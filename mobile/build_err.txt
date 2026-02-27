@@ -1,0 +1,39 @@
+﻿
+Running Gradle task 'assembleDebug'...                          
+C:\flutter\bin\flutter.bat : 
+lib/screens/video_player_screen.dart:236:25: Error: No named parameter 
+with the name 'p'.
+En línea: 1 Carácter: 1
++ C:\flutter\bin\flutter.bat build apk --debug 2>&1 | Out-File -Encodin 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (lib/screens/vid...h the nam 
+   e 'p'.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+              Container(p: 16, color: Colors.black87, child: 
+Text('Error: $_errorMessage', style: TextStyle(color: Colors.red))),
+                        ^
+/C:/flutter/packages/flutter/lib/src/widgets/container.dart:249:3: 
+Context: Found this candidate, but the arguments don't match.
+  Container({
+  ^^^^^^^^^
+Target kernel_snapshot failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\flutter\bin\flutter.bat'' finished with non-zero 
+exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 4s
+Running Gradle task 'assembleDebug'...                              4.9s
+Gradle task assembleDebug failed with exit code 1

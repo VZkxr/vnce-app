@@ -1,0 +1,4220 @@
+/* === ESTILOS GENERALES === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* evita scroll horizontal */
+  font-family: "Poppins", sans-serif;
+  background-color: #0e0e0e;
+  color: #fff;
+}
+
+/* ========================================= */
+/* === HEADER Y MENUBAR (ESTILO NETFLIX) === */
+/* ========================================= */
+/* 1. CONFIGURACIÃÂN GENERAL DEL MENUBAR (ESCRITORIO) */
+.menubar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* Centrado vertical */
+  padding: 0.5rem 2rem;
+  /* FONDO TRANSPARENTE (GRADIENTE) AL INICIO */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  z-index: 1000;
+  transition: background-color 0.3s ease, padding 0.3s ease;
+  /* CRUCIAL: Permite crear nuevas filas si los elementos no caben */
+  flex-wrap: wrap;
+}
+
+/* CUANDO SE HACE SCROLL (JS AGREGA ESTA CLASE) */
+.menubar.scrolled {
+  background-color: #0e0e0e;
+  /* Negro sÃÂ³lido */
+  background-image: none;
+  /* Quitamos el gradiente */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* 2. LOGO */
+.logo {
+  height: 35px;
+  cursor: pointer;
+  margin-right: 2rem;
+  /* SeparaciÃÂ³n en escritorio */
+  flex-shrink: 0;
+  /* Evita que el logo se aplaste */
+}
+
+/* 3. NAVEGACIÃÂN (Enlaces centrales) */
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  margin-right: auto;
+  /* Empuja el menÃÂº derecho al final */
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #e50914;
+  /* Rojo activo */
+}
+
+/* 4. ZONA DERECHA (Lupa + Usuario) */
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon {
+  height: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.icon:hover {
+  transform: scale(1.15);
+}
+
+/* --- ZONA DE USUARIO --- */
+.nav-icon {
+  transition: transform 0.5s ease-in-out;
+  cursor: pointer;
+}
+
+.nav-icon.rotated {
+  transform: rotate(180deg) !important;
+}
+
+.user-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #e5e5e5;
+  white-space: nowrap;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-logout {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #f40612;
+}
+
+/* ========================================= */
+/* === AJUSTE RESPONSIVE (MÃÂVIL - 2 FILAS) === */
+/* ========================================= */
+@media (max-width: 850px) {
+
+  /* A. CONTENEDOR PRINCIPAL */
+  .menubar {
+    /* Usamos padding pequeÃÂ±o para no comer espacio */
+    padding: 10px 15px !important;
+    /* Aseguramos que el ancho no exceda la pantalla */
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    /* CRUCIAL para evitar desbordamiento */
+    /* Gradiente para transparencia inicial */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+    /* Espacio vertical entre fila 1 y fila 2 */
+    gap: 10px;
+    /* Aseguramos flex-wrap para permitir las filas */
+    flex-wrap: wrap !important;
+  }
+
+  .menubar.scrolled {
+    background-color: #0e0e0e !important;
+    background-image: none;
+  }
+
+  /* B. FILA 1: IZQUIERDA (Logo) */
+  .logo {
+    order: 1;
+    height: 25px !important;
+    margin-right: 0 !important;
+    flex-shrink: 0;
+    /* Evita que se aplaste */
+  }
+
+  /* C. FILA 1: DERECHA (Usuario + Lupa) */
+  .menu-right {
+    order: 2;
+    margin-left: auto;
+    /* Empuja a la derecha */
+    gap: 10px !important;
+    flex-shrink: 0;
+  }
+
+  /* Forzar visibilidad del usuario */
+  .user-name {
+    display: block !important;
+    font-size: 0.8rem !important;
+    max-width: 80px;
+  }
+
+  .btn-logout {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* D. FILA 2: ABAJO (MenÃÂº de navegaciÃÂ³n) */
+  .nav-links {
+    order: 3;
+    width: 100% !important;
+    flex-basis: 100% !important;
+    margin: 0 !important;
+    padding: 10px 0 5px 0 !important;
+    display: flex;
+    justify-content: flex-start !important;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    gap: 25px !important;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    flex-shrink: 0 !important;
+    padding: 5px 0;
+    color: #bbb;
+    font-size: 0.95rem !important;
+  }
+
+  .nav-links-legacy {
+    order: 3;
+    /* FORZAR NUEVA LÃÂNEA: Ocupar el 100% del espacio disponible */
+    width: 100% !important;
+    flex-basis: 100% !important;
+    /* RESET TOTAL DE ESPACIOS */
+    margin: 0 !important;
+    padding: 8px 0 0 0 !important;
+    /* Solo padding arriba */
+    gap: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    /* DistribuciÃÂ³n exacta */
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-links a {
+    font-size: 0.9rem !important;
+    color: #bbb;
+    /* Evita que los textos largos empujen el ancho */
+    padding: 5px 2px;
+  }
+
+  .nav-links a.active {
+    color: #fff;
+    border-bottom: 2px solid #e50914;
+  }
+}
+
+/* === CONTADOR DE TÃÂTULOS === */
+.contador-titulo {
+  text-align: center;
+  font-size: 1.1rem;
+  /* Un poco mÃÂ¡s grande para legibilidad */
+  color: rgba(255, 255, 255, 0.6);
+  /* 60% opacidad para que se vea bien en PC y mÃÂ³vil */
+  margin-top: -0.5rem;
+  margin-bottom: 2rem;
+  font-weight: 400;
+  /* Un poco mÃÂ¡s de grosor */
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 1px;
+  /* Espaciado elegante */
+  display: block;
+  /* Asegura que ocupe su propia lÃÂ­nea */
+}
+
+/* reducimos un poco el margen inferior del tÃÂ­tulo principal para que no queden muy separados */
+#titulo-genero {
+  margin-bottom: 0.5rem !important;
+}
+
+/* === HERO SECTION (Portada principal tipo Netflix) === */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  top: 0;
+  overflow: hidden;
+  background-color: #0e0e0e;
+}
+
+.hero-carrusel {
+  position: relative;
+  width: 100%;
+  /* 3 pelÃÂ­culas */
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+  /* transiciÃÂ³n rÃÂ¡pida entre pelÃÂ­culas */
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 0;
+
+  /* FIX: Transición BASE para que si pierde clases, se desvanezca suave */
+  transition: opacity 0.5s ease-out;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  z-index: 1;
+  /* Detrás del que sale */
+  transition: none;
+  /* Aparece instantáneo detrás (o con fade rápido) */
+}
+
+.hero-slide.exiting {
+  opacity: 0;
+  z-index: 2;
+  /* Por encima del que entra */
+  transition: opacity 0.8s ease-out;
+  /* Más rápido y suave */
+  pointer-events: none;
+  /* EVITAR CLICS FANTASMA */
+}
+
+.hero-slide.no-transition {
+  transition: none !important;
+}
+
+.hero-img {
+  display: block;
+  width: 115%;
+  /* Más ancho para evitar franjas al moverse */
+  height: 100%;
+  object-fit: cover;
+  /* mantiene proporciÃÂ³n y cubre todo */
+  filter: brightness(90%);
+  /* oscurece un poco para resaltar texto */
+  object-position: top;
+  /* --- mÃÂ¡scara principal: fade a transparente desde 60% hasta 100% --- */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+  /* Para mayor suavidad en algunos navegadores */
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  /* AnimaciÃÂ³n de desplazamiento lento de derecha a izquierda */
+  animation: slow-slide 30s linear infinite;
+  animation-play-state: paused;
+  /* Paused by default to prevent background movement */
+}
+
+/* Solo animar si está activo o saliendo */
+.hero-slide.active .hero-img,
+.hero-slide.exiting .hero-img {
+  animation-play-state: running;
+}
+
+@media (max-width: 850px) {
+
+  .hero-slide.active .hero-img,
+  .hero-slide.exiting .hero-img {
+    /* Mantener running */
+    animation-play-state: running;
+  }
+
+  /* Ajustar duración en móvil sobreescribiendo la base */
+  .hero-img {
+    animation-duration: 20s;
+  }
+}
+
+@keyframes slow-slide {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-10%);
+  }
+
+  /* pequeÃÂ±o desplazamiento lento */
+}
+
+.hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  /* ajustar segÃÂºn lo suave que quieras el fundido */
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+      rgba(14, 14, 14, 0) 0%,
+      rgba(14, 14, 14, 0.15) 30%,
+      rgba(14, 14, 14, 0.45) 65%,
+      #0e0e0e 100%);
+}
+
+/* Contenido encima de la portada */
+.hero-content {
+  position: absolute;
+  bottom: 25%;
+  left: 4rem;
+  color: #fff;
+  z-index: 10;
+}
+
+.hero-logo {
+  width: 60%;
+  max-width: 1500px;
+  height: auto;
+  display: block;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.6));
+  animation: fadeInUp 1s ease forwards;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: #ccc;
+}
+
+.hero-btn {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.hero-btn:hover {
+  background-color: #f40612;
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.7rem;
+  z-index: 25;
+  /* encima de hero-content y hero-carrusel */
+}
+
+.hero-dots .dot {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.hero-dots .dot:hover {
+  transform: scale(1.3);
+}
+
+.hero-botones-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* Misma separaciÃÂ³n que en el modal */
+  margin-top: 1.5rem;
+  /* SeparaciÃÂ³n del subtÃÂ­tulo */
+  position: relative;
+  z-index: 30;
+}
+
+.hero-content .hero-btn {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+header {
+  display: contents;
+  text-align: center;
+  padding: 1rem 0;
+  background: transparent;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.header-seccion {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* separaciÃÂ³n pequeÃÂ±a entre botÃÂ³n y tÃÂ­tulo */
+  margin-bottom: 0rem;
+  /* pegado al carrusel */
+}
+
+/* Botones hero superpuestos */
+.hero-btn-left,
+.hero-btn-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background-color: transparent;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0;
+  /* ocultos por defecto */
+  pointer-events: none;
+  /* no clickeables */
+}
+
+.hero:hover .hero-btn-left,
+.hero:hover .hero-btn-right {
+  opacity: 0.7;
+  /* visibles al hover */
+  pointer-events: auto;
+  /* ahora clickeables */
+}
+
+.hero-btn-left:hover,
+.hero-btn-right:hover {
+  background-color: transparent;
+  transform: translateY(-50%) scale(1.5);
+  opacity: 1;
+}
+
+.hero-btn-left {
+  left: 1rem;
+}
+
+.hero-btn-right {
+  right: 1rem;
+}
+
+.hero-btn-left img,
+.hero-btn-right img {
+  width: 25px;
+  height: 25px;
+}
+
+.explorar-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #e50914;
+  /* rojo estilo Netflix */
+  overflow: hidden;
+  transform: translateY(9px);
+  padding: 0.3rem 0.6rem;
+  /* aÃÂ±ade ÃÂ¡rea alrededor del sÃÂ­mbolo/texto */
+  border-radius: 4px;
+  /* opcional: suaviza los bordes de la zona activa */
+}
+
+.explorar-btn .simbolo {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.explorar-btn .texto {
+  display: inline-block;
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  white-space: nowrap;
+  margin-left: 0.2rem;
+  color: #e50914;
+  /* rojo tambiÃÂ©n para el texto */
+}
+
+.explorar-btn:hover .simbolo {
+  opacity: 0;
+  /* desaparece */
+  transform: translateX(-10px);
+  /* opcional, un pequeÃÂ±o movimiento al desaparecer */
+}
+
+.explorar-btn:hover .texto {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* === CARRUSEL === */
+.carrusel-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 0;
+  overflow: hidden;
+}
+
+.carrusel {
+  display: flex;
+  gap: 1rem;
+  padding: 0 2rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  /* ocultar scrollbar */
+  -ms-overflow-style: none;
+  /* IE y Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.carrusel::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari y Opera */
+}
+
+/* === BOTONES SCROLL === */
+.scroll-btn {
+  position: absolute;
+  /* relativo a .carrusel-container */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+  transition: background 0.3s, opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carrusel-container:hover .scroll-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.scroll-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.scroll-btn.left {
+  left: 0px;
+  /* un poquito fuera para no tapar tarjetas */
+}
+
+.scroll-btn.right {
+  right: 0px;
+}
+
+/* Mantener tu carrusel existente */
+.carrusel {
+  padding: 1rem;
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  scroll-behavior: smooth;
+  /* ocultar scrollbar */
+  -ms-overflow-style: none;
+  /* IE y Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.carrusel::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari y Opera */
+}
+
+.carrusel::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+}
+
+/* === TARJETAS === */
+.tarjeta {
+  position: relative;
+  flex: 0 0 auto;
+  width: 200px;
+  height: auto;
+  /* <--- Agrega esto para que la tarjeta crezca con la imagen */
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  display: flex;
+  /* Asegura alineaciÃÂ³n */
+  flex-direction: column;
+  /* Pone imagen arriba, texto abajo */
+}
+
+/* === BOTÓN ELIMINAR (CONTINUAR VIENDO) === */
+.card-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  /* Borde más claro */
+}
+
+.card-delete-btn img {
+  width: 14px !important;
+  height: 14px !important;
+  /* Fuerza que el icono sea 100% blanco sin importar su color original */
+  filter: brightness(0) invert(1);
+}
+
+.card-delete-btn:hover {
+  background-color: rgba(229, 9, 20, 0.8);
+  /* Rojo al hover */
+  border-color: #ffffff;
+  transform: scale(1.1);
+}
+
+/* Mostrar en hover (Desktop) */
+.tarjeta-backdrop:hover .card-delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mostrar mediante clase (Móvil - Long Press) */
+.tarjeta-backdrop.show-delete .card-delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+  background-color: rgba(229, 9, 20, 0.9);
+  border-color: #fff;
+  /* REDUCCIÓN DE TAMAÑO PARA MÓVIL */
+  width: 24px;
+  height: 24px;
+  top: 5px;
+  right: 5px;
+  transform: none;
+  /* Evitamos el scale excesivo en móvil */
+}
+
+/* Ajuste del icono dentro del botón más pequeño en móvil */
+.tarjeta-backdrop.show-delete .card-delete-btn img {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+
+.tarjeta:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.tarjeta img:not(.icono-favorito) {
+  width: 100%;
+  height: auto;
+  /* Deja que la altura se calcule sola */
+  aspect-ratio: 2 / 3;
+  /* Fuerza la proporciÃÂ³n vertical de cine */
+  object-fit: cover;
+  /* Recorta los excesos sin deformar */
+}
+
+.contenido {
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.contenido h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.contenido p {
+  font-size: 0.85rem;
+  color: #bbb;
+  margin: 0.2rem 0;
+}
+
+.descripcion {
+  display: none;
+}
+
+/* === ESTILOS PARA MIS FAVORITOS (Ajustados) === */
+.seccion-favoritos {
+  /* Usamos el mismo padding que .genero-main para que la altura sea idÃÂ©ntica */
+  padding: 7.4rem 2rem 3rem;
+  min-height: calc(100vh - 100px);
+  margin-top: 0;
+  /* Eliminamos el margen extra que lo empujaba hacia abajo */
+}
+
+/* --- AGREGA ESTO JUSTO AQUÃÂ DEBAJO --- */
+@media (max-width: 850px) {
+  .seccion-favoritos {
+    /* Aumentamos de 6rem a 9rem (aprox 144px) solo en celular */
+    /* Esto bajarÃÂ¡ el tÃÂ­tulo "Mis Favoritos" para que no choque con el menÃÂº */
+    padding-top: 7.2rem !important;
+  }
+}
+
+.seccion-favoritos h2 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 1.65rem;
+  text-align: center;
+  /* Eliminamos border-bottom y padding-bottom para quitar la barra */
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Estilo para el link activo en la barra de navegaciÃÂ³n */
+.nav-links a {
+  transition: color 0.2s;
+}
+
+.nav-links a.active {
+  color: #e50914;
+  /* Color de resaltado */
+  font-weight: 600;
+}
+
+.icono-favorito {
+  position: absolute;
+  top: 8px;
+  /* SeparaciÃÂ³n superior */
+  right: 8px;
+  /* SeparaciÃÂ³n derecha */
+  width: 30px !important;
+  /*  ÃÂ¡CLAVE! TamaÃÂ±o fijo y prioritario */
+  height: 30px !important;
+  /* ÃÂ¡CLAVE! TamaÃÂ±o fijo y prioritario */
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
+}
+
+.icono-favorito:hover {
+  transform: scale(1.15);
+}
+
+.icono-favorito.favorito {
+  transform: scale(1.05);
+}
+
+/* === ESTADO VACÃÂO DE FAVORITOS (NETFLIX STYLE) === */
+.mensaje-vacio-container {
+  grid-column: 1 / -1;
+  /* OBLIGATORIO: Hace que ocupe todo el ancho del grid */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 50vh;
+  /* Ocupa la mitad de la pantalla verticalmente */
+  width: 100%;
+  animation: fadeIn 0.5s ease;
+}
+
+.mensaje-vacio-icono {
+  font-size: 3rem;
+  /* TamaÃÂ±o gigante (aprox 128px) */
+  line-height: 1;
+  margin-bottom: 1rem;
+  filter: grayscale(100%);
+  opacity: 0.5;
+  cursor: default;
+  transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.mensaje-vacio-titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+}
+
+.mensaje-vacio-texto {
+  font-size: 1rem;
+  color: #a3a3a3;
+  /* Gris suave */
+  line-height: 1.5;
+  max-width: 400px;
+  /* Mantiene el texto compacto */
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* TÃÂ­tulos de secciones (Mantenemos tu cÃÂ³digo anterior) */
+.seccion-catalogo h2 {
+  margin: 0 0 -1rem 30px;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+/* === BUSCADOR EMERGENTE === */
+.buscador-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start !important;
+  padding-top: 10rem;
+  padding-bottom: 4rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* evita desplazamiento horizontal */
+  z-index: 2000;
+  transition: opacity 0.3s ease;
+  box-sizing: border-box;
+}
+
+.buscador-overlay.hidden {
+  display: none;
+}
+
+.buscador-contenido {
+  width: 90%;
+  max-width: 1000px;
+  display: block;
+  text-align: center;
+  margin: 0;
+}
+
+#input-busqueda {
+  width: 100%;
+  max-width: 700px;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  margin-bottom: 2rem;
+  background-color: #222;
+  color: #fff;
+}
+
+/* === GRID DE RESULTADOS === */
+.resultados-busqueda {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(420px, auto);
+  gap: 1.5rem;
+  justify-items: center;
+  justify-content: center;
+  /* Ã°ÂÂÂ¡ centra todo el grid */
+  align-content: start;
+  margin: 0 auto;
+  /* Ã°ÂÂÂ¡ centra dentro del contenedor */
+  padding: 2rem 0.5rem;
+  max-width: 1000px;
+  width: fit-content;
+  /* Ã°ÂÂÂ¡ evita que se extienda innecesariamente */
+  overflow: visible;
+}
+
+/* === AJUSTE DE TARJETAS EN BUSCADOR === */
+.resultados-busqueda .tarjeta {
+  width: 100%;
+  max-width: 250px;
+  height: 420px;
+  /* mÃÂ¡s altura total */
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: #111;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resultados-busqueda .tarjeta img:not(.icono-favorito) {
+  width: 100%;
+  height: 85%;
+  /* mÃÂ¡s espacio para la imagen */
+  object-fit: cover;
+}
+
+.resultados-busqueda .contenido {
+  height: 15%;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: transparent;
+}
+
+.resultados-busqueda .contenido h3 {
+  font-size: 1rem;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resultados-busqueda .contenido p {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin: 0.2rem 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === FOOTER === */
+.footer {
+  background-color: #0e0e0e;
+  /* mismo fondo que la pÃÂ¡gina */
+  color: #aaa;
+  /* gris suave, estilo Netflix */
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  border-top: 1px solid #222;
+  /* lÃÂ­nea sutil arriba */
+}
+
+.footer p {
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 900px) {
+  #input-busqueda {
+    width: 90%;
+    max-width: 650px;
+    /* un poco mÃÂ¡s estrecho que desktop */
+  }
+
+  .resultados-busqueda {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 1rem;
+    /* separaciÃÂ³n horizontal */
+    row-gap: 0.5rem;
+    /* filas mÃÂ¡s juntas */
+    justify-content: center;
+    justify-items: center;
+    align-items: start;
+    grid-auto-rows: auto;
+    /* altura segÃÂºn contenido */
+  }
+
+  .resultados-busqueda .tarjeta {
+    max-width: 200px;
+    min-height: 340px;
+    /* altura mÃÂ­nima uniforme */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    background-color: #111;
+    overflow: hidden;
+  }
+
+  .resultados-busqueda .tarjeta img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    flex-shrink: 0;
+    /* evita compresiÃÂ³n de la imagen */
+  }
+
+  .resultados-busqueda .contenido {
+    padding: 0.45rem 0.55rem;
+    /* compacto pero suficiente para texto */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .resultados-busqueda .contenido h3 {
+    font-size: 0.9rem;
+    margin: 0 0 0.2rem;
+    line-height: 1.2;
+    word-break: break-word;
+    white-space: normal;
+    display: block;
+    overflow: visible;
+  }
+
+  .resultados-busqueda .contenido p {
+    font-size: 0.75rem;
+    color: #ccc;
+    margin: 0;
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 600px) {
+  #input-busqueda {
+    width: 90%;
+    max-width: 600px;
+  }
+
+  .resultados-busqueda {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 1rem;
+    /* separaciÃÂ³n horizontal */
+    row-gap: 0.5rem;
+    /* filas mÃÂ¡s juntas */
+    justify-content: center;
+    justify-items: center;
+    align-items: start;
+    grid-auto-rows: auto;
+    /* altura de fila segÃÂºn contenido */
+  }
+
+  .resultados-busqueda .tarjeta {
+    max-width: 180px;
+    height: auto;
+    min-height: 320px;
+    /* altura mÃÂ­nima uniforme */
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    background-color: #111;
+    overflow: hidden;
+  }
+
+  .resultados-busqueda .tarjeta img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .resultados-busqueda .contenido {
+    padding: 0.4rem 0.5rem;
+    /* un poco menos para compactar */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .resultados-busqueda .contenido h3 {
+    font-size: 0.85rem;
+    margin: 0 0 0.15rem;
+    line-height: 1.2;
+    word-break: break-word;
+    white-space: normal;
+    display: block;
+    overflow: visible;
+  }
+
+  .resultados-busqueda .contenido p {
+    font-size: 0.7rem;
+    color: #ccc;
+    margin: 0;
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+  }
+}
+
+/* Solo en escritorio: 8 tarjetas visibles, carrusel fijo sin scroll */
+@media screen and (min-width: 1024px) {
+  .carrusel {
+    overflow-x: hidden;
+    /* deshabilita scroll horizontal */
+  }
+
+  .tarjeta {
+    flex: 0 0 calc((100% - 7rem) / 8);
+    /* 7 gaps = 7rem entre 8 tarjetas */
+    height: auto;
+  }
+
+  .tarjeta img {
+    height: auto;
+    aspect-ratio: 2/3;
+  }
+
+  /* Opcional: ocultar botones de scroll en escritorio */
+  .scroll-btn {
+    display: none;
+  }
+
+  /* === AJUSTE PARA "CONTINUAR VIENDO" (5 Tarjetas) === */
+  .seccion-continue-watching .tarjeta-backdrop {
+    flex: 0 0 calc((100% - 4rem) / 5) !important;
+    /* 4 gaps de 1rem */
+    max-width: none !important;
+  }
+}
+
+/* === Ajuste de posiciÃÂ³n del buscador en modo responsive === */
+@media (max-width: 900px) {
+  .buscador-overlay {
+    padding-top: 3rem;
+    /* antes era 10rem Ã¢ÂÂ sube un poco */
+  }
+}
+
+@media (max-width: 600px) {
+  .buscador-overlay {
+    padding-top: 1rem;
+    /* aÃÂºn mÃÂ¡s arriba en pantallas pequeÃÂ±as */
+  }
+}
+
+/* === GRID DE GÃÂNERO === */
+.genero-main {
+  padding: 6rem 2rem 3rem;
+  /* deja espacio para el menÃÂº fijo */
+}
+
+#titulo-genero {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #fff;
+}
+
+.grid-genero {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1rem;
+  justify-items: center;
+}
+
+/* === AJUSTE FINAL DE TAMAÃÂO Y TÃÂTULOS EN GRID DE GÃÂNERO === */
+/* Tarjetas mÃÂ¡s grandes y con espacio reservado para el texto */
+.grid-genero .tarjeta {
+  width: 100%;
+  aspect-ratio: auto;
+  /* libera la restricciÃÂ³n vertical */
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  /* imagen arriba, texto abajo */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid-genero .tarjeta:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+/* Imagen completa, sin recorte */
+.grid-genero .tarjeta img:not(.icono-favorito) {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+  flex-shrink: 0;
+}
+
+/* Contenedor de texto debajo de la imagen */
+.grid-genero .contenido {
+  padding: 0.5rem 0.4rem 0.7rem;
+  text-align: center;
+}
+
+.grid-genero .contenido h3 {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 0.9rem;
+  color: #fff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  white-space: normal;
+  /* permite 2 lÃÂ­neas si el tÃÂ­tulo es largo */
+  line-height: 1.2;
+}
+
+.grid-genero .contenido p {
+  font-size: 0.75rem;
+  color: #bbb;
+  margin: 0;
+}
+
+/* Escalado limpio para pantallas pequeÃÂ±as */
+@media (max-width: 900px) {
+  .grid-genero {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+  }
+
+  .grid-genero .tarjeta {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 700px) {
+  .grid-genero {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.8rem;
+  }
+
+  .grid-genero .tarjeta {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-genero {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.7rem;
+  }
+
+  .grid-genero .tarjeta {
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 380px) {
+  .grid-genero {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.7rem;
+  }
+
+  .grid-genero .tarjeta {
+    max-width: 120px;
+  }
+}
+
+/* === AJUSTE DE TIPOGRAFÃÂA EN MODO RESPONSIVE PARA GRID DE GÃÂNERO === */
+/* Tablets medianas */
+@media (max-width: 900px) {
+  .grid-genero .contenido h3 {
+    font-size: 0.85rem;
+  }
+
+  .grid-genero .contenido p {
+    font-size: 0.7rem;
+  }
+}
+
+/* Celulares grandes */
+@media (max-width: 700px) {
+  .grid-genero .contenido h3 {
+    font-size: 0.8rem;
+  }
+
+  .grid-genero .contenido p {
+    font-size: 0.68rem;
+  }
+}
+
+/* Celulares pequeÃÂ±os */
+@media (max-width: 480px) {
+  .grid-genero .contenido h3 {
+    font-size: 0.75rem;
+  }
+
+  .grid-genero .contenido p {
+    font-size: 0.65rem;
+  }
+}
+
+/* Muy pequeÃÂ±os (hasta 380px) */
+@media (max-width: 380px) {
+  .grid-genero .contenido h3 {
+    font-size: 0.7rem;
+  }
+
+  .grid-genero .contenido p {
+    font-size: 0.6rem;
+  }
+}
+
+/* === AJUSTE PARA VISTA RESPONSIVE DE 4 COLUMNAS === */
+@media (max-width: 1024px) {
+  .grid-genero {
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 columnas */
+    gap: 1rem;
+  }
+
+  .grid-genero .tarjeta {
+    width: 100%;
+    max-width: none;
+    border-radius: 12px;
+    background-color: #1a1a1a;
+  }
+
+  .grid-genero .tarjeta img:not(.icono-favorito) {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .grid-genero .contenido {
+    padding: 0.5rem 0.6rem 1rem;
+    text-align: center;
+  }
+
+  .grid-genero .contenido h3 {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0.3rem;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+  .grid-genero .contenido p {
+    font-size: 0.75rem;
+    color: #bbb;
+  }
+}
+
+/* === OptimizaciÃÂ³n para pantallas mÃÂ¡s pequeÃÂ±as === */
+@media (max-width: 600px) {
+  .grid-genero {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .grid-genero .contenido h3 {
+    font-size: 0.85rem;
+  }
+
+  .grid-genero .contenido p {
+    font-size: 0.7rem;
+  }
+}
+
+/* ========================================= */
+/* === ESTILOS DEL MODAL === */
+/* ========================================= */
+/* Fondo oscuro que cubre toda la pantalla */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  /* CLAVE 1: Usar flex-start permite el scroll desde el principio */
+  align-items: flex-start;
+  overflow-y: auto;
+  /* Damos un poco mÃÂ¡s de aire arriba y abajo */
+  padding: 40px 20px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  display: none;
+  opacity: 0;
+}
+
+/* Contenedor principal */
+.modal-container {
+  background-color: #181818;
+  width: 100%;
+  max-width: 850px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+  /* CLAVE 2: EL TRUCO DE ORO */
+  /* En un contenedor Flex, 'margin: auto' centra verticalmente si hay espacio,
+     pero si el contenido es muy alto, respeta el padding superior y no lo corta. */
+  margin: auto;
+  /* Margen extra para que al scrollear hasta el fondo no quede pegado */
+  margin-bottom: 40px;
+  animation: modalFadeIn 0.4s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* BotÃÂ³n Cerrar */
+.btn-cerrar {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(24, 24, 24, 0.6);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  /* Aseguramos que estÃÂ© por encima de todo */
+  transition: transform 0.2s;
+}
+
+.btn-cerrar:hover {
+  background-color: white;
+  color: black;
+  transform: scale(1.1);
+}
+
+/* === ESTILO DEL BOTÃÂN FAVORITO EN MODAL === */
+.btn-modal-favorito {
+  position: absolute;
+  top: 13px;
+  /* Debajo del botÃÂ³n cerrar (aprox 15px + 36px + gap) */
+  right: 65px;
+  /* Mismo margen derecho que el cerrar */
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.2s;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+  /* Sombra para resaltar sobre el fondo */
+}
+
+.btn-modal-favorito:hover {
+  transform: scale(1.1);
+}
+
+/* === CABECERA (HERO) === */
+.modal-hero {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+#modal-img-fondo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.modal-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to top, #181818, transparent);
+  z-index: 1;
+}
+
+/* Contenido sobre la imagen */
+.modal-hero-overlay {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  width: 80%;
+  z-index: 10;
+  /* Importante para que se vea sobre el gradiente */
+}
+
+#modal-titulo {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  line-height: 1.1;
+}
+
+.btn-hero-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: white;
+  color: black;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  z-index: 25;
+  position: relative;
+  cursor: pointer;
+}
+
+.btn-hero-play:hover {
+  background-color: #e6e6e6;
+}
+
+/* === CUERPO DE INFO === */
+.modal-info-body {
+  padding: 20px 40px 40px 40px;
+  color: #fff;
+  position: relative;
+  z-index: 5;
+}
+
+.modal-metadata {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  /* Para que no se rompa en mÃÂ³vil */
+}
+
+.match {
+  color: #46d369;
+  font-weight: bold;
+}
+
+.meta-tag.border {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 0 5px;
+  font-size: 0.8rem;
+}
+
+.modal-descripcion-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.sinopsis-texto {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+.label-gris {
+  color: #777;
+}
+
+/* === GRILLA SIMILARES === */
+.seccion-similares h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-top: 1px solid #404040;
+  padding-top: 20px;
+}
+
+.grid-similares {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 15px;
+}
+
+.card-similar {
+  background-color: #2f2f2f;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.card-similar:hover {
+  transform: scale(1.05);
+}
+
+.card-similar img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.card-similar-info {
+  padding: 8px;
+}
+
+.card-similar-title {
+  font-size: 0.8rem;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === RESPONSIVE (MÃÂVIL) === */
+@media (max-width: 768px) {
+
+  /* 1. Aseguramos que el Overlay contenga todo sin salirse */
+  .modal-overlay {
+    padding: 15px;
+    /* Margen seguro alrededor de todo el modal */
+    align-items: flex-start;
+    /* Alineado arriba para permitir scroll */
+    box-sizing: border-box;
+    /* IMPORTANTE: Para que el padding no sume ancho extra */
+    display: flex;
+    /* Asegura comportamiento flexible */
+  }
+
+  /* 2. El contenedor se obliga a respetar el ancho disponible */
+  .modal-container {
+    width: 100%;
+    /* Ocupa el 100% del espacio disponible (dentro del padding del overlay) */
+    max-width: 100%;
+    /* Nunca exceder el ancho */
+    margin: 0;
+    height: auto;
+    /* Permite crecer hacia abajo */
+    display: block;
+    box-sizing: border-box;
+    /* CRUCIAL: Evita que bordes o rellenos lo ensanchen */
+    overflow: hidden;
+    /* Corta cualquier hijo rebelde que intente salirse */
+  }
+
+  /* 3. Cabecera fija para que no empuje */
+  .modal-hero {
+    height: 250px;
+    width: 100%;
+  }
+
+  /* 4. Ajuste del texto sobre la imagen */
+  .modal-hero-overlay {
+    left: 15px;
+    /* Margen izquierdo interno */
+    right: 15px;
+    /* Margen derecho interno (fuerza a no salirse) */
+    bottom: 15px;
+    width: auto;
+    /* Ancho automÃÂ¡tico basado en left/right */
+    box-sizing: border-box;
+    z-index: 20 !important;
+  }
+
+  #modal-titulo {
+    font-size: 1.6rem;
+    /* Un poco mÃÂ¡s pequeÃÂ±o para evitar saltos bruscos */
+    word-wrap: break-word;
+    /* Rompe palabras muy largas si es necesario */
+    hyphens: auto;
+    margin-bottom: 1rem;
+  }
+
+  /* 5. Cuerpo del texto */
+  .modal-info-body {
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  /* Grid de una sola columna */
+  .modal-descripcion-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* BotÃÂ³n de cerrar ajustado */
+  .btn-cerrar {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .btn-modal-favorito {
+    top: 8px;
+    /* Un poco mÃÂ¡s arriba en celular */
+    right: 50px;
+    /* Alineado con el nuevo margen de la X */
+    width: 32px;
+    height: 32px;
+  }
+
+  .grid-similares {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .card-similar img {
+    width: 100%;
+    /* Ocupa todo el ancho de su columna */
+    height: auto;
+    /* La altura se calcula sola segÃÂºn el ancho */
+    aspect-ratio: 2/3;
+    /* Mantiene siempre formato pÃÂ³ster vertical */
+    object-fit: cover;
+    /* Asegura que se vea bien sin deformarse */
+    border-radius: 4px;
+  }
+}
+
+/* === UTILIDAD PARA OCULTAR ELEMENTOS === */
+.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* === PERSONALIZACIÃÂN DEL REPRODUCTOR (PLYR) === */
+/* Definimos el color rojo Netflix para todo el reproductor */
+:root {
+  --plyr-color-main: #e50914;
+  /* Rojo intenso */
+}
+
+/* Ajustes para que se vea mÃÂ¡s premium */
+.plyr--video {
+  height: 100%;
+  /* Asegurar que llene el contenedor */
+  border-radius: 8px;
+  /* Bordes redondeados suaves */
+  overflow: hidden;
+}
+
+/* El botÃÂ³n grande de play central */
+.plyr__control--overlaid {
+  background: rgba(229, 9, 20, 0.8) !important;
+  /* Rojo semi-transparente */
+}
+
+.plyr__control--overlaid:hover {
+  background: #e50914 !important;
+  /* Rojo sÃÂ³lido al pasar el mouse */
+}
+
+/* Asegurar que los controles queden encima de todo */
+.plyr--full-ui.plyr--video .plyr__controls {
+  z-index: 105;
+}
+
+/* Forzamos que el contenedor de Plyr se ponga ENCIMA de todo (gradiente y tÃÂ­tulos) */
+.modal-hero .plyr {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  /* Mayor que overlay (10) y gradiente (1) */
+  background: #000;
+  /* Fondo negro para evitar parpadeos */
+}
+
+.modal-hero.video-activo .modal-hero-overlay,
+.modal-hero.video-activo .modal-gradient,
+.modal-hero.video-activo #modal-img-fondo {
+  display: none;
+}
+
+.custom-control-btn {
+  background: rgba(0, 0, 0, 0.5);
+  /* Fondo semitransparente */
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: white;
+  border-radius: 50%;
+  width: 50px;
+  /* TamaÃÂ±o fijo */
+  height: 50px;
+  /* TamaÃÂ±o fijo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  /* TamaÃÂ±o de icono */
+  backdrop-filter: blur(2px);
+  user-select: none;
+  /* Evita selecciÃÂ³n de texto */
+  transition: transform 0.2s, background 0.2s;
+}
+
+.custom-control-btn:hover {
+  background: #e50914;
+  /* Rojo */
+  border-color: #e50914;
+  transform: scale(1.1);
+}
+
+#custom-play-btn {
+  width: 70px;
+  /* BotÃÂ³n Play mÃÂ¡s grande */
+  height: 70px;
+  font-size: 2rem;
+}
+
+/* === FEEDBACK VISUAL (+10s / -10s) === */
+.seek-feedback {
+  /* ConfiguraciÃÂ³n Base (Modo Normal) */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Centrado inicial, las clases .left/.right lo moverÃÂ¡n */
+  transform: translate(-50%, -50%);
+  /* Centrado exacto */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 30px;
+  opacity: 0;
+  /* Invisible por defecto */
+  pointer-events: none;
+  /* No bloquea clicks */
+  z-index: 2000;
+  /* Muy alto para verse sobre el video */
+  display: block;
+  /* Asegura que exista en el layout */
+}
+
+/* Posiciones relativas */
+.seek-feedback.left {
+  left: 20%;
+}
+
+.seek-feedback.right {
+  left: 80%;
+}
+
+/* AnimaciÃÂ³n */
+.animate-feedback {
+  animation: fadeZoom 0.6s ease-out forwards;
+}
+
+@keyframes fadeZoom {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+}
+
+/* === MODO PANTALLA COMPLETA  === */
+/* Cuando Plyr activa fullscreen, cambiamos a fixed para salirnos del contenedor */
+.plyr--fullscreen-active .seek-feedback {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  /* Capa mÃÂ¡xima del navegador */
+  font-size: 3rem !important;
+  /* MÃÂ¡s grandes */
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem 3rem;
+  /* Ajustamos posiciones usando % de la pantalla */
+  top: 50%;
+  transform: translateY(-50%);
+  /* Solo centrado vertical, horizontal es manual */
+}
+
+.plyr--fullscreen-active .seek-feedback.left {
+  left: 15% !important;
+  right: auto !important;
+}
+
+.plyr--fullscreen-active .seek-feedback.right {
+  right: 15% !important;
+  left: auto !important;
+}
+
+/* ========================================= */
+/* === TÃÂTULO SUPERPUESTO EN EL VIDEO === */
+/* ========================================= */
+.video-overlay-title {
+  position: absolute;
+  top: 30px;
+  /* SeparaciÃÂ³n del borde superior */
+  left: 30px;
+  /* SeparaciÃÂ³n del borde izquierdo */
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  /* Sombra fuerte para legibilidad */
+  z-index: 205;
+  /* Encima de todo */
+  opacity: 0;
+  /* Oculto por defecto */
+  pointer-events: none;
+  /* Que no estorbe al click */
+  transition: opacity 0.3s ease;
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 1px;
+}
+
+/* Ajuste para celulares */
+@media (max-width: 768px) {
+  .video-overlay-title {
+    font-size: 1.2rem;
+    top: 15px;
+    left: 15px;
+  }
+}
+
+/* ======================================================= */
+/* === SINCRONIZACIÃÂN DE VISIBILIDAD (Normal y Fullscreen) === */
+/* ======================================================= */
+/* COMPORTAMIENTO POR DEFECTO: VISIBLE */
+/* Esto asegura que si mueves el mouse, se vean. */
+.custom-video-overlay,
+.video-overlay-title {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+/* === BOTÃÂN CERRAR VIDEO (DENTRO DEL REPRODUCTOR) === */
+.btn-close-video {
+  position: absolute;
+  top: 35px;
+  right: 20px;
+  background-color: rgba(24, 24, 24, 0.6);
+  /* Fondo semitransparente oscuro */
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 210;
+  /* Por encima de tÃÂ­tulo y overlays */
+  transition: transform 0.2s, background-color 0.2s, opacity 0.3s ease;
+  line-height: 1;
+  /* Centrado vertical exacto para la X */
+  opacity: 1;
+}
+
+.btn-close-video:hover {
+  background-color: white;
+  color: black;
+  transform: scale(1.1);
+}
+
+.plyr--hide-controls .btn-close-video {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Ajuste para Pantalla Completa  */
+.plyr--fullscreen-active .btn-close-video {
+  top: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  font-size: 32px;
+}
+
+/* Ajuste para MÃÂ³viles  */
+@media (max-width: 768px) {
+  .btn-close-video {
+    width: 35px;
+    height: 35px;
+    font-size: 24px;
+    top: 15px;
+    right: 15px;
+  }
+}
+
+/* AJUSTE ESPECIAL PARA PANTALLA COMPLETA */
+/* Cuando estÃÂ¡ en fullscreen, hacemos el tÃÂ­tulo mÃÂ¡s grande y elegante */
+.plyr--fullscreen-active .video-overlay-title {
+  font-size: 2.5rem;
+  /* MÃÂ¡s grande en TV/Monitor */
+  top: 50px;
+  left: 50px;
+}
+
+/* Ajuste de los botones centrales en pantalla completa */
+.plyr--fullscreen-active .custom-control-btn {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+}
+
+.plyr--fullscreen-active #custom-play-btn {
+  width: 100px;
+  height: 100px;
+  font-size: 3rem;
+}
+
+/* SEGURIDAD PARA MÃÂVILES */
+.plyr--paused .custom-video-overlay,
+.plyr--paused .video-overlay-title {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ======================================================= */
+/* === INDICADORES (+10s/-10s) === */
+/* ======================================================= */
+/* Estilo base (animaciÃÂ³n maneja la posiciÃÂ³n y escala) */
+.seek-feedback {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Centrado por defecto */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 30px;
+  opacity: 0;
+  /* Invisible hasta que se anime */
+  pointer-events: none;
+  z-index: 2000;
+  /* Muy alto */
+  display: block;
+}
+
+/* Ajustes de posiciÃÂ³n base */
+.seek-feedback.left {
+  left: 20%;
+}
+
+.seek-feedback.right {
+  left: 80%;
+}
+
+/* ANIMACIÃÂN: Controla opacidad, posiciÃÂ³n y zoom */
+.animate-feedback {
+  animation: fadeZoom 0.6s ease-out forwards;
+}
+
+@keyframes fadeZoom {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+}
+
+/* === MODO PANTALLA COMPLETA === */
+.plyr--fullscreen-active .seek-feedback {
+  position: fixed !important;
+  /* Salimos del contenedor */
+  z-index: 2147483647 !important;
+  /* Capa mÃÂ¡xima posible */
+  font-size: 3rem !important;
+  /* Texto gigante */
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem 3rem;
+  border-radius: 50px;
+}
+
+/* Posiciones en pantalla completa (usamos porcentajes de la pantalla) */
+.plyr--fullscreen-active .seek-feedback.left {
+  left: 15% !important;
+  right: auto !important;
+}
+
+.plyr--fullscreen-active .seek-feedback.right {
+  left: auto !important;
+  right: 15% !important;
+}
+
+/* Estos estilos tienen !important para sobrescribir los inyectados por JS */
+@media (max-width: 768px) {
+
+  /* Contenedor del menÃÂº: MÃÂ¡s compacto y permite scroll si la lista es larga */
+  .netflix-menu-container {
+    flex-direction: column !important;
+    /* Una columna encima de otra (Audio arriba, Subs abajo) */
+    gap: 1.5rem !important;
+    /* Menos separaciÃÂ³n */
+    width: 85% !important;
+    /* Un poco mÃÂ¡s estrecho para no tocar bordes */
+    max-height: 80vh !important;
+    /* Nunca exceder el 80% de la altura de pantalla */
+    overflow-y: auto !important;
+    /* Habilitar scroll interno si hay muchos idiomas */
+    padding: 10px !important;
+  }
+
+  /* TÃÂ­tulos de columnas (Audio / SubtÃÂ­tulos) mÃÂ¡s pequeÃÂ±os */
+  .netflix-col h3 {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Opciones individuales (Botones de idioma) */
+  .netflix-option {
+    font-size: 0.9rem !important;
+    /* Texto mÃÂ¡s pequeÃÂ±o */
+    padding: 10px 12px !important;
+    /* ÃÂreas de toque cÃÂ³modas pero no gigantes */
+    background-color: rgba(255, 255, 255, 0.05);
+    /* Fondo sutil para distinguir cada opciÃÂ³n */
+    margin-bottom: 5px;
+    /* SeparaciÃÂ³n entre opciones */
+    border-radius: 4px;
+  }
+
+  /* Estado seleccionado en mÃÂ³vil */
+  .netflix-option.selected {
+    background-color: rgba(229, 9, 20, 0.2);
+    /* Fondo rojo suave */
+    border: 1px solid rgba(229, 9, 20, 0.5);
+  }
+}
+
+/* === NUEVOS ESTILOS PARA BOTONES DEL MODAL === */
+.modal-botones-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* SeparaciÃÂ³n entre Reproducir y Telegram */
+}
+
+/* BotÃÂ³n de Telegram (Circular y transparente/glassmorphism) */
+.btn-hero-telegram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  /* TamaÃÂ±o del cÃÂ­rculo */
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(40, 168, 234, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s;
+  z-index: 25;
+  pointer-events: auto;
+}
+
+.btn-hero-telegram img {
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Efecto hover de expansiÃÂ³n (Igual al botÃÂ³n cerrar) */
+.btn-hero-telegram:hover {
+  transform: scale(1.1);
+  background-color: rgba(40, 168, 234, 0.5);
+  /* MÃÂ¡s visible al pasar el mouse */
+  border-color: #fff;
+}
+
+/* === BOTÃÂN SHARE (Igual al de Telegram) === */
+.btn-hero-share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Un poco mÃÂ¡s neutro */
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s;
+  z-index: 25;
+  pointer-events: auto;
+}
+
+.btn-hero-share img {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.btn-hero-share:hover {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: #fff;
+}
+
+/* === MENSAJE TOAST (MODIFICADO) === */
+.toast-msg {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #e50914;
+  /* Rojo Vanacue */
+  color: #fff;
+  /* CAMBIO 1: Espaciado y dimensiones */
+  padding: 16px 24px;
+  /* Un poco mÃÂ¡s de aire vertical */
+  border-radius: 8px;
+  /* Bordes mÃÂ¡s suaves */
+  width: auto;
+  /* Se ajusta al contenido */
+  max-width: 90%;
+  /* Nunca se sale de la pantalla */
+  /* CAMBIO 2: Manejo de texto */
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  /* Centrar texto multilÃÂ­nea */
+  white-space: pre-line;
+  /* ÃÂ¡CRUCIAL! Esto permite los saltos de lÃÂ­nea (\n) */
+  line-height: 1.5;
+  /* Mejor lectura para dos lÃÂ­neas */
+  /* DecoraciÃÂ³n */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  z-index: 20000;
+  /* AnimaciÃÂ³n */
+  opacity: 0;
+  animation: toastFade 4s ease forwards;
+  /* SubÃÂ­ a 4s para dar tiempo a leer */
+  pointer-events: none;
+}
+
+/* AnimaciÃÂ³n (La dejamos igual, funciona bien) */
+@keyframes toastFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+}
+
+/* --- AJUSTE RESPONSIVE --- */
+@media (max-width: 600px) {
+  .toast-msg {
+    top: 80px;
+    font-size: 0.9rem;
+    /* Texto legible pero ajustado */
+    padding: 12px 20px;
+    width: 90%;
+    /* En celular ocupamos casi todo el ancho para que quepa el texto */
+    max-width: 350px;
+    /* Pero no exageramos */
+  }
+}
+
+/* ========================================= */
+/* === ESTILOS LISTA DE EPISODIOS (NETFLIX) === */
+/* ========================================= */
+.seccion-episodios {
+  margin-top: 30px;
+  margin-bottom: 40px;
+  border-top: 1px solid #404040;
+  /* LÃÂ­nea separadora sutil */
+  padding-top: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+.episodios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.titulo-seccion-ep {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+/* Dropdown de Temporadas */
+.dropdown-temporadas {
+  background-color: #242424;
+  color: #fff;
+  border: 1px solid #4d4d4d;
+  padding: 8px 30px 8px 15px;
+  /* espacio extra a la derecha para la flecha */
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  /* Quita estilo nativo del navegador */
+  -webkit-appearance: none;
+  /* Flecha personalizada */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+/* === FILA DE CADA EPISODIO === */
+.episodio-item {
+  display: flex;
+  align-items: center;
+  /* Centrado vertical */
+  padding: 20px 15px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 4px;
+}
+
+.episodio-item:hover {
+  background-color: #262626;
+  /* Gris mÃÂ¡s claro al pasar el mouse */
+}
+
+/* NÃÂºmero grande a la izquierda */
+.episodio-numero {
+  font-size: 1.5rem;
+  color: #d2d2d2;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+  margin-right: 15px;
+}
+
+/* Miniatura del episodio */
+.episodio-img-wrapper {
+  position: relative;
+  width: 140px;
+  height: 78px;
+  /* Aspecto 16:9 aprox */
+  margin-right: 20px;
+  flex-shrink: 0;
+  /* Evita que se aplaste */
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.episodio-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto hover en la imagen */
+.episodio-item:hover .episodio-img {
+  transform: scale(1.05);
+  filter: brightness(0.7);
+}
+
+/* Icono Play superpuesto (oculto por defecto) */
+.episodio-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  /* Invisible */
+  transition: opacity 0.2s ease;
+}
+
+.episodio-play-icon::after {
+  content: "Ã¢ÂÂ¶";
+  font-size: 12px;
+  color: white;
+  margin-left: 2px;
+}
+
+.episodio-item:hover .episodio-play-icon {
+  opacity: 1;
+  /* Visible al hover */
+}
+
+/* InformaciÃÂ³n Texto (TÃÂ­tulo y Sinopsis) */
+.episodio-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  /* Para textos largos */
+}
+
+.episodio-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.episodio-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.episodio-duracion {
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.episodio-sinopsis {
+  font-size: 0.85rem;
+  color: #a3a3a3;
+  line-height: 1.4;
+  margin: 0;
+  /* Truco CSS para cortar texto a 2 lÃÂ­neas */
+  display: -webkit-box;
+  /* ... */
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-clamp: 2;
+  /* Estándar */
+  /* ... */
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  line-clamp: 3;
+  /* Estándar */
+  /* ... */
+  /* Empty ruleset removed */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === RESPONSIVE PARA MÃÂVILES === */
+@media (max-width: 700px) {
+  .episodio-img-wrapper {
+    width: 110px;
+    height: 62px;
+    margin-right: 15px;
+  }
+
+  .episodio-numero {
+    font-size: 1.1rem;
+    min-width: 25px;
+    margin-right: 10px;
+  }
+
+  .episodio-sinopsis {
+    display: none;
+    /* Ocultamos sinopsis en celular para ahorrar espacio */
+  }
+
+  .episodio-titulo {
+    font-size: 0.9rem;
+  }
+}
+
+/* === ESTILOS DEL MODAL DE EDICIÃÂN === */
+/* Fondo oscuro que cubre toda la pantalla */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  /* Fondo muy oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  /* Por encima de todo */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Cuando le quitamos la clase hidden (vÃÂ­a JS) */
+.modal-overlay:not(.hidden) {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* La cajita del formulario */
+.modal-content {
+  background: #1f1f1f;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  border: 1px solid #333;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: white;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+}
+
+.modal-content input:focus {
+  border-color: #e50914;
+  /* Rojo Vanacue */
+}
+
+/* Botones */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn-primary {
+  background-color: #e50914;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #f40612;
+}
+
+.btn-secondary {
+  background-color: #444;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #555;
+}
+
+/* Utilidad */
+.hidden {
+  display: none !important;
+}
+
+/* Aseguramos que hidden funcione */
+/* 2. Reglas especÃÂ­ficas para mÃÂ³vil */
+@media (max-width: 768px) {
+  .modal-overlay {
+    /* En vez de centrar, alineamos al inicio para que no se corte arriba */
+    align-items: flex-start;
+    padding-top: 20px;
+    /* Un poco de aire arriba */
+    padding-bottom: 20px;
+    /* Un poco de aire abajo */
+  }
+
+  .modal-container,
+  .modal-content {
+    /* Aseguramos que quepa a lo ancho y no se desborde */
+    width: 95%;
+    margin: 0 auto;
+    /* Centrado horizontal */
+    /* Importante: Si tenÃÂ­as una altura fija, quÃÂ­tala */
+    height: auto;
+    max-height: none;
+  }
+}
+
+/* =======================================================
+   TARJETAS PEQUEÃÂAS + ESTRELLA PEQUEÃÂA
+   ======================================================= */
+@media (max-width: 768px) {
+
+  /* 1. ARREGLO DE LA ESTRELLA GIGANTE */
+  .icono-favorito {
+    width: 28px !important;
+    height: 28px !important;
+    top: 6px !important;
+    right: 6px !important;
+    z-index: 50 !important;
+  }
+
+  /* 2. ARREGLO DE LA TARJETA (2.5 Tarjetas visibles) */
+  .carrusel .tarjeta {
+    width: 38vw !important;
+    min-width: 38vw !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    margin-right: 0 !important;
+  }
+
+  /* 3. ARREGLO DE LA IMAGEN (FORMATO PÃÂSTER AUTOMÃÂTICO) */
+  .carrusel .tarjeta img:not(.icono-favorito) {
+    width: 100% !important;
+    height: auto !important;
+    /* Dejamos que la altura se calcule sola */
+    aspect-ratio: 2/3 !important;
+    /* Forzamos la proporciÃÂ³n de pÃÂ³ster de cine */
+    object-fit: cover !important;
+  }
+
+  /* 4. TEXTOS (Ajustados al nuevo ancho) */
+  .carrusel .contenido {
+    padding: 8px 6px !important;
+    /* Un poco menos de padding lateral */
+    text-align: left !important;
+  }
+
+  .carrusel .contenido h3 {
+    font-size: 0.85rem !important;
+    /* Reducimos ligeramente para que quepa bien */
+    line-height: 1.2 !important;
+    margin-bottom: 2px !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .carrusel .contenido p {
+    display: block !important;
+    font-size: 0.6rem !important;
+    color: #bbb !important;
+    margin: 0 !important;
+  }
+
+  /* Ajuste de espaciado del carrusel */
+  .carrusel {
+    gap: 12px !important;
+    padding: 1rem 12px !important;
+  }
+}
+
+/* === INDICADORES DE ESTADO DE STREAMING (Punto con ondas) === */
+/* Base del indicador (el punto central) */
+.indicator-stream {
+  position: absolute;
+  top: 12px;
+  /* Ajustado para alinear mejor el centro con el icono de favoritos */
+  left: 12px;
+  width: 14px;
+  /* TamaÃÂ±o del punto central */
+  height: 14px;
+  border-radius: 50%;
+  z-index: 10;
+  pointer-events: none;
+  /* El click traspasa a la tarjeta */
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  /* Sombra base para profundidad */
+}
+
+/* Pseudo-elemento para la onda (el aro exterior que se expande) */
+.indicator-stream::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  opacity: 0.7;
+  z-index: -1;
+  /* DetrÃÂ¡s del punto central */
+}
+
+/* --- ESTADO: ONLINE (Disponible) --- */
+/* Punto central verde vibrante */
+.indicator-stream.online {
+  background-color: #00ff2a;
+  /* Verde neÃÂ³n */
+  box-shadow: 0 0 10px #00ff2a, inset 0 0 3px rgba(255, 255, 255, 0.6);
+  /* Brillo externo + brillo interno */
+}
+
+/* Onda verde */
+.indicator-stream.online::before {
+  background-color: #00ff2a;
+  animation: pulse-green 2s infinite ease-out;
+  /* AnimaciÃÂ³n continua */
+}
+
+/* --- ESTADO: OFFLINE (No disponible) --- */
+/* Punto central rojo vibrante */
+.indicator-stream.offline {
+  background-color: #ff1100;
+  /* Rojo neÃÂ³n */
+  box-shadow: 0 0 10px #ff1100, inset 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* Onda roja (opcional: puedes quitar la animaciÃÂ³n si quieres que el offline sea estÃÂ¡tico) */
+.indicator-stream.offline::before {
+  background-color: #ff1100;
+  animation: pulse-red 2.5s infinite ease-out;
+  /* Un poco mÃÂ¡s lento que el verde */
+}
+
+/* --- ANIMACIONES DE ONDAS (Keyframes) --- */
+@keyframes pulse-green {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+
+  70% {
+    /* ExpansiÃÂ³n mÃÂ¡xima */
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+    /* Se desvanece al final */
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scale(2.0);
+    /* Onda roja un poco mÃÂ¡s pequeÃÂ±a */
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(2.0);
+    opacity: 0;
+  }
+}
+
+/* --- AJUSTES MÃÂVILES --- */
+@media (max-width: 768px) {
+  .indicator-stream {
+    width: 12px;
+    height: 12px;
+    top: 10px;
+    left: 10px;
+  }
+
+  /* Reducimos un poco la expansiÃÂ³n de la onda en mÃÂ³vil para que no tape mucho */
+  @keyframes pulse-green {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.8;
+    }
+
+    70% {
+      transform: translate(-50%, -50%) scale(2.2);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translate(-50%, -50%) scale(2.2);
+      opacity: 0;
+    }
+  }
+}
+
+/* ========================================= */
+/* === BOTÃÂN VOLVER ARRIBA (SCROLL TOP) === */
+/* ========================================= */
+.btn-scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  background-color: #e50914;
+  /* Rojo Vanacue */
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 900;
+  /* Debajo del menÃÂº (1000) pero sobre el contenido */
+  /* Centrado del icono */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Sombra para que flote bonito */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  /* AnimaciÃÂ³n de entrada/salida */
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  /* No clickeable si no se ve */
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s;
+}
+
+.btn-scroll-top:hover {
+  background-color: #f40612;
+  /* Rojo mÃÂ¡s claro al pasar mouse */
+  transform: translateY(0) scale(1.1);
+  /* Efecto pop */
+}
+
+/* Clase para mostrarlo (se activa con JS) */
+.btn-scroll-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.btn-scroll-top img {
+  width: 24px;
+  height: 24px;
+  /* Filtro para asegurar que el icono se vea blanco si tu svg es negro */
+  filter: brightness(0) invert(1);
+}
+
+/* Ajuste para mÃÂ³vil: un poco mÃÂ¡s pequeÃÂ±o y pegado */
+@media (max-width: 600px) {
+  .btn-scroll-top {
+    width: 45px;
+    height: 45px;
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
+/* ========================================= */
+/* === AJUSTE HERO RESPONSIVE (MÃÂVIL) === */
+/* ========================================= */
+@media (max-width: 768px) {
+  .hero-content {
+    left: 1.5rem;
+    /* Reducimos de 4rem a 1.5rem para pegarlo a la izquierda */
+    bottom: 15%;
+    /* Bajamos un poco el contenido para que no tape la cara de los personajes */
+    width: 90%;
+    /* Permitimos que ocupe mÃÂ¡s ancho de pantalla */
+    text-align: left;
+    /* Aseguramos que el texto se alinee a la izquierda */
+  }
+
+  .hero-logo {
+    width: 70%;
+    /* Reducimos el logo un poco para que no se vea gigante */
+    max-width: 250px;
+    /* LÃÂ­mite mÃÂ¡ximo de ancho */
+    margin-left: 0;
+    /* Aseguramos que no tenga margen extra */
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    /* Ajustamos el tamaÃÂ±o del subtÃÂ­tulo para mÃÂ³viles */
+    max-width: 100%;
+    /* Que ocupe el ancho disponible */
+  }
+
+  .hero-botones-wrapper {
+    justify-content: flex-start;
+    /* Alineamos los botones (Play y Telegram) a la izquierda */
+    gap: 10px;
+    /* Reducimos un poco el espacio entre botones */
+  }
+
+  /* Ajuste opcional para el botÃÂ³n de reproducir en mÃÂ³vil */
+  .hero-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* === AJUSTE DE BOTONES DEL MODAL EN MÃÂVIL === */
+@media (max-width: 768px) {
+
+  /* Reducir botones circulares */
+  .btn-hero-telegram,
+  .btn-hero-share {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-hero-telegram img,
+  .btn-hero-share img {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Reducir botÃÂ³n reproducir */
+  .btn-hero-play {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    gap: 6px;
+  }
+
+  .btn-hero-play svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Reducir separaciÃÂ³n */
+  .modal-botones-wrapper {
+    gap: 10px;
+  }
+}
+
+/* === FUNCIONALIDAD PLANES === */
+.planes-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 8rem 2rem 4rem;
+  /* Padding top to clear fixed header */
+  min-height: 100vh;
+  flex-wrap: wrap;
+}
+
+.plan-card {
+  background-color: #141414;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #333;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+
+.plan-card.premium {
+  border: 1px solid #e50914;
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.2);
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+}
+
+.plan-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.plan-price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.plan-price span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #aaa;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  width: 100%;
+  text-align: left;
+}
+
+.plan-features li {
+  margin-bottom: 0.8rem;
+  color: #ccc;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.plan-features li::before {
+  content: '';
+  color: #fff;
+  font-weight: bold;
+}
+
+.plan-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-top: auto;
+}
+
+.plan-btn.disabled {
+  background-color: #333;
+  color: #777;
+  cursor: default;
+}
+
+.plan-btn.primary {
+  background-color: transparent;
+  border: 1px solid #e50914;
+  color: #fff;
+}
+
+.plan-btn.primary:hover {
+  background-color: #e50914;
+}
+
+/* Responsive adjustments for Plans */
+@media (max-width: 768px) {
+  .planes-container {
+    padding-top: 140px;
+    /* More space for the 2-row header */
+    gap: 1.5rem;
+  }
+
+  .plan-card {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+
+/* === AJUSTE NAVEGACIÃN HORIZONTAL (MÃVIL) === */
+
+
+/* =========================================
+   BOTÓN SIGUIENTE EPISODIO
+   ========================================= */
+.btn-next-episode {
+  position: absolute !important;
+  bottom: 80px;
+  right: 40px;
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(4px);
+  color: black;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.95rem !important;
+  cursor: pointer;
+  z-index: 20000 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s !important;
+  pointer-events: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-next-episode.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.btn-next-episode:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+  transform: scale(1.05) translateY(0);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+}
+
+.btn-next-episode svg {
+  width: 18px;
+  height: 18px;
+  fill: black;
+}
+
+@media (max-width: 768px) {
+  .btn-next-episode {
+    bottom: 60px;
+    /* Más abajo para no tapar subtítulos si los hay */
+    right: 15px !important;
+    padding: 4px 10px !important;
+    /* Mucho más compacto */
+    font-size: 0.75rem !important;
+    gap: 5px !important;
+    height: 32px;
+    /* Altura fija pequeña */
+  }
+
+  .btn-next-episode svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
+/* === FIX: CLASE ACTIVA Y REPARACION ICONO === */
+.episodio-play-icon::after {
+  content: none !important;
+}
+
+.episodio-play-icon svg {
+  width: 14px;
+  height: 14px;
+  fill: white;
+  margin-left: 2px;
+}
+
+/* Highlight del episodio activo */
+.episodio-item.active-episode {
+  background-color: #262626;
+  border-left: 4px solid #e50914;
+  /* Borde rojo a la izquierda activo */
+}
+
+.episodio-item.active-episode .episodio-titulo {
+  color: #e50914;
+  /* Título rojo también */
+}
+
+
+
+/* === TARJETAS BACKDROP (CONTINUAR VIENDO) === */
+.seccion-continue-watching {
+  min-height: auto !important;
+  /* Evitar huecos grandes si hay pocos items */
+}
+
+.tarjeta-backdrop {
+  width: 280px;
+  /* Más ancho */
+  height: auto;
+  /* Altura automática basada en contenido */
+  aspect-ratio: auto;
+  /* Override del 2/3 de tarjetas verticales */
+  background: #1a1a1a;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex: 0 0 auto;
+}
+
+.tarjeta-backdrop:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+/* Contenedor de la imagen para forzar aspect ratio 16:9 */
+.tarjeta-backdrop .img-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.tarjeta-backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 16 / 9 !important;
+  /* Fuerza horizontal */
+  transition: transform 0.3s ease;
+}
+
+/* Overlay de Play (Icono centrado) */
+.card-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  /* Un poco oscuro siempre para que resalte la barra */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tarjeta-backdrop:hover .card-play-overlay {
+  opacity: 1;
+}
+
+.play-icon {
+  font-size: 2rem;
+  color: #fff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* BARRA DE PROGRESO */
+.progress-bar-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  /* Fina y discreta */
+  background-color: rgba(255, 255, 255, 0.3);
+  /* Fondo grisaseo */
+  z-index: 5;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #e50914;
+  /* Rojo Netflix */
+  width: 0%;
+  /* Se define inline desde JS */
+  transition: width 0.3s ease;
+}
+
+/* Contenido Texto (Abajo de la imagen) */
+.contenido-backdrop {
+  padding: 0.8rem;
+  background: #1a1a1a;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contenido-backdrop h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.contenido-backdrop .episodio-info {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #bbb;
+}
+
+/* Responsive para Backdrop */
+/* Responsive para Backdrop - HIGH SPECIFICITY */
+@media (max-width: 768px) {
+  .seccion-continue-watching .tarjeta.tarjeta-backdrop {
+    width: 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    flex: 0 0 180px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: flex-start !important;
+  }
+
+  /* Bulletproof 16:9 Image Container */
+  .seccion-continue-watching .tarjeta.tarjeta-backdrop .img-container {
+    width: 100% !important;
+    aspect-ratio: 16 / 9 !important;
+    position: relative !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+
+  /* Force image to fill container exactly */
+  .seccion-continue-watching .tarjeta.tarjeta-backdrop img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    aspect-ratio: auto !important;
+    /* Reset img aspect ratio */
+  }
+
+  .tarjeta.tarjeta-backdrop .contenido-backdrop {
+    padding: 0.5rem;
+  }
+
+  .contenido-backdrop h3 {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .seccion-continue-watching .tarjeta.tarjeta-backdrop {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+    flex: 0 0 140px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: flex-start !important;
+  }
+
+  .seccion-continue-watching .tarjeta.tarjeta-backdrop .img-container {
+    width: 100% !important;
+    aspect-ratio: 16 / 9 !important;
+    position: relative !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+
+  .seccion-continue-watching .tarjeta.tarjeta-backdrop img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    aspect-ratio: auto !important;
+  }
+
+  .play-icon {
+    font-size: 1.5rem;
+  }
+
+  .contenido-backdrop h3 {
+    font-size: 0.75rem;
+  }
+
+  .contenido-backdrop .episodio-info {
+    font-size: 0.65rem;
+  }
+}
+
+/* ========================================= */
+/* === NUEVOS ESTILOS MENUBAR (NETFLIX) === */
+/* ========================================= */
+
+/* --- 1. BUSCADOR ANIMADO --- */
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Estado activo/focus del buscador (borde blanco, fondo negro) */
+.search-box.active,
+.search-box:focus-within {
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid #fff;
+}
+
+.search-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+#menu-search-input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  outline: none;
+  width: 0;
+  opacity: 0;
+  transition: width 0.4s ease, opacity 0.4s ease;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+/* Al activar, el input se expande */
+.search-box.active #menu-search-input,
+.search-box:focus-within #menu-search-input {
+  width: 200px;
+  /* Ancho expandido */
+  opacity: 1;
+  padding-left: 10px;
+}
+
+/* --- 2. ICONOS DE NAVEGACIÓN --- */
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  object-fit: contain;
+}
+
+.nav-icon:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.notification-container,
+.config-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.desktop-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  /* Reduced from default/inherited */
+}
+
+/* --- BADGE DE NOTIFICACIONES --- */
+.mobile-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #E50914;
+  /* Netflix Red */
+  color: white;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  min-width: 15px;
+  height: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  z-index: 1200;
+  /* Higher than menu icon (1100) */
+  pointer-events: none;
+  padding: 0 3px;
+  /* Allow expansion for '99+' */
+}
+
+/* --- 3. DROPDOWN DE NOTIFICACIONES --- */
+.notification-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 400px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 0;
+  display: flex;
+  /* Siempre flex, ocultamos con opacity/visibility */
+  flex-direction: column;
+  z-index: 2000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* TRANSICIÓN SUAVE */
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+/* Estado oculto con transición */
+.notification-dropdown.hidden {
+  display: flex;
+  /* Mantener labor */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+  /* Evitar clicks fantasmas */
+}
+
+/* ANIMACIÓN CAMPANA (SWING) */
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  20% {
+    transform: rotate(15deg);
+  }
+
+  40% {
+    transform: rotate(-10deg);
+  }
+
+  60% {
+    transform: rotate(5deg);
+  }
+
+  80% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.nav-icon.swing {
+  animation: swing 0.5s ease-in-out;
+}
+
+/* Scrollbar para notificaciones */
+.notification-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-dropdown::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+/* .notification-dropdown.hidden { display: none; }  <-- REMOVED to allow transition */
+
+/* Opcional: Flechita arriba del dropdown */
+.notification-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  transform: rotate(45deg);
+}
+
+/* ... resto de estilos ... */
+
+.notif-header {
+  padding: 25px 20px 15px 20px;
+  /* Más espacio arriba (25px) */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* Separador sutil */
+  font-weight: 600;
+  font-size: 1.1rem;
+  /* Un poco más grande */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  /* Alineado a la izquierda */
+  gap: 10px;
+  color: #fff;
+}
+
+.notif-item {
+  display: flex;
+  padding: 15px 20px;
+  /* Coincidir padding horizontal */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 15px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+
+.notif-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.notif-item.unread {
+  border-left: 3px solid #e50914;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.notif-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notif-icon-circle img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+}
+
+.notif-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notif-text {
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: #dedede;
+}
+
+.notif-time {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.notif-footer {
+  padding: 15px;
+  text-align: center;
+}
+
+.btn-view-all {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ccc;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.btn-view-all:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* --- 4. MODAL CONFIGURACIÓN (PERFIL) --- */
+.config-modal {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 250px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  /* Siempre flex */
+  flex-direction: column;
+  gap: 15px;
+  z-index: 2000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+
+  /* TRANSICIÓN SUAVE */
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.config-modal.hidden {
+  display: flex;
+  /* Mantener layout */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+/* Flechita config */
+.config-modal::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  transform: rotate(45deg);
+}
+
+.config-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.edit-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.edit-icon:hover {
+  opacity: 1;
+}
+
+/* Badges de suscripción */
+#subscription-badge {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 20px;
+  /* Pill shape */
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-free {
+  background-color: #555;
+  color: #ccc;
+}
+
+.badge-premium {
+  background-color: #ffd700;
+  /* Dorado */
+  color: #000;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.config-divider {
+  border: 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15);
+  width: 100%;
+}
+
+.btn-logout-full {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 5px;
+  transition: background 0.3s;
+}
+
+.btn-logout-full:hover {
+  background-color: #f40612;
+}
+
+/* AJUSTES RESPONSIVE BÁSICO PARA QUE NO SE ROMPA */
+/* --- RESPONSIVE MENU (MOBILE) --- */
+.menu-toggle-icon {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  /* Forzar blanco puro */
+  margin-left: 15px;
+  display: none;
+  z-index: 1100;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  /* Transición suave */
+}
+
+.menu-toggle-icon.fading {
+  opacity: 0;
+  transform: scale(0.8);
+  /* Efecto sutil de encogimiento */
+}
+
+/* LEFT SIDEBAR (DRAWER) */
+#responsive-dropdown {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80%;
+  max-width: 300px;
+  height: 100vh;
+  background-color: #141414;
+  border-right: 1px solid #333;
+  padding: 20px 0;
+  display: flex !important;
+  /* Forzar flex para evitar conflictos */
+  flex-direction: column;
+  z-index: 2000;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
+  overflow-y: auto;
+
+  /* ANIMACIÓN */
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out, visibility 0.4s;
+}
+
+#responsive-dropdown.hidden {
+  /* Mantener display flex o lo que sea, pero visibility hidden */
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+  box-shadow: none;
+}
+
+.responsive-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 25px;
+  cursor: pointer;
+  color: #e5e5e5;
+  transition: background 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.responsive-item:hover {
+  background-color: #1f1f1f;
+  border-left-color: #e50914;
+}
+
+.responsive-item img {
+  width: 22px;
+  height: 22px;
+  filter: invert(1);
+}
+
+.responsive-divider {
+  border: 0;
+  border-top: 1px solid #333;
+  margin: 10px 0;
+}
+
+/* Global hidden-desktop (Default: Desktop) */
+.hidden-desktop {
+  display: none !important;
+}
+
+/* MEDIA QUERIES PARA MENU RESPONSIVE */
+@media (max-width: 850px) {
+
+  /* Mostrar hamburguesa */
+  .mobile-menu-container.hidden-desktop {
+    display: flex !important;
+  }
+
+  .mobile-menu-container .menu-toggle-icon {
+    display: block !important;
+  }
+
+  /* Ocultar iconos de escritorio */
+  .notification-container.hidden-mobile,
+  .config-container.hidden-mobile {
+    display: none !important;
+  }
+
+  /* MOSTRAR enlaces de navegación en fila inferior */
+  .nav-links {
+    display: flex !important;
+    width: 100% !important;
+    order: 3 !important;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    /* Fondo degradado ELIMINADO */
+    padding-bottom: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+    padding: 5px 0;
+  }
+
+  /* Ajustar layout general */
+  .menubar {
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    padding: 10px 15px !important;
+  }
+
+  .logo {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+    order: 0 !important;
+    /* Izquierda extrema */
+  }
+
+  .menu-right {
+    flex-grow: 0 !important;
+    /* No ocupar todo, solo lo necesario a la derecha */
+    width: auto !important;
+    order: 1 !important;
+    /* Derecha extrema */
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+    /* Los items tienen su propio margin */
+  }
+
+  /* Ajustar buscador */
+  .search-box {
+    margin-left: 0;
+    display: flex !important;
+  }
+
+  .search-box.active #menu-search-input,
+  .search-box:focus-within #menu-search-input {
+    width: 120px;
+  }
+
+  .notification-dropdown {
+    width: 300px;
+    right: -60px;
+  }
+
+  .config-modal {
+    right: 0;
+  }
+
+  .search-box.active #menu-search-input,
+  .search-box:focus-within #menu-search-input {}
+}
+
+/* === BADGES ROL === */
+.badge-premium {
+  background-color: #ffd700;
+  color: #000;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.badge-free {
+  background-color: #888;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.badge-admin {
+  background: linear-gradient(135deg, #6a0dad, #9b30ff);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 8px rgba(155, 48, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+/* === NOTIFICACIONES REFINADAS === */
+.notif-item {
+  display: flex !important;
+  /* Force flex */
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s;
+  cursor: default;
+  text-decoration: none;
+  /* In case it's an anchor */
+}
+
+.notif-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.notif-left {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.notif-icon-circle {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.notif-icon-circle img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  /* Ensure white icon */
+}
+
+.notif-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  /* FEEDBACK: Alinear a la izquierda */
+}
+
+.notif-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.notif-message {
+  font-size: 0.85rem;
+  color: #ccc;
+  line-height: 1.3;
+}
+
+.notif-date {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.notif-date::before {
+  content: '';
+  display: none;
+}
+
+/* Iconos específicos por tipo (opcional si quieres colores distintos en el círculo) */
+.notif-type-info .notif-icon-circle {
+  background-color: rgba(64, 150, 255, 0.2);
+}
+
+.notif-type-alert .notif-icon-circle {
+  background-color: rgba(255, 77, 79, 0.2);
+}
+
+/* SCROLL LIMIT for dropdown */
+#notification-dropdown .notif-list,
+.notif-list {
+  max-height: 240px;
+  /* FEEDBACK: Aprox 3 items */
+  overflow-y: auto;
+}

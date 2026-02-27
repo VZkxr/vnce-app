@@ -1,0 +1,23 @@
+[
+  {
+    "titulo": "No Me Sigas",
+    "imagen": "Multimedia/no_me_sigas.png",
+    "logo": "Multimedia/no_me_sigas_title.png",
+    "subtitulo": "Si juegas con fuego, te acercarás al infierno",
+    "enlaceTelegram": null
+  },
+  {
+    "titulo": "Bugonia",
+    "imagen": "Multimedia/bugonia.png",
+    "logo": "Multimedia/bugonia_title.png",
+    "subtitulo": "Una historia de violencia disfrazada de justicia",
+    "enlaceTelegram": null
+  },
+  {
+    "titulo": "IT: Bienvenidos a Derry",
+    "imagen": "Multimedia/it.png",
+    "logo": "Multimedia/it_title.png",
+    "subtitulo": "Es tiempo de flotar",
+    "enlaceTelegram": "https://t.me/c/2990770379/720"
+  }
+]

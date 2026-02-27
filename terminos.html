@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Términos y Condiciones - Vanacue</title>
+  <link rel="icon" type="image/png" href="Multimedia/vnce_4.png">
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos específicos para documento legal */
+    .legal-body {
+        background-color: #0e0e0e;
+        color: #e5e5e5;
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+    }
+    .legal-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+    .legal-header {
+        text-align: center;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #333;
+        margin-bottom: 40px;
+    }
+    .legal-logo {
+        width: 100px;
+        margin-bottom: 20px;
+    }
+    h1 { color: #fff; font-size: 2.2rem; margin-bottom: 10px; }
+    
+    /* Estilos de las Secciones */
+    section { margin-bottom: 40px; }
+    h2 { 
+        color: #e50914; /* Rojo Vanacue */
+        margin-top: 50px; 
+        font-size: 1.5rem; 
+        border-left: 4px solid #e50914; 
+        padding-left: 15px; 
+        margin-bottom: 20px;
+    }
+    p { 
+        color: #cccccc; 
+        font-size: 1rem; 
+        margin-bottom: 15px; 
+        text-align: justify;
+    }
+    ul { 
+        margin-bottom: 20px; 
+        padding-left: 20px;
+    }
+    li { 
+        color: #cccccc; 
+        margin-bottom: 10px; 
+        list-style-type: disc;
+    }
+    strong { color: #fff; font-weight: 600; }
+    
+    .btn-volver {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 25px;
+        background-color: #333;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        transition: background 0.3s;
+        cursor: pointer;
+    }
+    .btn-volver:hover { background-color: #e50914; }
+
+    .legal-footer {
+        text-align: center;
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid #333;
+        font-size: 0.8rem;
+        color: #666;
+    }
+  </style>
+</head>
+<body class="legal-body">
+
+<div class="legal-container">
+    <div class="legal-header">
+        <img src="Multimedia/logo.png" alt="Vanacue" class="legal-logo">
+        <h1>Términos y Condiciones</h1>
+        <p>Última actualización: Enero 2026</p>
+        <a onclick="goBackOrLogin()" class="btn-volver">← Volver</a>
+    </div>
+
+    <section>
+        <h2>1. Introducción y Aceptación</h2>
+        <p>Bienvenido a <strong>Vanacue</strong> (en adelante, "la Plataforma" o "el Servicio"), accesible a través del dominio <strong>vnc-e.com</strong>. Estos Términos y Condiciones regulan el acceso y uso del sitio web y los servicios de streaming asociados.</p>
+        <p>Al registrarse, acceder o utilizar nuestros servicios, usted (el "Usuario") acepta estar legalmente vinculado por estos términos. Si no está de acuerdo con alguno de ellos, por favor absténgase de utilizar la Plataforma.</p>
+
+        <h2>2. Naturaleza del Servicio</h2>
+        <p>El Usuario reconoce y acepta que:</p>
+        <ul>
+            <li><strong>Vanacue</strong> es un proyecto de desarrollo de software de carácter <strong>personal, experimental y educativo</strong>.</li>
+            <li>El objetivo principal de la Plataforma es la demostración técnica de capacidades de streaming, gestión de servidores Linux (Ubuntu Server) y arquitectura web.</li>
+            <li>El servicio se proporciona "tal cual" (<em>as is</em>) y "según disponibilidad" (<em>as available</em>), sin garantías de ningún tipo, explícitas o implícitas, sobre su funcionamiento comercial o idoneidad para un propósito particular.</li>
+        </ul>
+
+        <h2>3. Infraestructura y Disponibilidad del Servicio</h2>
+        <p>Dada la naturaleza experimental de Vanacue, aplicamos las siguientes limitaciones técnicas que el Usuario debe aceptar:</p>
+        <ul>
+            <li><strong>Alojamiento Doméstico:</strong> El núcleo del servicio (backend, base de datos y servidor de archivos) se aloja en infraestructura propia (servidor local). Por lo tanto, no garantizamos un tiempo de actividad (Uptime) del 100%.</li>
+            <li><strong>Interrupciones:</strong> El servicio puede sufrir interrupciones no programadas debido a cortes de energía, mantenimiento de hardware, actualizaciones de software o fallos en la conexión del túnel de Cloudflare.</li>
+            <li><strong>Conectividad:</strong> La entrega de contenido multimedia depende de la estabilidad de la red doméstica del administrador y del servicio de tunelización de terceros. Vanacue no se hace responsable por latencia, buffering o imposibilidad de acceso al dominio vnc-e.com en momentos puntuales.</li>
+        </ul>
+
+        <h2>4. Cuentas de Usuario y Acceso</h2>
+        <ul>
+            <li><strong>Carácter Personal e Intransferible:</strong> La cuenta de usuario registrada en Vanacue es estrictamente personal. Queda terminantemente prohibida la venta, alquiler, préstamo o transferencia de las credenciales de acceso a terceros.</li>
+            <li><strong>Responsabilidad:</strong> El Usuario es responsable de mantener la confidencialidad de su contraseña (la cual viaja encriptada hacia nuestro servidor). Cualquier actividad realizada desde su cuenta será responsabilidad exclusiva del titular registrado.</li>
+        </ul>
+
+        <h2>5. Modelo de Sostenibilidad</h2>
+        <p>Para garantizar la operatividad continua de la infraestructura (mantenimiento del servidor, dominio y consumo eléctrico), Vanacue establece las siguientes condiciones económicas:</p>
+        <ul>
+            <li><strong>Cuota Mensual de Recuperación:</strong> Se establece una aportación periódica de <strong>$49.00 MXN mensuales</strong> para mantener activo el acceso a las funcionalidades de nivel "Premium". La falta de aporte implicará la suspensión del acceso al mes siguiente.</li>
+            <li><strong>Naturaleza del Pago:</strong> El Usuario reconoce que este pago tiene el carácter de "apoyo recurrente al proyecto" para cubrir costos operativos constantes. No constituye la compra de contenido digital ni otorga derechos de propiedad sobre los videos alojados.</li>
+            <li><strong>Política de No Reembolso:</strong> Dado que los fondos se destinan al pago inmediato de servicios operativos (luz, internet, infraestructura), las aportaciones mensuales no son reembolsables una vez procesadas.</li>
+        </ul>
+
+        <h2>6. Confidencialidad y Restricciones de Uso (NDA)</h2>
+        <p>Vanacue opera bajo un estricto principio de confidencialidad. Al acceder a la plataforma, el Usuario acepta un Acuerdo de No Divulgación con las siguientes restricciones absolutas:</p>
+        <ul>
+            <li><strong>Prohibición de Divulgación Externa:</strong> Está estrictamente prohibido mencionar, discutir, reseñar o promocionar la existencia de Vanacue, su funcionamiento técnico o su contenido en foros públicos, redes sociales, grupos de mensajería (WhatsApp, Telegram, Discord, etc.) o cualquier otro sitio web externo.</li>
+            <li><strong>Prohibición de Compartir Material:</strong> Queda prohibida la realización y distribución de capturas de pantalla (screenshots), grabaciones de pantalla, o la copia de textos e imágenes de la interfaz.</li>
+            <li><strong>Protección de Enlaces y Datos:</strong> El Usuario se compromete a no compartir, publicar ni enviar a terceros la URL del dominio (vnc-e.com), los enlaces directos a los archivos, ni información sobre otros miembros de la comunidad.</li>
+            <li><strong>Sanción por Incumplimiento:</strong> La violación de cualquiera de estos puntos resultará en la baja inmediata y permanente (Baneo) de la cuenta del Usuario y el bloqueo de su dirección IP, sin perjuicio de las acciones legales que correspondan por la violación de la confidencialidad.</li>
+        </ul>
+
+        <h2>7. Propiedad Intelectual y Derechos</h2>
+        <ul>
+            <li><strong>Plataforma y Código:</strong> El código fuente del frontend, la estructura del backend, la lógica de organización de datos (incluyendo, pero no limitado a, la estructura de archivos <code>.json</code> y el diseño de la interfaz son propiedad exclusiva del desarrollador de Vanacue. Queda prohibida la ingeniería inversa o la copia del código fuente.</li>
+            <li><strong>Contenido Multimedia:</strong> El Usuario reconoce que Vanacue actúa como un repositorio privado de indexación. Los derechos de propiedad intelectual sobre las obras audiovisuales (películas, series, videos) accesibles mediante los archivos .m3u8 pertenecen a sus respectivos creadores y titulares de copyright. El pago de la cuota periódica de mantenimiento no otorga al Usuario ningún derecho de propiedad o licencia comercial sobre dicho contenido.</li>
+        </ul>
+
+        <h2>8. Política de Privacidad y Gestión de Datos</h2>
+        <p>A diferencia de las grandes plataformas comerciales, Vanacue gestiona los datos de manera local y privada. El Usuario debe conocer y aceptar lo siguiente:</p>
+        <ul>
+            <li><strong>Almacenamiento Local:</strong> La información de los usuarios (credenciales, estado de suscripción y preferencias) se almacena en una base de datos alojada físicamente en el servidor privado del administrador. Estos datos no se venden ni se transfieren a terceros anunciantes.</li>
+            <li><strong>Seguridad de Credenciales:</strong> Las contraseñas de los usuarios viajan y se almacenan encriptadas (cifradas) en el servidor. El administrador de Vanacue no tiene acceso a leer las contraseñas en texto plano.</li>
+            <li><strong>Tráfico y Túneles:</strong> Para permitir el acceso externo seguro, el tráfico de la plataforma pasa a través de Cloudflare Tunnel. Aunque la base de datos reside localmente, el Usuario acepta que los datos de navegación transitan por la infraestructura de seguridad de Cloudflare para llegar al dominio vnc-e.com.</li>
+        </ul>
+
+        <h2>9. Integridad de los Datos</h2>
+        <ul>
+            <li><strong>Respaldo:</strong> Aunque se toman medidas para proteger la base de datos, debido a la naturaleza física del servidor (hardware doméstico), Vanacue no se hace responsable por la pérdida accidental de datos de usuario (por ejemplo, listas de favoritos o historial de visualización) en caso de fallo catastrófico del disco duro o corrupción de la base de datos.</li>
+        </ul>
+
+        <h2>10. Modificaciones de los Términos</h2>
+        <p>Vanacue se reserva el derecho de modificar, actualizar o reemplazar estos Términos y Condiciones en cualquier momento y sin previo aviso.</p>
+        <ul>
+            <li><strong>Notificación:</strong> Dado el carácter confidencial del servicio, las notificaciones de cambios importantes se publicarán directamente en la página de inicio o en el panel de usuario.</li>
+            <li><strong>Aceptación:</strong> El uso continuado de la Plataforma tras cualquier modificación constituye la aceptación plena de los nuevos términos.</li>
+        </ul>
+
+        <h2>11. Terminación del Servicio y Derecho de Admisión</h2>
+        <ul>
+            <li><strong>Derecho de Admisión:</strong> Vanacue se reserva el derecho absoluto de admisión. El administrador puede denegar el registro o suspender cuentas existentes a su entera discreción si detecta comportamientos sospechosos, uso de VPNs para evadir seguridad, o cualquier indicio de violación del acuerdo de confidencialidad.</li>
+            <li><strong>Cierre del Proyecto:</strong> El Usuario reconoce que Vanacue es un proyecto finito dependiente de hardware doméstico específico. El administrador se reserva el derecho de discontinuar el servicio (apagar el servidor) de manera temporal o permanente en cualquier momento. En caso de cierre definitivo del proyecto, no existirán obligaciones de reembolso sobre las cuotas de mantenimiento ya abonadas, entendiéndose estas como consumidas en el periodo operativo previo.</li>
+        </ul>
+
+        <h2>12. Limitación de Responsabilidad</h2>
+        <p>En la máxima medida permitida por la ley, Vanacue y su administrador no serán responsables por:</p>
+        <ul>
+            <li>Daños indirectos, incidentales o consecuentes derivados del uso o imposibilidad de uso del servicio.</li>
+            <li>Fallos técnicos, ataques informáticos (DDoS), o accesos no autorizados al túnel de Cloudflare que pudieran comprometer la disponibilidad del sitio.</li>
+            <li>La exactitud o legalidad del contenido indexado en los archivos JSON, ya que la plataforma actúa meramente como un medio técnico de reproducción.</li>
+        </ul>
+
+        </section>
+
+    <div class="legal-footer">
+        <p>© 2026 Vanacue. Todos los derechos reservados.</p>
+    </div>
+</div>
+
+<script>
+    // Script corregido para el botón Volver
+    function goBackOrLogin() {
+        // Verificamos si hay historial para retroceder (mayor a 1 significa que hay una página atrás)
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Si no hay historial (ej. se abrió en nueva pestaña), forzamos ir al login
+            window.location.href = 'login.html';
+        }
+    }
+
+    // Protección contra clic derecho
+    document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+
+</body>
+</html>

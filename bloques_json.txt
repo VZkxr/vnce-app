@@ -1,0 +1,142 @@
+{
+    "titulo": "La Quinta Ola",
+    "tipo": "Película",
+    "sinopsis": "Cassie Sullivan, de 16 años, intenta sobrevivir en un mundo devastado por las olas de una invasión alienígena que ya ha diezmado a la población y ha hecho retroceder a la humanidad hasta la Edad de Piedra.",
+    "genero": ["Ciencia ficción", "Aventura", "Acción"],
+    "calificacion": 5.938,
+    "duracion": "112 min",
+    "elenco": ["Chloë Grace Moretz", "Nick Robinson", "Ron Livingston", "Maggie Siff", "Alex Roe"],
+    "portada": "https://image.tmdb.org/t/p/original/6uM9vb68EcEHJ6DCOBTKUpwtvoO.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2016-01-14"
+}
+
+{
+    "titulo": "El libro de la selva",
+    "tipo": "Película",
+    "sinopsis": "Bagheera, la pantera, y Baloo, el oso, tienen dificultades para convencer a un niño de que abandone la selva para ir a la civilización humana.",
+    "genero": ["Familia", "Animación", "Aventura"],
+    "calificacion": 7.276,
+    "duracion": "78 min",
+    "elenco": ["Bruce Reitherman", "Phil Harris", "Sebastian Cabot", "George Sanders", "Sterling Holloway"],
+    "portada": "https://image.tmdb.org/t/p/original/uBKffnwwHGIkQET18gVPsyeDdjC.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "1967-10-18"
+}
+
+{
+    "titulo": "El rey león",
+    "tipo": "Película",
+    "sinopsis": "El príncipe león Simba y su padre son el blanco de su amargado tío, que quiere ascender al trono.",
+    "genero": ["Familia", "Animación", "Drama", "Aventura"],
+    "calificacion": 8.255,
+    "duracion": "85 min",
+    "elenco": ["Matthew Broderick", "Moira Kelly", "Nathan Lane", "Ernie Sabella", "James Earl Jones"],
+    "portada": "https://image.tmdb.org/t/p/original/b0MxU37dNmMwKtoPVYPKOZSIrIn.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "1994-06-15"
+}
+
+{
+    "titulo": "El rey león II: El reino de Simba",
+    "tipo": "Película",
+    "sinopsis": "Kiara, la primogénita de Simba y heredera de sus dominios, escapa de sus protectores y, buscando aventuras, se adentra en sombríos territorios que están fuera de los límites del reino de su padre. En su camino conoce a Kovu, un joven cachorro: alcanzar la paz entre los habitantes de las tierras oscuras y los del territorio de Simba dependerá de ellos dos.",
+    "genero": ["Familia", "Aventura", "Animación", "Drama", "Romance"],
+    "calificacion": 6.942,
+    "duracion": "81 min",
+    "elenco": ["Matthew Broderick", "Neve Campbell", "Jason Marsden", "Nathan Lane", "Ernie Sabella"],
+    "portada": "https://image.tmdb.org/t/p/original/izHxXVkLCAuhQ6iz3H0WaXKAizC.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "1998-10-24"
+}
+
+{
+    "titulo": "El rey león 1½",
+    "tipo": "Película",
+    "sinopsis": "Timón la suricata y Pumbaa el jabalí cuentan la historia de «El rey león» desde su propia perspectiva.",
+    "genero": ["Familia", "Animación", "Comedia", "Aventura"],
+    "calificacion": 6.579,
+    "duracion": "77 min",
+    "elenco": ["Nathan Lane", "Ernie Sabella", "Julie Kavner", "Jerry Stiller", "Matthew Broderick"],
+    "portada": "https://image.tmdb.org/t/p/original/x2SAEOXURbKDgKfdHdZ49VhPGrB.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2004-10-28"
+}
+
+{
+    "titulo": "La Granja",
+    "tipo": "Película",
+    "sinopsis": "Como a otros animales en el granero, a Otis el toro (Kevin James) le gusta cantar y jugar mientras el granjero no está. Sin embargo, el cuidadoso bovino pronto deberá tener el coraje suficiente para convertirse en el líder cuando, inesperadamente, se encuentra en una situación de gran responsabilidad.",
+    "genero": ["Animación", "Comedia", "Familia"],
+    "calificacion": 5.9,
+    "duracion": "90 min",
+    "elenco": ["Kevin James", "Courteney Cox", "Sam Elliott", "Danny Glover", "Wanda Sykes"],
+    "portada": "https://image.tmdb.org/t/p/original/71ck2GMBJAwrnjUmUxpPyUAp7Yp.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2006-08-04"
+}
+
+{
+    "titulo": "La era de hielo",
+    "tipo": "Película",
+    "sinopsis": "La historia gira en torno a unos héroes bajo cero: un mamut lanudo, un tigre de dientes de sable, un perezoso y una combinación prehistórica de ardilla y rata, conocida como Scrat.",
+    "genero": ["Animación", "Comedia", "Familia", "Aventura"],
+    "calificacion": 7.366,
+    "duracion": "81 min",
+    "elenco": ["Ray Romano", "John Leguizamo", "Denis Leary", "Goran Višnjić", "Jack Black"],
+    "portada": "https://image.tmdb.org/t/p/original/j52ufQ4Y5QIESpCdgSN3MVNvZOK.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2002-03-14"
+}
+
+{
+    "titulo": "La era de hielo 2",
+    "tipo": "Película",
+    "sinopsis": "Después de los hechos de la primera película, Manny, Sid, Diego y el resto de los animales tendran que dejar su hogar para evitar una inundación provocado por Scrat, quien busca poder agarrar su bellota. En el camino, Manny se encuentra que con Ellie, una mamut que se confunde con ser una mamut como una zarigüeya.",
+    "genero": ["Animación", "Familia", "Comedia", "Aventura"],
+    "calificacion": 6.716,
+    "duracion": "91 min",
+    "elenco": ["Ray Romano", "John Leguizamo", "Denis Leary", "Queen Latifah", "Seann William Scott"],
+    "portada": "https://image.tmdb.org/t/p/original/ifAsle0SWkYnL4CnqhwryGtBDl2.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2006-03-29"
+}
+
+{
+    "titulo": "La era de hielo 3",
+    "tipo": "Película",
+    "sinopsis": "Ahora que Manny y Ellie van a tener una hija, Manny se asegura de que sea un buen padre, Diego piensa dejar la manada y Sid roba 3 huevos de dinosaurio y luego es capturado por un dinosaurio. La manada entra al mundo subterraneo y van a tener la ayuda de Buck, una comadreja. Mientras tanto, Scrat se enamora de Scratty, una ardilla dientes de sable que tambien se interesa en la bellota.",
+    "genero": ["Animación", "Comedia", "Familia", "Aventura"],
+    "calificacion": 6.762,
+    "duracion": "94 min",
+    "elenco": ["Ray Romano", "John Leguizamo", "Denis Leary", "Queen Latifah", "Simon Pegg"],
+    "portada": "https://image.tmdb.org/t/p/original/bFLbDLyE8BX4yccwoSotfHMJBZF.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2009-06-26"
+}
+
+{
+    "titulo": "La era de hielo 4",
+    "tipo": "Película",
+    "sinopsis": "La loca persecución de Scrat por su escurridiza bellota desde el principio de los tiempos, tiene consecuencias que cambiarán el mundo: un cataclismo continental que desencadenará la mayor de las aventuras para Manny, Diego y Sid. En medio de estas agitaciones, Sid se reencuentra con su Abuelita Gruñona y la manada tropieza con una extraña cuadrilla de piratas de altamar decididos a impedirles su regreso a casa.",
+    "genero": ["Animación", "Comedia", "Aventura", "Familia"],
+    "calificacion": 6.388,
+    "duracion": "88 min",
+    "elenco": ["Ray Romano", "John Leguizamo", "Denis Leary", "Seann William Scott", "Josh Peck"],
+    "portada": "https://image.tmdb.org/t/p/original/iwib3jxIbKRNMPsuByrRWoV7dkN.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2012-06-27"
+}
+
+{
+    "titulo": "La era de hielo: Choque de mundos",
+    "tipo": "Película",
+    "sinopsis": "Scrat y su mítica bellota estan en el espacio, donde accidentalmente desencadenará una serie de acontecimientos que amenazarán la Edad de Hielo. Para salvarse, Sid, Manny, Diego y el resto de la manada deberán salir de su hogar y embarcarse en una nueva aventura.",
+    "genero": ["Aventura", "Animación", "Familia", "Comedia", "Ciencia ficción"],
+    "calificacion": 6.115,
+    "duracion": "95 min",
+    "elenco": ["Ray Romano", "John Leguizamo", "Denis Leary", "Queen Latifah", "Seann William Scott"],
+    "portada": "https://image.tmdb.org/t/p/original/atny2pOR1h0emUjhI7wWquftAFb.jpg",
+    "enlaceTelegram": "https://t.me/vanacue/",
+    "fecha": "2016-06-23"
+}

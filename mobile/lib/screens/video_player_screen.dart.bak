@@ -1,0 +1,950 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+
+import 'package:provider/provider.dart';
+import '../providers/providers.dart';
+import '../models/models.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../services/api_service.dart';
+
+class VideoPlayerScreen extends StatefulWidget {
+  final String videoUrl;
+  final String title;
+  final List<dynamic>? audios;
+  final List<dynamic>? subtitulos;
+  
+  // Progress tracking new params
+  final Contenido? contentMaster;
+  final String? episodeTitle;
+  final Duration startPosition;
+  final int? seasonIndex;
+  final int? episodeIndex;
+  final List<Contenido>? catalog;
+
+  const VideoPlayerScreen({
+    Key? key,
+    required this.videoUrl,
+    required this.title,
+    this.audios,
+    this.subtitulos,
+    this.contentMaster,
+    this.episodeTitle,
+    this.startPosition = Duration.zero,
+    this.seasonIndex,
+    this.episodeIndex,
+    this.catalog,
+  }) : super(key: key);
+
+  @override
+  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
+}
+
+class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
+  late final VlcPlayerController _videoController;
+
+  bool _isPlaying = true;
+  bool _isBuffering = true;
+  bool _showControls = true;
+  String _errorMessage = '';
+
+  Map<int, String> _audioTracks = {};
+  Map<int, String> _subtitleTracks = {};
+  int? _activeAudioTrack;
+  int? _activeSubtitleTrack;
+  
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+  bool _isDragging = false;
+  
+  Timer? _hideTimer;
+  String? _selectedSubtitleIdentifier;
+  String? _selectedAudioIdentifier;
+  int _subtitleDelayMs = 0;
+  bool _initialSeekDone = false;
+
+  // Post-play & Next Episode
+  bool _showPostPlay = false;
+  bool _showNextEpisode = false;
+  bool _postPlayDismissed = false;
+  bool _nextEpDismissed = false;
+  Contenido? _nextRecommendation;
+  bool _isNavigatingAway = false;
+  bool _isLandscape = true;
+  bool _hasPlaybackStarted = false;
+  bool _tracksExtracted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Default to Landscape
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+    String fullUrl = widget.videoUrl;
+    if (!fullUrl.startsWith('http')) {
+      fullUrl = 'https://vnc-e.com${fullUrl.startsWith('/') ? '' : '/'}${fullUrl}';
+    }
+
+    // VLC initialized in tracking method
+
+    _startHideTimer();
+
+    _initPlayer(fullUrl);
+  }
+
+    Future<void> _initPlayer(String fullUrl) async {
+    _videoController = VlcPlayerController.network(
+      fullUrl,
+      hwAcc: HwAcc.auto,
+      autoPlay: true,
+      options: VlcPlayerOptions(
+        http: VlcHttpOptions([
+          VlcHttpOptions.httpReconnect(true),
+        ]),
+        extras: [
+          '--http-referrer=https://vnc-e.com',
+          '--http-user-agent=VanacueMobile/1.0',
+        ],
+      ),
+    );
+    _setupListeners();
+    // Inject external sub early if present
+    if (widget.subtitulos != null && widget.subtitulos!.isNotEmpty) {
+        var subUrl = widget.subtitulos!.first['url'];
+        if (!subUrl.startsWith('http')) {
+           subUrl = 'https://vnc-e.com${subUrl.startsWith('/') ? '' : '/'}$subUrl';
+        }
+        _selectedSubtitleIdentifier = widget.subtitulos!.first['label'] ?? 'Subtítulo';
+        await _videoController.addSubtitleFromNetwork(subUrl, isSelected: true);
+    }
+  }
+
+  void _startHideTimer() {
+    _hideTimer?.cancel();
+    _hideTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted && _showControls && _isPlaying && !_isDragging) {
+        setState(() {
+          _showControls = false;
+        });
+      }
+    });
+  }
+
+    void _setupListeners() {
+    _videoController.addListener(() async {
+      if (!mounted) return;
+      final value = _videoController.value;
+      
+      bool playing = value.isPlaying;
+      bool buffering = value.isBuffering;
+      Duration position = value.position;
+      Duration duration = value.duration;
+
+      if (_isPlaying != playing) setState(() => _isPlaying = playing);
+      
+      if (_isBuffering != buffering) {
+        final wasBuffering = _isBuffering;
+        setState(() => _isBuffering = buffering);
+        if (wasBuffering && !buffering && !_hasPlaybackStarted) {
+          _hasPlaybackStarted = true;
+        }
+      }
+
+      if (mounted) {
+         if (!_isDragging && _hasPlaybackStarted) {
+            if (_position.inSeconds != position.inSeconds) {
+               setState(() => _position = position);
+            }
+         }
+
+         if (_duration != duration && duration > Duration.zero) {
+            setState(() => _duration = duration);
+            if (!_initialSeekDone && widget.startPosition > Duration.zero) {
+                _videoController.seekTo(widget.startPosition);
+                _initialSeekDone = true;
+            }
+         }
+
+         if (_hasPlaybackStarted && !_tracksExtracted) {
+             _tracksExtracted = true;
+             _extractTracks();
+         }
+      }
+
+      // Progress Tracker 
+      if (_hasPlaybackStarted && !_showPostPlay && !_showNextEpisode && position.inSeconds > 0 && position.inSeconds % 5 == 0 && widget.contentMaster != null && duration.inSeconds > 0) {
+          final provider = Provider.of<ProgressProvider>(context, listen: false);
+          provider.saveVideoProgress(
+            generateProgressId(widget.contentMaster!, episodeTitle: widget.episodeTitle),
+            position.inSeconds.toDouble(),
+            duration.inSeconds.toDouble(),
+            widget.contentMaster!,
+            subtitulo: widget.episodeTitle,
+            seasonIndex: widget.seasonIndex,
+            episodeIndex: widget.episodeIndex,
+          );
+      }
+      
+      // Post-Play Checks
+      if (duration.inSeconds > 0 && widget.contentMaster != null) {
+          final remaining = duration.inSeconds - position.inSeconds;
+          final content = widget.contentMaster!;
+          final isMovie = !content.esSerie;
+          final isLastEp = _isLastEpisodeOfLastSeason();
+
+          if ((isMovie || isLastEp) && content.postPlayExperience != null && !_postPlayDismissed) {
+            final threshold = _parseTimeValue(content.postPlayExperience!);
+            if (remaining <= threshold && !_showPostPlay) {
+              _nextRecommendation ??= _pickRecommendation();
+              if (_nextRecommendation != null) {
+                setState(() => _showPostPlay = true);
+              }
+              final provider = Provider.of<ProgressProvider>(context, listen: false);
+              provider.removeVideoProgress(generateProgressId(content, episodeTitle: widget.episodeTitle));
+            }
+          }
+
+          if (content.esSerie && !isLastEp && !_nextEpDismissed) {
+             final sIdx = widget.seasonIndex ?? 0;
+             final eIdx = widget.episodeIndex ?? 0;
+             if (content.temporadas != null && sIdx < content.temporadas!.length) {
+                final episode = content.temporadas![sIdx].episodios[eIdx];
+                if (episode.timeNextEpisode != null) {
+                   final threshold = _parseTimeValue(episode.timeNextEpisode!);
+                   if (remaining <= threshold && !_showNextEpisode) {
+                      setState(() => _showNextEpisode = true);
+                      final provider = Provider.of<ProgressProvider>(context, listen: false);
+                      provider.removeVideoProgress(generateProgressId(content, episodeTitle: widget.episodeTitle));
+                   }
+                }
+             }
+          }
+      }
+    });
+  }
+
+  Future<void> _extractTracks() async {
+      await Future.delayed(Duration(seconds: 2)); // Give VLC time to parse
+      if (!mounted) return;
+      
+      final audioTracksMap = await _videoController.getAudioTracks();
+      final subTracksMap = await _videoController.getSpuTracks();
+      final activeA = await _videoController.getAudioTrack();
+      final activeS = await _videoController.getSpuTrack();
+      
+      if (mounted) {
+         setState(() {
+            _audioTracks = audioTracksMap;
+            _subtitleTracks = subTracksMap;
+            _activeAudioTrack = activeA;
+            _activeSubtitleTrack = activeS;
+         });
+      }
+  }
+
+  @override
+  void dispose() {
+    _hideTimer?.cancel();
+    _videoController.dispose();
+    
+    // Restore Portrait layout only if NOT navigating to another video player
+    if (!_isNavigatingAway) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
+    
+    super.dispose();
+  }
+
+  /// Parse "27.30" format -> 27*60 + 30 = 1650 seconds
+  int _parseTimeValue(double value) {
+    int minutes = value.toInt();
+    int seconds = ((value - minutes) * 100).round();
+    return minutes * 60 + seconds;
+  }
+
+  /// Determine if current episode is the last of the last season
+  bool _isLastEpisodeOfLastSeason() {
+    final content = widget.contentMaster;
+    if (content == null || !content.esSerie || content.temporadas == null) return false;
+    final seasons = content.temporadas!;
+    if (seasons.isEmpty) return false;
+    final lastSeason = seasons.last;
+    final lastEp = lastSeason.episodios.last;
+    final currentSeasonIdx = widget.seasonIndex ?? 0;
+    final currentEpIdx = widget.episodeIndex ?? 0;
+    return currentSeasonIdx == seasons.length - 1 && currentEpIdx == lastSeason.episodios.length - 1;
+  }
+
+  /// Get next episode info: returns (seasonIndex, episodeIndex) or null
+  (int, int)? _getNextEpisode() {
+    final content = widget.contentMaster;
+    if (content == null || !content.esSerie || content.temporadas == null) return null;
+    final seasons = content.temporadas!;
+    final sIdx = widget.seasonIndex ?? 0;
+    final eIdx = widget.episodeIndex ?? 0;
+    // Try next episode in same season
+    if (eIdx + 1 < seasons[sIdx].episodios.length) {
+      return (sIdx, eIdx + 1);
+    }
+    // Try first episode of next season
+    if (sIdx + 1 < seasons.length && seasons[sIdx + 1].episodios.isNotEmpty) {
+      return (sIdx + 1, 0);
+    }
+    return null;
+  }
+
+  /// Pick a random recommendation from catalog
+  Contenido? _pickRecommendation() {
+    if (widget.catalog == null || widget.catalog!.isEmpty) return null;
+    final candidates = widget.catalog!.where((c) => c.tmdbId != widget.contentMaster?.tmdbId).toList();
+    if (candidates.isEmpty) return null;
+    candidates.shuffle();
+    return candidates.first;
+  }
+
+  /// Navigate to next episode
+  void _navigateToNextEpisode() {
+    final next = _getNextEpisode();
+    if (next == null || widget.contentMaster == null) return;
+    _isNavigatingAway = true;
+    final (sIdx, eIdx) = next;
+    final season = widget.contentMaster!.temporadas![sIdx];
+    final episode = season.episodios[eIdx];
+    if (episode.streamUrl == null) return;
+    final episodeString = 'T${season.numero}:E${episode.numero} - ${episode.titulo}';
+    _videoController.stop();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPlayerScreen(
+          videoUrl: episode.streamUrl!,
+          title: '${widget.contentMaster!.titulo} - $episodeString',
+          audios: episode.audios,
+          subtitulos: episode.subtitulos,
+          contentMaster: widget.contentMaster,
+          episodeTitle: episodeString,
+          seasonIndex: sIdx,
+          episodeIndex: eIdx,
+          catalog: widget.catalog,
+        ),
+      ),
+    );
+  }
+
+  /// Navigate to recommended content (post-play)
+  void _navigateToRecommendation(Contenido item) {
+    // Check availability first
+    if (item.esSerie) {
+      if (item.temporadas == null || item.temporadas!.isEmpty || item.temporadas!.first.episodios.isEmpty || item.temporadas!.first.episodios.first.streamUrl == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No disponible en streaming')),
+        );
+        return;
+      }
+    } else {
+      if (item.streamUrl == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No disponible en streaming')),
+        );
+        return;
+      }
+    }
+    _isNavigatingAway = true;
+    _videoController.stop();
+    if (item.esSerie) {
+      // Play first episode
+      if (item.temporadas != null && item.temporadas!.isNotEmpty && item.temporadas!.first.episodios.isNotEmpty) {
+        final season = item.temporadas!.first;
+        final episode = season.episodios.first;
+        if (episode.streamUrl != null) {
+          final episodeString = 'T${season.numero}:E${episode.numero} - ${episode.titulo}';
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VideoPlayerScreen(
+                videoUrl: episode.streamUrl!,
+                title: '${item.titulo} - $episodeString',
+                audios: episode.audios,
+                subtitulos: episode.subtitulos,
+                contentMaster: item,
+                episodeTitle: episodeString,
+                seasonIndex: 0,
+                episodeIndex: 0,
+                catalog: widget.catalog,
+              ),
+            ),
+          );
+        }
+      }
+    } else {
+      if (item.streamUrl != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoPlayerScreen(
+              videoUrl: item.streamUrl!,
+              title: item.titulo,
+              audios: item.audios,
+              subtitulos: item.subtitulos,
+              contentMaster: item,
+              catalog: widget.catalog,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Duration get _adjustedPosition => _position;
+  Duration get _adjustedDuration => _duration;
+
+  void _toggleOrientation() {
+    setState(() => _isLandscape = !_isLandscape);
+    if (_isLandscape) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    if (duration.inHours > 0) {
+      return "${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds";
+    }
+    return "$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+  void _showSettingsModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return FutureBuilder(
+          future: Future.wait([
+            _videoController.getAudioTracks(),
+            _videoController.getSpuTracks(),
+          ]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (!snapshot.hasData) {
+               return Container(
+                 height: 100,
+                 decoration: BoxDecoration(
+                   color: Color(0xFF141414),
+                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                 ),
+                 child: Center(child: CircularProgressIndicator(color: Color(0xFFE50914))),
+               );
+            }
+
+            final Map<int, String> audioMap = snapshot.data![0] ?? {};
+            final Map<int, String> subMap = snapshot.data![1] ?? {};
+
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF141414),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+          padding: EdgeInsets.all(16),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Audio', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                if (audioMap.isEmpty && (widget.audios == null || widget.audios!.isEmpty))
+                   Padding(padding: EdgeInsets.all(8), child: Text('No hay pistas de audio adicionales.', style: TextStyle(color: Colors.grey))),
+                
+                // 1. Manually passed audio alternatives (typically external URLs or hints)
+                ...(widget.audios ?? []).map((aud) {
+                     String label = aud['label'] ?? 'Audio';
+                     bool isSelected = _selectedAudioIdentifier == label;
+                     
+                     return ListTile(
+                       title: Text(label, style: TextStyle(color: isSelected ? Color(0xFFE50914) : Colors.white)),
+                       trailing: isSelected ? Icon(Icons.check, color: Color(0xFFE50914)) : null,
+                       contentPadding: EdgeInsets.zero,
+                       dense: true,
+                       onTap: () async {
+                         setState(() => _selectedAudioIdentifier = label);
+                         var url = aud['url'];
+                         if (!url.startsWith('http')) {
+                            url = 'https://vnc-e.com${url.startsWith('/') ? '' : '/'}$url';
+                         }
+                         await _videoController.addAudioFromNetwork(url, isSelected: true);
+                         Navigator.pop(context);
+                       }
+                     );
+                }).toList(),
+
+                // 2. Internal HLS Tracks (Usually mapped to ints 1, 2, 3...)
+                ...audioMap.entries.where((e) => e.value.toLowerCase() != 'disable').map((entry) {
+                   String label = entry.value;
+                   final String lowerLabel = label.toLowerCase();
+                   
+                   if (lowerLabel.contains('spa') || lowerLabel.contains('español') || lowerLabel == 'es') {
+                     label = 'Español Latino';
+                   } else if (lowerLabel.contains('eng') || lowerLabel.contains('inglés') || lowerLabel == 'en') {
+                     label = 'Inglés';
+                   } else if (lowerLabel.contains('fre') || lowerLabel.contains('francés') || lowerLabel == 'fr') {
+                     label = 'Francés';
+                   }
+                   
+                   bool isSelected = (_selectedAudioIdentifier == null && _activeAudioTrack == entry.key) || (_selectedAudioIdentifier == label.trim());
+
+                   return ListTile(
+                     title: Text(label, style: TextStyle(color: isSelected ? Color(0xFFE50914) : Colors.white)),
+                     trailing: isSelected ? Icon(Icons.check, color: Color(0xFFE50914)) : null,
+                     contentPadding: EdgeInsets.zero,
+                     dense: true,
+                     onTap: () {
+                       setState(() => _selectedAudioIdentifier = null);
+                       _videoController.setAudioTrack(entry.key);
+                       Navigator.pop(context);
+                     }
+                   );
+                }).toList(),
+
+                SizedBox(height: 16),
+
+                Text('Sincronización (Desfase)', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        icon: Icon(Icons.remove_circle_outline, color: Colors.white, size: 32),
+                        onPressed: () {
+                           setModalState(() => _subtitleDelayMs -= 500);
+                           _videoController.setSpuDelay(_subtitleDelayMs);
+                        },
+                    ),
+                    SizedBox(width: 16),
+                    Text('${(_subtitleDelayMs > 0 ? '+' : '')}${(_subtitleDelayMs / 1000).toStringAsFixed(1)} s', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(width: 16),
+                    IconButton(
+                        icon: Icon(Icons.add_circle_outline, color: Colors.white, size: 32),
+                        onPressed: () {
+                           setModalState(() => _subtitleDelayMs += 500);
+                           _videoController.setSpuDelay(_subtitleDelayMs);
+                        },
+                    ),
+                  ]
+                ),
+                SizedBox(height: 16),
+                
+                Text('Subtítulos', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                
+                ListTile(
+                     title: Text('Desactivado', style: TextStyle(color: (_selectedSubtitleIdentifier == 'no' || (_selectedSubtitleIdentifier == null && _activeSubtitleTrack == -1)) ? Color(0xFFE50914) : Colors.white)),
+                     trailing: (_selectedSubtitleIdentifier == 'no' || (_selectedSubtitleIdentifier == null && _activeSubtitleTrack == -1)) ? Icon(Icons.check, color: Color(0xFFE50914)) : null,
+                     contentPadding: EdgeInsets.zero,
+                     dense: true,
+                     onTap: () {
+                       setState(() => _selectedSubtitleIdentifier = 'no');
+                       _videoController.setSpuTrack(-1);
+                       Navigator.pop(context);
+                     }
+                ),
+
+                ...(widget.subtitulos ?? []).map((sub) {
+                     String label = sub['label'] ?? 'Subtítulo';
+                     bool isSelectedSub = _selectedSubtitleIdentifier == label;
+                     
+                     return ListTile(
+                       title: Text(label, style: TextStyle(color: isSelectedSub ? Color(0xFFE50914) : Colors.white)),
+                       trailing: isSelectedSub ? Icon(Icons.check, color: Color(0xFFE50914)) : null,
+                       contentPadding: EdgeInsets.zero,
+                       dense: true,
+                       onTap: () async {
+                         setState(() => _selectedSubtitleIdentifier = label);
+                         var url = sub['url'];
+                         if (!url.startsWith('http')) {
+                            url = 'https://vnc-e.com${url.startsWith('/') ? '' : '/'}$url';
+                         }
+                         await _videoController.addSubtitleFromNetwork(url, isSelected: true);
+                         Navigator.pop(context);
+                       }
+                     );
+                }).toList(),
+
+                ...subMap.entries.where((e) => e.value.toLowerCase() != 'disable' && widget.subtitulos?.isEmpty == true).map((entry) {
+                     String label = entry.value;
+                     
+                     bool isSelectedSub = (_selectedSubtitleIdentifier == null && _activeSubtitleTrack == entry.key) || (_selectedSubtitleIdentifier == label.trim());
+                     
+                     return ListTile(
+                       title: Text(label, style: TextStyle(color: isSelectedSub ? Color(0xFFE50914) : Colors.white)),
+                       trailing: isSelectedSub ? Icon(Icons.check, color: Color(0xFFE50914)) : null,
+                       contentPadding: EdgeInsets.zero,
+                       dense: true,
+                       onTap: () {
+                         setState(() => _selectedSubtitleIdentifier = null);
+                         _videoController.setSpuTrack(entry.key);
+                         Navigator.pop(context);
+                       }
+                     );
+                }).toList(),
+              ],
+            ),
+          ),
+        );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          setState(() {
+            _showControls = !_showControls;
+          });
+          if (_showControls) {
+            _startHideTimer();
+          } else {
+            _hideTimer?.cancel();
+          }
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+                            child: VlcPlayer(
+                controller: _videoController,
+                aspectRatio: 16 / 9,
+                placeholder: Center(child: CircularProgressIndicator(color: Color(0xFFE50914))),
+              ),
+            ),
+            
+            if (_errorMessage.isNotEmpty)
+              Container(padding: EdgeInsets.all(16), color: Colors.black87, child: Text('Error: $_errorMessage', style: TextStyle(color: Colors.red))),
+
+            if (_isBuffering)
+              CircularProgressIndicator(color: Color(0xFFE50914)),
+
+            AnimatedOpacity(
+              opacity: _showControls ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 300),
+              child: Container(color: Colors.black.withOpacity(0.4)),
+            ),
+
+            // Top Bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AnimatedOpacity(
+                opacity: _showControls ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 300),
+                child: Container(
+                  padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    )
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                        onPressed: () {
+                           if (_showControls) Navigator.pop(context);
+                        },
+                      ),
+                      Expanded(
+                        child: Text(
+                          widget.title,
+                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.settings, color: Colors.white, size: 28),
+                        onPressed: _showControls ? _showSettingsModal : null,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Center Controls
+            Positioned.fill(
+              child: AnimatedOpacity(
+                opacity: _showControls ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 300),
+                child: IgnorePointer(
+                  ignoring: !_showControls,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        iconSize: 50,
+                        icon: Icon(Icons.replay_10, color: Colors.white),
+                        onPressed: () {
+                          // Prevent exact 0 seek to avoid MPV void chunk skip
+                          final target = (_position.inSeconds - 10);
+                          _videoController.seekTo(Duration(milliseconds: target <= 0 ? 50 : target * 1000));
+                        },
+                      ),
+                      SizedBox(width: 40),
+                      IconButton(
+                        iconSize: 70,
+                        icon: Icon(_isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill, color: Colors.white),
+                        onPressed: () {
+                          if (_isPlaying) {
+                            _videoController.pause();
+                          } else {
+                            _videoController.play();
+                          }
+                        },
+                      ),
+                      SizedBox(width: 40),
+                      IconButton(
+                        iconSize: 50,
+                        icon: Icon(Icons.forward_10, color: Colors.white),
+                        onPressed: () {
+                          _videoController.seekTo(Duration(seconds: (_position.inSeconds + 10).clamp(0, _duration.inSeconds)));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Bottom Bar
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: AnimatedOpacity(
+                opacity: _showControls ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 300),
+                child: Container(
+                  padding: EdgeInsets.only(bottom: 24, left: 24, right: 24, top: 40),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.transparent, Colors.black.withOpacity(0.9)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    )
+                  ),
+                  child: IgnorePointer(
+                    ignoring: !_showControls,
+                    child: Row(
+                      children: [
+                        Text(_formatDuration(_adjustedPosition), style: TextStyle(color: Colors.white)),
+                        Expanded(
+                          child: Slider(
+                            activeColor: Color(0xFFE50914),
+                            inactiveColor: Colors.white30,
+                            min: 0,
+                            max: _adjustedDuration.inSeconds > 0 ? _adjustedDuration.inSeconds.toDouble() : 100,
+                            value: _adjustedPosition.inSeconds.clamp(0, _adjustedDuration.inSeconds).toDouble(),
+                            onChangeStart: (value) {
+                              setState(() {
+                                _isDragging = true;
+                              });
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _position = Duration(seconds: value.toInt());
+                              });
+                            },
+                            onChangeEnd: (value) {
+                              // Pad 0-seek to 50ms to prevent MPV from falling into a non-keyframe void and snapping to 40s
+                              final seekValue = value == 0 ? 50 : value.toInt() * 1000;
+                              _videoController.seekTo(Duration(milliseconds: seekValue));
+                              setState(() {
+                                _isDragging = false;
+                              });
+                            },
+                          ),
+                        ),
+                        Text(_formatDuration(_adjustedDuration), style: TextStyle(color: Colors.white)),
+                        SizedBox(width: 8),
+                        IconButton(
+                          icon: Icon(
+                            _isLandscape ? Icons.screen_lock_landscape : Icons.screen_lock_portrait,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                          onPressed: _toggleOrientation,
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          // === Post-Play Overlay ===
+            if (_showPostPlay && _nextRecommendation != null)
+              Positioned.fill(
+                child: Stack(
+                  children: [
+                    // Backdrop image of recommended content
+                    Positioned.fill(
+                      child: CachedNetworkImage(
+                        imageUrl: _nextRecommendation!.backdrop.startsWith('http')
+                            ? _nextRecommendation!.backdrop
+                            : '${ApiService.baseUrl}/${_nextRecommendation!.backdrop}',
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Container(color: Colors.black),
+                      ),
+                    ),
+                    // Dark overlay on top of backdrop
+                    Positioned.fill(
+                      child: Container(color: Colors.black.withOpacity(0.7)),
+                    ),
+                    // Content row
+                    Row(
+                      children: [
+                        // Left side: shrunk video preview area
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: EdgeInsets.all(24),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: AspectRatio(
+                                aspectRatio: 16 / 9,
+                                                                child: VlcPlayer(
+                                  controller: _videoController,
+                                  aspectRatio: 16 / 9,
+                                  placeholder: Container(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Right side: recommendation info
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'A CONTINUACI\u00d3N',
+                                  style: TextStyle(color: Color(0xFFE50914), fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2),
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  _nextRecommendation!.titulo,
+                                  style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  _nextRecommendation!.sinopsis,
+                                  style: TextStyle(color: Colors.grey[400], fontSize: 13, height: 1.4),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () => _navigateToRecommendation(_nextRecommendation!),
+                                      icon: Icon(Icons.play_arrow, color: Colors.black),
+                                      label: Text('Reproducir'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: Colors.black,
+                                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      ),
+                                    ),
+                                    SizedBox(width: 16),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.white54, width: 2),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(Icons.close, color: Colors.white, size: 24),
+                                        onPressed: () {
+                                          setState(() {
+                                            _showPostPlay = false;
+                                            _postPlayDismissed = true;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+
+            // === Next Episode Button ===
+            if (_showNextEpisode && !_showPostPlay)
+              Positioned(
+                bottom: 80,
+                right: 24,
+                child: ElevatedButton.icon(
+                  onPressed: _navigateToNextEpisode,
+                  icon: Text('Siguiente Episodio', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  label: Icon(Icons.skip_next, size: 22),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  ),
+                ),
+              ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
