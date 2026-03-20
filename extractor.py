@@ -51,6 +51,7 @@ def generar_bloque_json(datos, tipo):
     
     if tipo == "movie":
         titulo = datos.get("title", "Desconocido")
+        titulo_original = datos.get("original_title", "Desconocido")
         duracion = f"{datos.get('runtime', 0)} min"
         fecha = datos.get("release_date", "Desconocida")
         tipo_formato = "Película"
@@ -63,6 +64,7 @@ def generar_bloque_json(datos, tipo):
             
     else: # Serie
         titulo = datos.get("name", "Desconocido")
+        titulo_original = datos.get("original_name", "Desconocido")
         temporadas = datos.get("number_of_seasons", 0)
         episodios = datos.get("number_of_episodes", 0)
         fecha = datos.get("first_air_date", "Desconocida")
@@ -131,6 +133,7 @@ def generar_bloque_json(datos, tipo):
     
     tmdb_id_json = json.dumps(tmdb_id)
     titulo_json = json.dumps(titulo, ensure_ascii=False)
+    titulo_original_json = json.dumps(titulo_original, ensure_ascii=False)
     tipo_json = json.dumps(tipo_formato, ensure_ascii=False)
     sinopsis_json = json.dumps(sinopsis, ensure_ascii=False)
     generos_json = json.dumps(generos, ensure_ascii=False) 
@@ -145,11 +148,11 @@ def generar_bloque_json(datos, tipo):
     post_play_json = json.dumps(post_play_experience)
     fecha_json = json.dumps(fecha, ensure_ascii=False)
 
-    # Armamos la lista respetando el orden solicitado
     partes_json = [
         "    {", 
         f'        "tmdbId": {tmdb_id_json},',
         '        "premium": true,',
+        f'        "titulo_original": {titulo_original_json},',
         f'        "titulo": {titulo_json},',
         f'        "tipo": {tipo_json},',
         f'        "sinopsis": {sinopsis_json},',

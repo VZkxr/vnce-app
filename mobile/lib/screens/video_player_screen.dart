@@ -253,6 +253,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     final episode = season.episodios[eIdx];
     if (episode.streamUrl == null) { _showNotAvailableAndPop(); return; }
     final epStr = 'T${season.numero}:E${episode.numero} - ${episode.titulo}';
+    
+    // Aggressive Progress Sync for SeriesDetailModal
+    final prov = Provider.of<ProgressProvider>(context, listen: false);
+    prov.saveVideoProgress(
+      generateProgressId(content, episodeTitle: epStr),
+      1, 100, content,
+      subtitulo: epStr,
+      seasonIndex: sIdx, episodeIndex: eIdx,
+    );
+
     Navigator.pushReplacement(context, MaterialPageRoute(
       builder: (_) => VideoPlayerScreen(
         videoUrl: episode.streamUrl!, title: '${content.titulo} - $epStr',

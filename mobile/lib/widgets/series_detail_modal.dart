@@ -8,6 +8,9 @@ import '../screens/video_player_screen.dart';
 import '../providers/providers.dart';
 import 'movie_detail_modal.dart';
 import 'package:flutter/services.dart';
+import 'write_review_modal.dart';
+import '../screens/home_screen.dart';
+import '../providers/reviews_provider.dart';
 
 class SeriesDetailModal extends StatefulWidget {
   final Contenido item;
@@ -253,6 +256,20 @@ class _SeriesDetailModalState extends State<SeriesDetailModal> {
 
     return Scaffold(
       backgroundColor: Color(0xFF141414),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFFE50914),
+        onPressed: () {
+          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+          if (authProvider.userRole == 'Free' || authProvider.userRole == 'free') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Esta acción requiere suscripción Premium'), backgroundColor: Color(0xFFE50914))
+            );
+            return;
+          }
+          showWriteReviewModal(context, widget.item);
+        },
+        child: Icon(Icons.edit, color: Colors.white),
+      ),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -337,56 +354,76 @@ class _SeriesDetailModalState extends State<SeriesDetailModal> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    // Action Buttons Row
-                   Row(
-                     children: [
-                       Expanded(
-                         child: ElevatedButton.icon(
-                           onPressed: () => _handlePlay(widget.item, _watchedSeasonIndex ?? 0, _watchedEpisodeIndex ?? 0),
-                           icon: Icon(Icons.play_arrow, color: Colors.black),
-                           label: Text(_getPlayButtonLabel()), 
-                           style: ElevatedButton.styleFrom(
-                             backgroundColor: widget.item.premium ? Color(0xFFFFD700) : Colors.white, 
-                             foregroundColor: Colors.black,
-                             padding: EdgeInsets.symmetric(vertical: 12),
-                             textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                           ),
-                         ),
-                       ),
-                       SizedBox(width: 12),
-                       IconButton(
-                         icon: Icon(Icons.telegram, color: Colors.blue),
-                         onPressed: () {
-                          if (widget.item.enlaceTelegram != null && widget.item.enlaceTelegram!.isNotEmpty) {
-                            launchUrl(Uri.parse(widget.item.enlaceTelegram!), mode: LaunchMode.externalApplication);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('No disponible en Telegram')),
-                            );
-                          }
-                        },
-                         style: IconButton.styleFrom(
-                           backgroundColor: Colors.grey[800],
-                           padding: EdgeInsets.all(12),
-                         ),
-                       ),
-                        SizedBox(width: 12),
-                       IconButton(
-                         icon: Icon(Icons.share, color: Colors.white),
-                         onPressed: () {
-                          final String shareUrl = 'https://vnc-e.com/share/${widget.item.tmdbId}';
-                          Clipboard.setData(ClipboardData(text: shareUrl));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Enlace copiado al portapapeles')),
-                          );
-                        },
-                         style: IconButton.styleFrom(
-                           backgroundColor: Colors.grey[800],
-                           padding: EdgeInsets.all(12),
-                         ),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => _handlePlay(widget.item, _watchedSeasonIndex ?? _selectedSeasonIndex, _watchedEpisodeIndex ?? 0),
+                            icon: Icon(Icons.play_arrow, color: Colors.black),
+                            label: Text(_getPlayButtonLabel()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: widget.item.premium ? Color(0xFFFFD700) : Colors.white,
+                              foregroundColor: Colors.black,
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              Provider.of<ReviewsProvider>(context, listen: false).setSearchQuery(widget.item.titulo);
+                              Navigator.popUntil(context, (route) => route.isFirst);
+                              HomeScreen.globalKey.currentState?.setSection('Reseñas');
+                            },
+                            icon: Icon(Icons.forum_outlined, color: Colors.white),
+                            label: Text('Ver reseñas', style: TextStyle(color: Colors.white)),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.white54),
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.telegram, color: Colors.blue), // Telegram Color
+                          onPressed: () {
+                           if (widget.item.enlaceTelegram != null && widget.item.enlaceTelegram!.isNotEmpty) {
+                             launchUrl(Uri.parse(widget.item.enlaceTelegram!), mode: LaunchMode.externalApplication);
+                           } else {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               SnackBar(content: Text('No disponible en Telegram')),
+                             );
+                           }
+                          },
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.grey[800],
+                            padding: EdgeInsets.all(12),
+                          ),
+                        ),
+                         SizedBox(width: 12),
+                        IconButton(
+                          icon: Icon(Icons.share, color: Colors.white),
+                          onPressed: () {
+                           final String shareUrl = 'https://vnc-e.com/share/${widget.item.tmdbId}';
+                           Clipboard.setData(ClipboardData(text: shareUrl));
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(content: Text('Enlace copiado al portapapeles')),
+                           );
+                          },
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.grey[800],
+                            padding: EdgeInsets.all(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
                    
                    // Metadata
                    Row(

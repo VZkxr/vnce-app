@@ -8,6 +8,9 @@ import '../screens/video_player_screen.dart';
 import '../providers/providers.dart';
 import 'series_detail_modal.dart';
 import 'package:flutter/services.dart';
+import 'write_review_modal.dart';
+import '../providers/reviews_provider.dart';
+import '../screens/home_screen.dart';
 
 class MovieDetailModal extends StatefulWidget {
   final Contenido item;
@@ -150,6 +153,20 @@ class _MovieDetailModalState extends State<MovieDetailModal> {
 
     return Scaffold(
       backgroundColor: Color(0xFF141414), // Dark background matching modal image
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFFE50914),
+        onPressed: () {
+          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+          if (authProvider.userRole == 'Free' || authProvider.userRole == 'free') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Esta acción requiere suscripción Premium'), backgroundColor: Color(0xFFE50914))
+            );
+            return;
+          }
+          showWriteReviewModal(context, widget.item);
+        },
+        child: Icon(Icons.edit, color: Colors.white),
+      ),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -250,7 +267,27 @@ class _MovieDetailModalState extends State<MovieDetailModal> {
                            ),
                          ),
                        ),
-                       SizedBox(width: 12),
+                       SizedBox(width: 8),
+                       Expanded(
+                         child: OutlinedButton.icon(
+                           onPressed: () {
+                             Provider.of<ReviewsProvider>(context, listen: false).setSearchQuery(widget.item.titulo);
+                             Navigator.popUntil(context, (route) => route.isFirst);
+                             HomeScreen.globalKey.currentState?.setSection('Reseñas');
+                           },
+                           icon: Icon(Icons.forum_outlined, color: Colors.white),
+                           label: Text('Ver reseñas', style: TextStyle(color: Colors.white)),
+                           style: OutlinedButton.styleFrom(
+                             side: BorderSide(color: Colors.white54),
+                             padding: EdgeInsets.symmetric(vertical: 12),
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: 12),
+                   Row(
+                     children: [
                        IconButton(
                          icon: Icon(Icons.telegram, color: Colors.blue), // Telegram Blue
                          onPressed: () {
@@ -261,7 +298,7 @@ class _MovieDetailModalState extends State<MovieDetailModal> {
                               SnackBar(content: Text('No disponible en Telegram')),
                             );
                           }
-                        },
+                         },
                          style: IconButton.styleFrom(
                            backgroundColor: Colors.grey[800],
                            padding: EdgeInsets.all(12),

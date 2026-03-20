@@ -14,24 +14,36 @@ def clean_text(text):
     text = re.sub(r'_+', '_', text)
     return text
 
+def clean_text_short(text):
+    # Specialized cleaner to shorten names:
+    # 1. Replace spaces/dots with underscores
+    text = re.sub(r'[\s\.]+', '_', text)
+    # 2. Remove vowels (keep case)
+    text = re.sub(r'[aeiouAEIOUáéíóúÁÉÍÓÚ]', '', text)
+    # 3. Remove duplicates and leading/trailing underscores
+    text = re.sub(r'_+', '_', text)
+    return text.strip('_')
+
 def process_file(f):
     # Match pattern: "T1.E1 - Title.mkv" OR "T1.E1 Title.mp4"
-    # User input: "T1.E1 Ya era hora.mp4"
-    # Regex needs to be flexible with separator (space, dash, dot)
-    # Try match: ^(T\d+\.E\d+)(?: - | |\.)(.+)(\.(mkv|mp4))$
+    match_series = re.match(r"(T\d+\.E\d+)(?:[\s\.-]+)(.+)(\.(mkv|mp4))", f, re.IGNORECASE)
     
-    match = re.match(r"(T\d+\.E\d+)(?:[\s\.-]+)(.+)(\.(mkv|mp4))", f, re.IGNORECASE)
-    
-    if match:
-        original_prefix = match.group(1) # T1.E1
+    if match_series:
+        original_prefix = match_series.group(1) # T1.E1
         file_prefix = original_prefix.replace('.', '') # T1E1
-        title = match.group(2)
-        ext = match.group(3)
+        title = match_series.group(2)
+        ext = match_series.group(3)
         
-        clean_t = clean_text(title)
+        # Original clean_text for series (aggressive removal)
+        # Note: Original code used a specific clean_text. Check if we should reuse/modify it.
+        # For compatibility, let's keep the logic inline or simple
+        clean_t = re.sub(r'[aeiouAEIOUáéíóúÁÉÍÓÚ]', '', title)
+        clean_t = clean_t.replace('ñ', '').replace('Ñ', '')
+        clean_t = re.sub(r'[,!¡?¿\']', '', clean_t)
+        clean_t = clean_t.strip().replace(' ', '_')
+        clean_t = re.sub(r'_+', '_', clean_t)
+        
         new_name = f"{file_prefix}-{clean_t}{ext}"
-        
-        # Text file format: "T1E1-Sanitized_Name"
         txt_entry = f"{file_prefix}-{clean_t}"
         
         if new_name != f:
@@ -44,8 +56,38 @@ def process_file(f):
         else:
             print(f"Skipping '{f}' (name matches, adding to list)")
             return txt_entry
-    else:
-        print(f"Skipping '{f}' (does not match T#.E# pattern)")
+
+    # New Logic: Movie Shortener
+    # Pattern: Name (Year) or Name.Year...
+    # Flexible match for Year
+    try:
+        base_name, ext = f.rsplit('.', 1)
+    except ValueError:
+        return None
+
+    # Check for Year pattern to split name
+    match_movie = re.search(r'^(.*?)[.(\s](\d{4})([.\)\s]|$)', base_name)
+    
+    if match_movie:
+        title_raw = match_movie.group(1)
+        year = match_movie.group(2)
+        
+        short_title = clean_text_short(title_raw)
+        
+        new_name = f"{short_title}-{year}.{ext}"
+        
+        if new_name != f:
+             try:
+                os.rename(f, new_name)
+                print(f"Renamed: '{f}' -> '{new_name}'")
+                return new_name # Return new name as entry
+             except OSError as e:
+                print(f"Error renaming '{f}': {e}")
+        else:
+            print(f"Skipping '{f}' (already correct)")
+            return new_name
+
+    print(f"Skipping '{f}' (no pattern match)")
     return None
 
 def main():

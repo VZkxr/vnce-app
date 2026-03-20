@@ -16,6 +16,7 @@ EXTENSION = '.mkv'
 def renombrar_archivo_individual(nombre_archivo, directorio):
     patterns = [
         re.compile(r"^S(\d+)X(\d+)\s+(.*)" + re.escape(EXTENSION) + r"$", re.IGNORECASE),
+        re.compile(r"^(\d+)[Xx](\d+)[-\s]+(.*)" + re.escape(EXTENSION) + r"$", re.IGNORECASE),
         re.compile(r".*?[S|s](\d+)[E|e](\d+)\.(.+?)\.(?:1080p|720p|2160p|4k|WEB|HDTV|BluRay|HDR|DV|DDP|H\.265|x264|x265|HEVC|AVC|MAX|AMZN|NF|HMAX).*" + re.escape(EXTENSION) + r"$", re.IGNORECASE),
         re.compile(r".*?[S|s](\d+)[E|e](\d+)\.(.+?)" + re.escape(EXTENSION) + r"$", re.IGNORECASE)
     ]
@@ -90,6 +91,7 @@ def renombrar_archivo_individual(nombre_archivo, directorio):
                         'ffmpeg',
                         '-i', ruta_original,
                         '-map', '0',       # Copia todo
+                        '-map_metadata', '0', # Preservar todos los metadatos originales
                         '-c', 'copy',      
                         '-metadata', f'title={titulo_final}',
                         '-loglevel', 'error',

@@ -35,6 +35,9 @@ class ApiService {
           final String role = data['user']?['tipo_cuenta'] ?? data['user']?['role'] ?? 'Free';
           await _saveRole(role);
           
+          final String profilePic = data['user']?['profile_pic'] ?? 'alucard.jpg';
+          await saveProfilePic(profilePic);
+          
           return {'success': true, 'token': data['token']};
         } else {
           return {'success': false, 'message': data['message'] ?? 'Usuario o contraseña incorrectos'};
@@ -200,6 +203,22 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> updateProfilePic(String token, String profilePic) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/update-profile-pic'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({'profilePic': profilePic}),
+      );
+      return json.decode(response.body);
+    } catch (e) {
+      return {'success': false, 'message': 'Error de conexión'};
+    }
+  }
+
   // --- Token Management ---
   Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -231,11 +250,22 @@ class ApiService {
     return prefs.getString('vanacue_role');
   }
   
+  Future<void> saveProfilePic(String profilePic) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('vanacue_profile_pic', profilePic);
+  }
+
+  Future<String?> getProfilePic() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('vanacue_profile_pic');
+  }
+
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('vanacue_token');
     await prefs.remove('vanacue_user');
     await prefs.remove('vanacue_role');
+    await prefs.remove('vanacue_profile_pic');
   }
   // --- FAVORITES SYSTEM ---
 
@@ -352,6 +382,170 @@ class ApiService {
       return response.statusCode == 200 && data['success'] == true;
     } catch (e) {
       print('Error removing favorite: $e');
+      return false;
+    }
+  }
+
+  // =====================================
+  // ⭐ REVIEWS & COMMENTS (NUEVO SISTEMA)
+  // =====================================
+
+  Future<Map<String, dynamic>> fetchReviews({int page = 1, int limit = 10, String order = 'recent'}) async {
+    try {
+      final token = await getToken();
+      final url = Uri.parse('$baseUrl/api/reviews?page=$page&limit=$limit&order=$order');
+      final response = await http.get(
+        url,
+        headers: token != null ? {'Authorization': 'Bearer $token'} : {},
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return {'success': false, 'message': 'HTTP ${response.statusCode}'};
+    } catch (e) {
+      print('Error fetching reviews: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<bool> createReview({
+    required dynamic tmdbId,
+    required String title,
+    required String type,
+    required String year,
+    required int rating,
+    required String comment,
+  }) async {
+    try {
+      final token = await getToken();
+      if (token == null) return false;
+
+      final url = Uri.parse('$baseUrl/api/reviews');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'tmdb_id': tmdbId,
+          'movie_title': title,
+          'movie_type': type,
+          'movie_year': year,
+          'rating': rating,
+          'comment': comment,
+        }),
+      );
+      final data = json.decode(response.body);
+      return response.statusCode == 200 && data['success'] == true;
+    } catch (e) {
+      print('Error creating review: $e');
+      return false;
+    }
+  }
+
+  Future<bool> toggleReviewReaction(int reviewId, String type) async {
+    try {
+      final token = await getToken();
+      if (token == null) return false;
+
+      final url = Uri.parse('$baseUrl/api/reviews/like');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'review_id': reviewId,
+          'type': type,
+        }),
+      );
+      final data = json.decode(response.body);
+      return response.statusCode == 200 && data['success'] == true;
+    } catch (e) {
+      print('Error toggling reaction: $e');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchReviewComments(int reviewId) async {
+    try {
+      final token = await getToken();
+      final url = Uri.parse('$baseUrl/api/reviews/$reviewId/comments');
+      final response = await http.get(
+        url,
+        headers: token != null ? {'Authorization': 'Bearer $token'} : {},
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return {'success': false, 'message': 'HTTP ${response.statusCode}'};
+    } catch (e) {
+      print('Error fetching comments: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<bool> postReviewComment(int reviewId, String comment) async {
+    try {
+      final token = await getToken();
+      if (token == null) return false;
+
+      final url = Uri.parse('$baseUrl/api/reviews/comment');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'review_id': reviewId,
+          'comment': comment,
+        }),
+      );
+      final data = json.decode(response.body);
+      return response.statusCode == 200 && data['success'] == true;
+    } catch (e) {
+      print('Error posting comment: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteReview(int reviewId) async {
+    try {
+      final token = await getToken();
+      if (token == null) return false;
+
+      final url = Uri.parse('$baseUrl/api/reviews/$reviewId');
+      final response = await http.delete(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      final data = json.decode(response.body);
+      return response.statusCode == 200 && data['success'] == true;
+    } catch (e) {
+      print('Error deleting review: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteComment(int commentId) async {
+    try {
+      final token = await getToken();
+      if (token == null) return false;
+
+      final url = Uri.parse('$baseUrl/api/reviews/comment/$commentId');
+      final response = await http.delete(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      final data = json.decode(response.body);
+      return response.statusCode == 200 && data['success'] == true;
+    } catch (e) {
+      print('Error deleting comment: $e');
       return false;
     }
   }

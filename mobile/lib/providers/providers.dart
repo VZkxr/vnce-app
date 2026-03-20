@@ -9,11 +9,13 @@ class AuthProvider with ChangeNotifier {
   bool _isInitializing = true;
   String? _username;
   String _userRole = 'Free';
+  String _profilePic = 'alucard.jpg';
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isInitializing => _isInitializing;
   String? get username => _username;
   String get userRole => _userRole;
+  String get profilePic => _profilePic;
 
   final ApiService _api = ApiService();
   ApiService get api => _api; // Expose api for login_screen to use
@@ -34,6 +36,7 @@ class AuthProvider with ChangeNotifier {
         _isAuthenticated = true;
         _username = await _api.getUser();
         _userRole = await _api.getRole() ?? 'Free';
+        _profilePic = await _api.getProfilePic() ?? 'alucard.jpg';
       } else {
         await logout(); // Invalid token
       }
@@ -52,6 +55,7 @@ class AuthProvider with ChangeNotifier {
       _isAuthenticated = true;
       _username = username;
       _userRole = await _api.getRole() ?? 'Free';
+      _profilePic = await _api.getProfilePic() ?? 'alucard.jpg';
       notifyListeners();
       return null; // Return null on success
     } else {
@@ -73,11 +77,26 @@ class AuthProvider with ChangeNotifier {
     return result;
   }
 
+  Future<bool> updateProfilePic(String newPic) async {
+    final token = await _api.getToken();
+    if (token == null) return false;
+
+    final result = await _api.updateProfilePic(token, newPic);
+    if (result['success'] == true) {
+      _profilePic = newPic;
+      await _api.saveProfilePic(newPic);
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
   Future<void> logout() async {
     await _api.logout();
     _isAuthenticated = false;
     _username = null;
     _userRole = 'Free';
+    _profilePic = 'alucard.jpg';
     notifyListeners();
   }
 }

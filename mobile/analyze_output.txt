@@ -1,0 +1,912 @@
+Analyzing mobile...                                             
+
+   info - Use 'const' for final variables initialized to a constant value - fetch_m3u8.dart:5:3 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - fetch_m3u8.dart:15:5 - avoid_print
+   info - Don't invoke 'print' in production code - fetch_m3u8.dart:16:5 - avoid_print
+   info - Don't invoke 'print' in production code - fetch_m3u8.dart:17:5 - avoid_print
+   info - Don't invoke 'print' in production code - fetch_m3u8.dart:19:5 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\main.dart:13:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\main.dart:16:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\main.dart:18:10 - prefer_const_constructors
+warning - Unused import: 'dart:convert' - lib\models\models.dart:1:8 - unused_import
+   info - Unnecessary cast - lib\models\models.dart:54:24 - unnecessary_cast
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - lib\models\models.dart:192:12 - missing_required_argument
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:258:11 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:261:19 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:262:17 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:263:18 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:264:15 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:265:19 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:266:18 - unnecessary_this
+   info - Unnecessary 'this.' qualifier - lib\models\models.dart:267:16 - unnecessary_this
+   info - Use interpolation to compose strings and values - lib\providers\providers.dart:262:10 - prefer_interpolation_to_compose_strings
+   info - The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\home_screen.dart:3:8 - unnecessary_import
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\home_screen.dart:19:7 - use_key_in_widget_constructors
+   info - Invalid use of a private type in a public API - lib\screens\home_screen.dart:21:3 - library_private_types_in_public_api
+   info - Don't invoke 'print' in production code - lib\screens\home_screen.dart:156:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:203:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:203:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:290:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:296:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:299:58 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:301:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:305:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:309:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:309:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:309:60 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:324:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:339:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:342:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:360:56 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:361:61 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:363:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:368:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:375:56 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:395:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:408:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:483:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:499:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:501:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:503:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:514:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:550:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:552:36 - prefer_const_constructors
+   info - Unnecessary braces in a string interpolation - lib\screens\home_screen.dart:564:64 - unnecessary_brace_in_string_interps
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:569:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:581:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:595:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:602:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:634:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:635:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:644:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:658:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:662:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:670:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:671:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:680:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:686:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:690:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:693:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:694:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:719:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:720:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:729:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:731:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:735:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:739:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:740:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:777:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:779:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:784:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:785:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:785:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:786:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:787:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:790:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:792:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:803:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:805:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:812:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:814:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:820:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:820:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:821:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:823:27 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\home_screen.dart:824:33 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:825:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:825:54 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:826:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:826:55 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:830:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:832:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:834:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:840:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:842:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:847:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:850:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:852:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:854:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:858:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:858:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:858:102 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:859:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:861:27 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\home_screen.dart:862:33 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:863:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:863:55 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:864:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:864:58 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:868:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:870:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:872:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:874:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:890:81 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:892:85 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:893:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:895:93 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:911:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:929:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:934:11 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\home_screen.dart:949:20 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:949:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:977:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:1012:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:1017:28 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\screens\home_screen.dart:1029:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\screens\home_screen.dart:1032:3 - library_private_types_in_public_api
+   info - Use 'const' with the constructor to improve performance - lib\screens\home_screen.dart:1073:19 - prefer_const_constructors
+   info - Constructors for public widgets should have a named 'key' parameter - lib\screens\login_screen.dart:10:7 - use_key_in_widget_constructors
+   info - Invalid use of a private type in a public API - lib\screens\login_screen.dart:12:3 - library_private_types_in_public_api
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:87:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:88:25 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\login_screen.dart:91:25 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:92:19 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\login_screen.dart:95:24 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:108:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:110:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:112:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:142:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:146:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:147:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:147:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:148:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:150:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:153:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:163:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:166:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:176:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:194:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:198:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:199:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:199:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:200:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:202:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:205:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:207:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:209:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:218:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:230:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:230:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:230:150 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:237:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:244:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:248:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:248:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:248:133 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:252:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:252:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:252:130 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:256:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:256:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:256:137 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:276:37 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:276:131 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:279:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:288:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:300:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:304:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:305:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:305:66 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:306:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:308:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:311:9 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:321:37 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:321:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:321:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:321:131 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:327:37 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:327:131 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:336:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:340:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:341:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:341:71 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:342:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:344:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:347:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:351:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:351:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:351:117 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:367:39 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:367:133 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:370:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:374:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:374:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:382:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:386:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:387:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:387:71 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:388:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:389:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:389:58 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:390:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:393:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:395:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:399:58 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:399:76 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:399:114 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:413:37 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:413:136 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\screens\login_screen.dart:416:37 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:416:134 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:419:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:423:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:423:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:438:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:444:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:449:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:454:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:471:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:475:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:475:54 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:476:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:486:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:486:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:532:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\login_screen.dart:534:21 - prefer_const_constructors
+   info - Invalid use of a private type in a public API - lib\screens\reviews_tab.dart:15:3 - library_private_types_in_public_api
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:33:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:41:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:53:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:55:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:57:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:71:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:73:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:75:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:75:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:75:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:76:21 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\reviews_tab.dart:77:21 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:77:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:77:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:85:13 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\reviews_tab.dart:86:25 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:87:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:87:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:88:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:89:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:91:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:95:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:113:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:114:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:114:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:115:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:117:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:139:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:139:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:144:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:144:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:144:65 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:148:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:151:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:152:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:187:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:187:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:189:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:192:32 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\screens\reviews_tab.dart:194:28 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:195:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:195:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:196:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:196:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:204:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:207:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:210:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:215:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:221:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:223:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:223:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:223:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:228:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:230:55 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:241:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:241:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:245:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:263:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:264:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:265:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:274:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:276:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:278:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:291:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:296:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:305:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:312:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:315:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:315:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:317:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:322:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:324:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:324:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:332:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:337:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:342:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:347:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:357:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\reviews_tab.dart:394:11 - prefer_const_constructors
+warning - Unused import: 'package:cached_network_image/cached_network_image.dart' - lib\screens\video_player_screen.dart:7:8 - unused_import
+warning - Unused import: '../services/api_service.dart' - lib\screens\video_player_screen.dart:8:8 - unused_import
+   info - Convert 'key' to a super parameter - lib\screens\video_player_screen.dart:22:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\screens\video_player_screen.dart:37:3 - library_private_types_in_public_api
+warning - The left operand can't be null, so the right operand is never executed - lib\screens\video_player_screen.dart:99:63 - dead_null_aware_expression
+   info - Statements in an if should be enclosed in a block - lib\screens\video_player_screen.dart:163:60 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\screens\video_player_screen.dart:164:65 - curly_braces_in_flow_control_structures
+   info - Use 'const' with the constructor to improve performance - lib\screens\video_player_screen.dart:238:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\video_player_screen.dart:240:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\video_player_screen.dart:305:12 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\video_player_screen.dart:307:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\video_player_screen.dart:307:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\video_player_screen.dart:307:60 - prefer_const_constructors
+warning - Unused import: 'package:flutter/services.dart' - lib\services\api_service.dart:4:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:18:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:26:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:27:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:50:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:81:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:99:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:114:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:118:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:286:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:308:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:326:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:340:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:363:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:384:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:407:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:443:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:468:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:487:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:512:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:530:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_service.dart:548:7 - avoid_print
+   info - The imported package 'path' isn't a dependency of the importing package - lib\services\proxy_server.dart:4:8 - depend_on_referenced_packages
+warning - Unused import: 'package:path/path.dart' - lib\services\proxy_server.dart:4:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\proxy_server.dart:17:5 - avoid_print
+   info - Use interpolation to compose strings and values - lib\services\proxy_server.dart:75:43 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\services\proxy_server.dart:82:30 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\services\proxy_server.dart:84:30 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\services\proxy_server.dart:90:29 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - lib\services\proxy_server.dart:101:9 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:69:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:82:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:82:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:82:94 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\widgets\comment_bottom_sheet.dart:94:28 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:95:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:95:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:132:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:133:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:134:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:134:54 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:134:85 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:141:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:149:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:149:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:149:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:151:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:156:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:170:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:171:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:172:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:172:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:172:57 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:182:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:185:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:187:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:189:53 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:193:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:205:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:208:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:210:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:210:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:210:110 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:213:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:213:61 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:237:53 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:245:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:257:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:260:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:262:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:263:58 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:264:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:264:53 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:269:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:271:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:273:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:273:55 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:275:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:276:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:277:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:277:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:278:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:278:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:280:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:280:52 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:280:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:284:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:287:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:297:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\comment_bottom_sheet.dart:301:53 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\widgets\content_section.dart:16:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:28:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:40:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:49:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:51:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:52:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:65:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:71:25 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\widgets\content_section.dart:96:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:154:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:179:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:179:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:189:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:192:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:193:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:200:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:211:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:217:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:222:26 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\widgets\content_section.dart:238:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\widgets\content_section.dart:241:3 - library_private_types_in_public_api
+   info - Use 'const' with the constructor to improve performance - lib\widgets\content_section.dart:250:62 - prefer_const_constructors
+   info - Constructors for public widgets should have a named 'key' parameter - lib\widgets\custom_drawer.dart:6:7 - use_key_in_widget_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:14:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:20:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:21:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:35:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:42:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:48:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:50:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:57:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:69:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:81:17 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\custom_drawer.dart:82:29 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:83:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:84:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:85:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:85:51 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:90:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:92:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:104:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:104:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:104:73 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:107:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:107:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:107:77 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:133:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:134:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:136:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:138:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:154:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:157:21 - prefer_const_constructors
+   info - The local variable '_formatDate' starts with an underscore - lib\widgets\custom_drawer.dart:160:12 - no_leading_underscores_for_local_identifiers
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:164:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:188:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:193:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:197:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:205:66 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:212:52 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:213:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:213:79 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:215:99 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:215:123 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:216:98 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:216:120 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:224:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:228:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:230:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:234:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:252:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:254:16 - prefer_const_constructors
+   info - The local variable '_usernameController' starts with an underscore - lib\widgets\custom_drawer.dart:261:33 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_passwordController' starts with an underscore - lib\widgets\custom_drawer.dart:262:33 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_isLoading' starts with an underscore - lib\widgets\custom_drawer.dart:263:10 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_feedbackMessage' starts with an underscore - lib\widgets\custom_drawer.dart:264:13 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_isSuccess' starts with an underscore - lib\widgets\custom_drawer.dart:265:10 - no_leading_underscores_for_local_identifiers
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:273:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:275:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:276:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:277:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:296:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:298:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:300:57 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:302:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:307:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:310:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:328:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:334:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:337:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:340:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:343:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:343:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:344:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:344:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:345:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:348:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:352:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:355:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:358:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:358:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:359:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:359:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:360:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:364:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:380:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:381:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:384:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:384:54 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:387:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:428:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:439:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:440:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:444:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:444:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:445:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:445:54 - prefer_const_constructors
+   info - The local variable '_selectedTemporaryPic' starts with an underscore - lib\widgets\custom_drawer.dart:464:12 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_isSaving' starts with an underscore - lib\widgets\custom_drawer.dart:465:10 - no_leading_underscores_for_local_identifiers
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:473:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:475:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:476:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:477:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:478:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:478:57 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:483:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:484:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:502:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:525:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:526:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:528:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:528:56 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:531:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:552:74 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:552:92 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:554:74 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:554:92 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:559:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:560:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:563:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:563:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:564:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:564:58 - prefer_const_constructors
+   info - The local variable '_titleController' starts with an underscore - lib\widgets\custom_drawer.dart:578:33 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_messageController' starts with an underscore - lib\widgets\custom_drawer.dart:579:33 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_selectedType' starts with an underscore - lib\widgets\custom_drawer.dart:580:12 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_isLoading' starts with an underscore - lib\widgets\custom_drawer.dart:581:10 - no_leading_underscores_for_local_identifiers
+   info - The local variable '_feedbackMessage' starts with an underscore - lib\widgets\custom_drawer.dart:582:13 - no_leading_underscores_for_local_identifiers
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:590:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:592:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:592:56 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:598:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:601:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:604:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:604:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:605:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:605:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:608:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:611:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:615:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:618:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:618:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:619:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:619:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:622:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:625:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:626:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:629:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:630:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:630:87 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:631:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:631:87 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\custom_drawer.dart:633:28 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:634:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:634:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:635:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:635:63 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:644:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:645:52 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:652:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:652:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:680:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:682:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:682:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:683:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\custom_drawer.dart:683:47 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\widgets\hero_slider.dart:12:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:34:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:37:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:57:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:100:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:130:39 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\hero_slider.dart:132:44 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:154:48 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\hero_slider.dart:159:52 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:159:53 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:162:37 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\hero_slider.dart:168:50 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:168:51 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:171:37 - prefer_const_constructors
+   info - Don't invoke 'print' in production code - lib\widgets\hero_slider.dart:177:45 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:180:45 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:181:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:183:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:185:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:187:52 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:190:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:217:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:220:27 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\hero_slider.dart:224:32 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:224:33 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\widgets\hero_slider.dart:240:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:274:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:274:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:324:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\hero_slider.dart:326:47 - prefer_const_constructors
+   info - Convert 'key' to a super parameter - lib\widgets\movie_detail_modal.dart:20:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\widgets\movie_detail_modal.dart:30:3 - library_private_types_in_public_api
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:46:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:47:16 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\movie_detail_modal.dart:48:21 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:49:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:50:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:51:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:51:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:61:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:61:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:73:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:74:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:74:53 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:113:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:113:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:153:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:155:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:160:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:160:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:160:100 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:166:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:171:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:179:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:184:26 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\movie_detail_modal.dart:188:30 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:188:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:196:31 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\movie_detail_modal.dart:199:34 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:218:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:226:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:233:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:239:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:258:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:259:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:261:69 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:263:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:264:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:268:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:273:73 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:273:91 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:275:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:276:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:276:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:278:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:279:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:285:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:289:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:295:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:295:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:301:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:304:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:306:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:311:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:311:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:316:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:321:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:328:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:328:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:330:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:331:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:331:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:332:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:333:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:334:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:336:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:341:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:341:57 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:345:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:350:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:352:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:356:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:358:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:361:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:363:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:365:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:367:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:370:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:371:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:400:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:425:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\movie_detail_modal.dart:428:40 - prefer_const_constructors
+  error - Target of URI doesn't exist: 'package:cached_network_image/cached_network_image' - lib\widgets\series_detail_modal.dart:3:8 - uri_does_not_exist
+warning - Duplicate import - lib\widgets\series_detail_modal.dart:10:8 - duplicate_import
+warning - Unused import: '../screens/home_screen.dart' - lib\widgets\series_detail_modal.dart:14:8 - unused_import
+   info - Convert 'key' to a super parameter - lib\widgets\series_detail_modal.dart:22:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\widgets\series_detail_modal.dart:31:3 - library_private_types_in_public_api
+   info - The declaration '_getPlayButtonLabel' isn't referenced - lib\widgets\series_detail_modal.dart:76:10 - unused_element
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:101:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:102:16 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\series_detail_modal.dart:103:21 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:104:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:105:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:106:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:106:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:116:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:116:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:128:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:129:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:129:53 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:175:14 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:175:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:182:8 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:182:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:230:10 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:230:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:259:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:261:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:266:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:266:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:266:100 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:272:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:277:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:285:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:290:26 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\series_detail_modal.dart:294:30 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:294:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:302:33 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\series_detail_modal.dart:305:36 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:324:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:332:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:339:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:345:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:353:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:363:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:364:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:366:70 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:368:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:369:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:373:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:380:74 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:380:92 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:382:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:383:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:383:63 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:385:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:386:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:392:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:396:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:402:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:402:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:408:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:411:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:413:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:418:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:418:48 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:423:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:428:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:435:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:435:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:437:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:438:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:438:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:439:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:440:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:441:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:443:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:448:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:448:54 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:452:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:457:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:459:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:462:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:464:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:468:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:474:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:474:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:479:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:480:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:496:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:501:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:507:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:509:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:510:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:511:44 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:511:57 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:511:75 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:514:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:521:117 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:523:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:541:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:542:45 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:546:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:554:76 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:558:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:560:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:575:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:578:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:580:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:582:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:585:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:586:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:613:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:638:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\series_detail_modal.dart:641:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:36:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:36:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:40:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:40:68 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\widgets\write_review_modal.dart:58:28 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:58:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:58:68 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\widgets\write_review_modal.dart:61:38 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\widgets\write_review_modal.dart:62:23 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\widgets\write_review_modal.dart:65:28 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:65:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:65:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:72:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:84:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:84:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:85:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:86:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:87:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:87:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:90:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:96:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:96:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:102:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:104:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:118:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:123:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:124:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:139:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:139:51 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:140:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:153:38 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:155:63 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:155:100 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:160:63 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:177:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:178:45 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:184:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:187:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:200:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:200:43 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:201:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:209:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:210:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:210:39 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:223:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:228:42 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:230:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:233:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:233:68 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:234:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\widgets\write_review_modal.dart:234:60 - prefer_const_constructors
+   info - The file name 'parseUrl.dart' isn't a lower_case_with_underscores identifier - parseUrl.dart:1:1 - file_names
+   info - Don't invoke 'print' in production code - parseUrl.dart:9:3 - avoid_print
+   info - The imported package 'mobile' isn't a dependency of the importing package - test\widget_test.dart:11:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:mobile/main.dart' - test\widget_test.dart:11:8 - uri_does_not_exist
+  error - The name 'MyApp' isn't a class - test\widget_test.dart:16:35 - creation_with_non_type
+   info - Don't invoke 'print' in production code - test_proxy.dart:6:3 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test_proxy.dart:10:3 - prefer_const_declarations
+   info - Use interpolation to compose strings and values - test_proxy.dart:13:20 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test_proxy.dart:14:3 - avoid_print
+   info - Use interpolation to compose strings and values - test_proxy.dart:14:9 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test_proxy.dart:21:3 - avoid_print
+   info - Don't invoke 'print' in production code - test_proxy.dart:22:3 - avoid_print
+   info - Don't invoke 'print' in production code - test_proxy.dart:23:3 - avoid_print
+   info - Use 'const' for final variables initialized to a constant value - test_stream.dart:4:3 - prefer_const_declarations
+   info - Don't invoke 'print' in production code - test_stream.dart:5:3 - avoid_print
+   info - Use interpolation to compose strings and values - test_stream.dart:5:9 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test_stream.dart:17:5 - avoid_print
+   info - Use interpolation to compose strings and values - test_stream.dart:17:11 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test_stream.dart:18:5 - avoid_print
+   info - Use interpolation to compose strings and values - test_stream.dart:18:11 - prefer_interpolation_to_compose_strings
+   info - Don't invoke 'print' in production code - test_stream.dart:20:5 - avoid_print
+   info - Use interpolation to compose strings and values - test_stream.dart:20:11 - prefer_interpolation_to_compose_strings
+

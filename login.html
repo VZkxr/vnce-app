@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
     <title>Acceso Vanacue</title>
     <link rel="icon" type="image/png" href="Multimedia/vnce_4.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -307,9 +308,12 @@
                 </div>
 
                 <div class="terms-wrapper" style="margin: 15px 0; display: flex; align-items: flex-start; gap: 10px;">
-                    <input type="checkbox" id="terms-check" required style="width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: #e50914;">
-                    <label for="terms-check" style="color: #ccc; font-size: 0.85rem; line-height: 1.4; cursor: pointer;">
-                        He leído y acepto los <a href="terminos.html" target="_blank" style="color: #e50914; text-decoration: none; font-weight: 600;">Términos y Condiciones</a>.
+                    <input type="checkbox" id="terms-check" required
+                        style="width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: #e50914;">
+                    <label for="terms-check"
+                        style="color: #ccc; font-size: 0.85rem; line-height: 1.4; cursor: pointer;">
+                        He leído y acepto los <a href="terminos.html" target="_blank"
+                            style="color: #e50914; text-decoration: none; font-weight: 600;">Términos y Condiciones</a>.
                     </label>
                 </div>
 
@@ -407,13 +411,24 @@
         }
 
         // 1. INICIALIZACIÓN INSTANTÁNEA (Pre-llenado de pantalla)
-        // Generamos 100 partículas de golpe con tiempos avanzados
-        for (let i = 0; i < 100; i++) {
-            createRainParticle(true);
+        function fillScreen() {
+            // Generamos 100 partículas de golpe con tiempos avanzados
+            for (let i = 0; i < 100; i++) {
+                createRainParticle(true);
+            }
         }
+
+        fillScreen();
 
         // 2. GENERACIÓN CONTINUA (Mantiene la lluvia)
         setInterval(() => createRainParticle(false), 70);
+
+        // === RELLENO AL VOLVER A LA PESTAÑA (Para evitar pantalla vacía por throttling del navegador) ===
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                fillScreen();
+            }
+        });
 
 
         // === LÓGICA DEL SISTEMA ===

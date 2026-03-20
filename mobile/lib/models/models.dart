@@ -3,6 +3,7 @@ import 'dart:convert';
 class Contenido {
   final dynamic tmdbId; // Can be int or string based on data
   final String titulo;
+  final String? tituloOriginal;
   final String tipo; // "Película" or "Serie"
   final String sinopsis;
   final List<String> genero;
@@ -17,6 +18,7 @@ class Contenido {
   final String? fecha;
   final String? match;
   final bool premium;
+  final bool popular;
   final List<dynamic>? audios;
   final List<dynamic>? subtitulos;
   final String? enlaceTelegram;
@@ -25,6 +27,7 @@ class Contenido {
   Contenido({
     required this.tmdbId,
     required this.titulo,
+    this.tituloOriginal,
     required this.tipo,
     required this.sinopsis,
     required this.genero,
@@ -34,6 +37,7 @@ class Contenido {
     this.streamUrl,
     this.temporadas,
     this.premium = false,
+    this.popular = false,
     this.director,
     this.reparto,
     this.duracion,
@@ -57,9 +61,10 @@ class Contenido {
     }
 
     return Contenido(
-      tmdbId: json['tmdbId'],
-      titulo: json['titulo'] ?? 'Sin título',
-      tipo: json['tipo'] ?? 'Desconocido',
+      tmdbId: json['tmdbId'] ?? json['id'] ?? 0,
+      titulo: json['titulo'] ?? '',
+      tituloOriginal: json['titulo_original'] ?? json['tituloOriginal'],
+      tipo: json['tipo'] ?? 'Película',
       sinopsis: json['sinopsis'] ?? '',
       genero: (json['genero'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
       portada: json['portada'] ?? '',
@@ -67,6 +72,7 @@ class Contenido {
       continueWatching: json['continue_watching'],
       streamUrl: json['streamUrl'] ?? json['video'],
       premium: json['premium'] ?? false,
+      popular: json['popular'] != null && json['popular'].toString().trim().toLowerCase() == 'true',
       temporadas: json['temporadas'] != null
           ? (json['temporadas'] as List).map((i) => Temporada.fromJson(i)).toList()
           : null,
@@ -195,6 +201,109 @@ class Notificacion {
       message: json['message'] ?? '',
       type: json['type'] ?? 'info',
       createdAt: json['created_at'] ?? '',
+    );
+  }
+}
+
+class Review {
+  final int id;
+  final int userHasLiked;
+  final int userHasDisliked;
+  final String profilePic;
+  final String username;
+  final String createdAt;
+  final int rating;
+  final String movieTitle;
+  final String movieYear;
+  final String comment;
+  final int likes;
+  final int dislikes;
+  final int commentsCount;
+
+  Review({
+    required this.id,
+    required this.userHasLiked,
+    required this.userHasDisliked,
+    required this.profilePic,
+    required this.username,
+    required this.createdAt,
+    required this.rating,
+    required this.movieTitle,
+    required this.movieYear,
+    required this.comment,
+    required this.likes,
+    required this.dislikes,
+    required this.commentsCount,
+  });
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    return Review(
+      id: json['id'] ?? 0,
+      userHasLiked: json['user_has_liked'] ?? 0,
+      userHasDisliked: json['user_has_disliked'] ?? 0,
+      profilePic: json['profile_pic'] ?? 'alucard.jpg',
+      username: json['username'] ?? 'Usuario',
+      createdAt: json['created_at'] ?? '',
+      rating: json['rating'] ?? 0,
+      movieTitle: json['movie_title'] ?? '',
+      movieYear: json['movie_year']?.toString() ?? '',
+      comment: json['comment'] ?? '',
+      likes: json['likes'] ?? 0,
+      dislikes: json['dislikes'] ?? 0,
+      commentsCount: json['comments_count'] ?? 0,
+    );
+  }
+  
+  Review copyWith({
+    int? userHasLiked,
+    int? userHasDisliked,
+    int? likes,
+    int? dislikes,
+    int? commentsCount,
+  }) {
+    return Review(
+      id: this.id,
+      userHasLiked: userHasLiked ?? this.userHasLiked,
+      userHasDisliked: userHasDisliked ?? this.userHasDisliked,
+      profilePic: this.profilePic,
+      username: this.username,
+      createdAt: this.createdAt,
+      rating: this.rating,
+      movieTitle: this.movieTitle,
+      movieYear: this.movieYear,
+      comment: this.comment,
+      likes: likes ?? this.likes,
+      dislikes: dislikes ?? this.dislikes,
+      commentsCount: commentsCount ?? this.commentsCount,
+    );
+  }
+}
+
+class ReviewComment {
+  final int id;
+  final String role;
+  final String username;
+  final String profilePic;
+  final String createdAt;
+  final String comment;
+
+  ReviewComment({
+    required this.id,
+    required this.role,
+    required this.username,
+    required this.profilePic,
+    required this.createdAt,
+    required this.comment,
+  });
+
+  factory ReviewComment.fromJson(Map<String, dynamic> json) {
+    return ReviewComment(
+      id: json['id'] ?? 0,
+      role: json['role'] ?? 'free',
+      username: json['username'] ?? 'Usuario',
+      profilePic: json['profile_pic'] ?? 'alucard.jpg',
+      createdAt: json['created_at'] ?? '',
+      comment: json['comment'] ?? '',
     );
   }
 }

@@ -146,8 +146,11 @@ class VNCEApp(ctk.CTk):
         ctk.CTkButton(f_opts, text="Run Clean Names (MKV/MP4)", command=self.run_clean_names, 
                       fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=1, column=0, sticky="w", padx=10, pady=5)
         
-        ctk.CTkButton(f_opts, text="Run Series Format", command=self.run_series_rename,
+        ctk.CTkButton(f_opts, text="Run Movie Format", command=self.run_movie_format,
                       fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=2, column=0, sticky="w", padx=10, pady=5)
+
+        ctk.CTkButton(f_opts, text="Run Series Format", command=self.run_series_rename,
+                      fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=3, column=0, sticky="w", padx=10, pady=5)
 
         ctk.CTkLabel(frame, text="Activity Log:", font=("Roboto", 12)).grid(row=3, column=0, sticky="w", padx=10, pady=(10,0))
         self.log_rename = ctk.CTkTextbox(frame, height=300)
@@ -179,11 +182,11 @@ class VNCEApp(ctk.CTk):
         ctk.CTkButton(f_opts, text="MKV to MP4", command=lambda: self.run_conversion("mkv_to_mp4"),
                       fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=1, column=0, sticky="w", padx=10, pady=5)
         
-        ctk.CTkButton(f_opts, text="MKV to HLS", command=lambda: self.run_conversion("mkv_to_hls"),
-                      fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=2, column=0, sticky="w", padx=10, pady=5)
+        ctk.CTkButton(f_opts, text="MKV to MP4", command=lambda: self.run_conversion("mkv_to_mp4"),
+                      fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=1, column=0, sticky="w", padx=10, pady=5)
         
-        ctk.CTkButton(f_opts, text="MP4 to HLS", command=lambda: self.run_conversion("mp4_to_hls"),
-                      fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=3, column=0, sticky="w", padx=10, pady=5)
+        ctk.CTkButton(f_opts, text="Convert to HLS (Auto)", command=lambda: self.run_conversion("smart_hls"),
+                      fg_color=self.color_accent, hover_color=self.color_accent_hover).grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
         ctk.CTkLabel(frame, text="Activity Log:", font=("Roboto", 12)).grid(row=3, column=0, sticky="w", padx=10, pady=(10,0))
         self.log_convert = ctk.CTkTextbox(frame, height=300)
@@ -239,14 +242,18 @@ class VNCEApp(ctk.CTk):
         if not tgt: return
         self.run_script("mkv_renames_series.py", tgt, self.log_rename)
 
+    def run_movie_format(self):
+        tgt = self.get_target()
+        if not tgt: return
+        self.run_script("names_movie_format.py", tgt, self.log_rename)
+
     def run_conversion(self, mode):
         tgt = self.get_target()
         if not tgt: return
         
         script_map = {
             "mkv_to_mp4": "mkv_to_mp4_converter.py",
-            "mkv_to_hls": "mkv_to_hls_converter.py",
-            "mp4_to_hls": "mp4_to_hls_converter.py"
+            "smart_hls": "smart_hls.py"
         }
         script = script_map.get(mode)
         
@@ -256,8 +263,7 @@ class VNCEApp(ctk.CTk):
         
         if tgt == "BATCH":
             if mode == "mkv_to_mp4": args.append("batch")
-            elif mode == "mkv_to_hls": args.append("batch")
-            elif mode == "mp4_to_hls": args.append("batch")
+            elif mode == "smart_hls": args.append("batch")
         else:
             args.append(tgt)
             

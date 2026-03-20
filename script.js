@@ -12,15 +12,36 @@ async function verificarSesionActiva() {
     if (!token) return;
 
     try {
-        // 2. TRUCO: Agregamos &u=NombreUsuario a la URL
-        // Mantenemos el timestamp (t=...) para evitar caché y añadimos el usuario.
-        const urlPing = `${API_URL}/api/ping?t=${Date.now()}&u=${encodeURIComponent(username)}`;
+        // Obtenemos el título de la película/serie en curso
+        const media = window.currentMediaWatching || 'Ninguna';
+
+        // 2. TRUCO: Agregamos &u=NombreUsuario y &media= a la URL
+        const urlPing = `${API_URL}/api/ping?t=${Date.now()}&u=${encodeURIComponent(username)}&media=${encodeURIComponent(media)}`;
 
         const response = await fetch(urlPing, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
         const data = await response.json();
+
+        // --- ACTUALIZAR FOTO DE PERFIL DESDE PING ---
+        if (data.success && data.user && data.user.profile_pic) {
+            const profileUrl = `Multimedia/Profiles/${data.user.profile_pic}`;
+            const dropdownImg = document.getElementById('dropdown-profile-img');
+            const modalImg = document.getElementById('modal-profile-img');
+            if (dropdownImg) dropdownImg.src = profileUrl;
+            if (modalImg) modalImg.src = profileUrl;
+
+            // Actualizar en localStorage para persistencia local
+            const user = JSON.parse(localStorage.getItem('vanacue_user') || '{}');
+            user.profile_pic = data.user.profile_pic;
+            user.username = data.user.username; // Asegurar que el nombre también esté al día
+            localStorage.setItem('vanacue_user', JSON.stringify(user));
+
+            // Actualizar nombre en el dropdown por si acaso cambió
+            const configName = document.getElementById('config-user-name');
+            if (configName) configName.innerText = data.user.username;
+        }
 
         if (handleSessionError(data)) {
             console.warn("Sesión invalidada. Cerrando...");
@@ -45,12 +66,45 @@ function inicializarSistemaFavoritos() {
 //  INICIO DE LA APLICACION
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Detección inmediata de sección para evitar flicker de Hero
+    const params = new URLSearchParams(window.location.search);
+    const accion = params.get('accion');
+    const esIndex = document.getElementById('mainContent') !== null;
+
+    if (accion && accion !== 'home') {
+        // --- FIX DATA SYNC: Esperamos a que globalData esté listo antes de renderizar ---
+        if (typeof dataPromise !== 'undefined') {
+            await dataPromise;
+        }
+
+        if (accion === 'reseñas' || accion === 'reseñas') window.renderView('reviews');
+        else if (accion === 'series') window.renderView('series');
+        else if (accion === 'peliculas') window.renderView('movies');
+        else if (accion === 'favoritos') window.renderView('favorites');
+        else if (accion === 'planes') window.renderView('plans');
+        else if (accion === 'scanner') window.renderView('scanner');
+        else if (params.has('genero')) window.renderView('genre', params.get('genero'));
+
+        // Autorizar y mostrar contenido de inmediato
+        const mainContent = document.getElementById('mainContent');
+        if (esIndex && mainContent) mainContent.style.display = 'block';
+    }
+
     const token = localStorage.getItem('vanacue_token');
     const userStr = localStorage.getItem('vanacue_user');
     const mainContent = document.getElementById('mainContent');
 
-    const esIndex = mainContent !== null;
-    const esGenero = document.querySelector('.genero-main') !== null;
+    // --- 0. INICIALIZACIÓN INMEDIATA DEL PERFIL ---
+    if (userStr) {
+        try {
+            const u = JSON.parse(userStr);
+            const pUrl = `Multimedia/Profiles/${u.profile_pic || 'alucard.jpg'}`;
+            const ddImg = document.getElementById('dropdown-profile-img');
+            const configName = document.getElementById('config-user-name');
+            if (ddImg) ddImg.src = pUrl;
+            if (configName) configName.innerText = u.username || 'Usuario';
+        } catch (e) { console.error("Error parsing stored user", e); }
+    }
 
     if (!token || !userStr) {
         console.warn("Acceso denegado (Credenciales locales faltantes).");
@@ -59,37 +113,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     console.log("INIT: Inicializando sistema de favoritos...");
-
     inicializarSistemaFavoritos();
 
-    console.log("INIT: Esperando carga completa de favoritos...");
     if (favoritosPromesa) {
         try {
             await favoritosPromesa;
-            console.log("INIT: Favoritos cargados. Size:", misFavoritos.size);
         } catch (error) {
             console.error("INIT: Error cargando favoritos:", error);
         }
     }
 
-    if (esIndex && typeof cargarHero === 'function') cargarHero();
+    // 2. Lógica de Home (solo si no se cargó otra sección arriba)
+    if (!accion || accion === 'home') {
+        if (esIndex && typeof cargarHero === 'function') cargarHero();
+        if (esIndex && mainContent) mainContent.style.display = 'block';
+    }
 
     await verificarSesionActiva();
-
     setInterval(verificarSesionActiva, 15000);
-
-    if (esIndex) {
-        console.log("INIT: Acceso autorizado y verificado.");
-        if (mainContent) {
-            mainContent.style.display = 'block';
-        }
-    }
 
     const user = JSON.parse(userStr);
     const displayElement = document.getElementById('user-display');
-    if (displayElement) {
-        displayElement.innerText = user.username;
-    }
+    if (displayElement) displayElement.innerText = user.username;
 
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout) {
@@ -97,6 +142,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('vanacue_token');
             localStorage.removeItem('vanacue_user');
             window.location.href = 'login.html';
+        });
+    }
+
+    if (user && user.role === 'admin') {
+        const linkScanner = document.getElementById('link-scanner');
+        if (linkScanner) linkScanner.style.display = 'inline-block';
+    }
+
+    const linkScannerLocal = document.getElementById('link-scanner');
+    if (linkScannerLocal) {
+        linkScannerLocal.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.navigateTo('scanner');
         });
     }
 });
@@ -517,6 +575,10 @@ window.navigateTo = function (viewName, param = null) {
         newUrl = "?accion=favoritos";
     } else if (viewName === 'plans') {
         newUrl = "?accion=planes";
+    } else if (viewName === 'reviews') {
+        newUrl = "?accion=reseñas";
+    } else if (viewName === 'scanner') {
+        newUrl = "?accion=scanner";
     } else if (viewName === 'genre') {
         newUrl = `?genero=${encodeURIComponent(param)}`;
     }
@@ -544,6 +606,8 @@ window.renderView = function (viewName, param) {
     else if (viewName === 'movies') document.getElementById('link-peliculas')?.classList.add('active');
     else if (viewName === 'favorites') document.getElementById('link-favoritos')?.classList.add('active');
     else if (viewName === 'plans') document.getElementById('link-planes')?.classList.add('active');
+    else if (viewName === 'reviews') document.getElementById('link-reviews')?.classList.add('active');
+    else if (viewName === 'scanner') document.getElementById('link-scanner')?.classList.add('active');
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -576,6 +640,8 @@ window.renderView = function (viewName, param) {
         else if (viewName === 'movies') window.mostrarGrid("Películas", "Película");
         else if (viewName === 'favorites') window.mostrarFavoritos();
         else if (viewName === 'plans') window.mostrarPlanes();
+        else if (viewName === 'reviews') window.mostrarReseñas();
+        else if (viewName === 'scanner') window.mostrarScanner();
         else if (viewName === 'genre') window.mostrarGenero(param);
     }
 };
@@ -811,8 +877,8 @@ function createBackdropCard(dataCatalogo, progressItem) {
         infoTexto = dataCatalogo.fecha.split("-")[0];
     }
 
-    // Porcentaje
-    const percent = Math.min(100, Math.max(0, (progressItem.time / progressItem.duration) * 100));
+    // Porcentaje (Si duration es 0, asumimos 0%)
+    const percent = progressItem.duration > 0 ? Math.min(100, Math.max(0, (progressItem.time / progressItem.duration) * 100)) : 0;
 
     // --- BTN ELIMINAR (NUEVO) ---
     // Se inserta dentro de img-container para que quede sobre la imagen
@@ -846,17 +912,21 @@ function createBackdropCard(dataCatalogo, progressItem) {
             // 1. Borrar progreso
             removeVideoProgress(progressItem.id); // Usamos el ID original del progreso
 
-            // 2. Eliminar UI
+            // 2. Identificar el contenedor ANTES de borrar la tarjeta
+            // Esto es crucial porque card.parentNode se pierde al hacer remove()
+            const container = card.parentElement;
+
+            // 3. Eliminar UI
             card.remove();
 
-            // 3. Verificar si quedó vacía la sección
-            const container = document.querySelector(".seccion-continue-watching .carrusel");
+            // 4. Verificar si quedó vacía la sección USANDO EL CONTENEDOR CAPTURADO
             if (container && container.children.length === 0) {
-                const seccion = document.querySelector(".seccion-continue-watching");
+                // Buscamos la sección completa (padre del carrusel container, padre del carrusel)
+                const seccion = container.closest(".seccion-continue-watching");
                 if (seccion) seccion.remove();
             }
 
-            // 4. Feedback
+            // 5. Feedback
             mostrarToast("Obra eliminada de la sección");
         });
     }
@@ -989,6 +1059,24 @@ window.mostrarPlanes = function () {
     const hero = document.querySelector(".hero");
     if (hero) hero.style.display = "none";
 
+    let username = "Invitado";
+    let userRole = "free";
+    try {
+        const userStr = localStorage.getItem('vanacue_user');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            if (user.username) username = user.username;
+            if (user.role) userRole = user.role;
+        }
+    } catch (e) {
+        console.error("Error retrieving user", e);
+    }
+
+    const isPremium = userRole === 'premium' || userRole === 'admin';
+    const premiumBtnHtml = isPremium
+        ? `<button class="plan-btn disabled">Ya lo tienes</button>`
+        : `<button id="btn-request-premium" class="plan-btn primary">Lo quiero</button>`;
+
     main.innerHTML = `
     <section class="planes-container">
         <!-- PLAN FREE -->
@@ -1011,7 +1099,7 @@ window.mostrarPlanes = function () {
                 <li>Acceso ILIMITADO al contenido</li>
                 <li>Prioridad en pedidos y subidas</li>
             </ul>
-            <button id="btn-request-premium" class="plan-btn primary">Lo quiero</button>
+            ${premiumBtnHtml}
         </div>
     </section>
     `;
@@ -1020,22 +1108,10 @@ window.mostrarPlanes = function () {
     const btnPremium = document.getElementById("btn-request-premium");
     if (btnPremium) {
         btnPremium.addEventListener("click", () => {
-            // 1. Get User
-            let username = "Invitado";
-            try {
-                const userStr = localStorage.getItem('vanacue_user');
-                if (userStr) {
-                    const user = JSON.parse(userStr);
-                    if (user.username) username = user.username;
-                }
-            } catch (e) {
-                console.error("Error retrieving user", e);
-            }
-
-            // 2. Generate Message
+            // Generate Message
             const message = `¡Hola! soy el usuario ${username}, quisiera mejorar mi plan de Vanacue, espero más información.`;
 
-            // 3. Open Telegram with pre-filled message
+            // Open Telegram with pre-filled message
             const telegramUrl = `https://t.me/llzkxrll?text=${encodeURIComponent(message)}`;
             window.open(telegramUrl, "_blank");
         });
@@ -1054,11 +1130,11 @@ window.mostrarFavoritos = function () {
 
     // Renderizar Estructura
     main.innerHTML = `
-    <section class="seccion-favoritos" style="padding-top: 120px;"> 
+                <section class="seccion-favoritos" style="padding-top: 120px;"> 
       <h2>Mi Lista</h2>
       <div id="grid-favoritos-spa" class="grid-genero"></div>
     </section>
-    `;
+                `;
 
     const grid = document.getElementById("grid-favoritos-spa");
     window.renderizarFavoritosInto(grid);
@@ -1085,7 +1161,7 @@ window.renderizarFavoritosInto = function (grid) {
                             ¡Explora el catálogo y marca tus favoritas!
                         </p>
                 </div>
-            `;
+                `;
                 return;
             }
 
@@ -1121,6 +1197,736 @@ window.renderizarFavoritosInto = function (grid) {
             grid.innerHTML = "<p style='text-align:center; color:#777;'>Error al cargar datos.</p>";
         });
 };
+
+// ==========================================
+// SECCIÓN DE RESEÑAS
+// ==========================================
+
+// ==========================================
+// SECCIÓN DE RESEÑAS CON PAGINACIÓN
+// ==========================================
+
+let reviewsCurrentPage = 1;
+const REVIEWS_PER_PAGE = 3;
+
+window.mostrarReseñas = function () {
+    const main = document.querySelector("main");
+    const menubar = document.querySelector(".menubar");
+    if (menubar) menubar.classList.add("scrolled");
+
+    // Hide Hero
+    const hero = document.querySelector(".hero");
+    if (hero) hero.style.display = "none";
+
+    // User Role Info
+    const userStr = localStorage.getItem('vanacue_user');
+    const user = userStr ? JSON.parse(userStr) : { username: 'Invitado', role: 'free' };
+    const isPremium = user.role === 'premium' || user.role === 'admin';
+
+    // 1. BANNER DINÁMICO
+    let bannerHtml = "";
+    if (!isPremium) {
+        bannerHtml = `
+            <div class="review-banner">
+                <div class="banner-content">
+                    <img src="Multimedia/info.svg" alt="Plus" class="banner-icon">
+                    <div class="banner-text">
+                        <h3>¿Quieres compartir tu opinión?</h3>
+                        <p>Solo los miembros con suscripción <span class="plus-highlight">Premium</span> pueden escribir, puntuar y comentar contenido. ¡Únete a Vanacue Premium hoy!</p>
+                    </div>
+                </div>
+                <button class="btn-banner-plans" onclick="window.navigateTo('plans')">VER PLAN PREMIUM</button>
+            </div>
+        `;
+    } else {
+        bannerHtml = `
+            <div class="review-banner banner-plus">
+                <div class="banner-content">
+                    <img src="Multimedia/info.svg" alt="Plus" class="banner-icon">
+                    <div class="banner-text">
+                        <h3>Funcionamiento de reseñas</h3>
+                    </div>
+                </div>
+                <div class="plus-instructions-grid">
+                    <div class="plus-col">
+                        <div class="inst-item"><span class="inst-num">1</span> Selecciona la obra que quieras puntuar y da click en el "lápiz".</div>
+                        <div class="inst-item"><span class="inst-num">2</span> Puntúa de 1 a 5 estrellas.</div>
+                        <div class="inst-item"><span class="inst-num">3</span> Redacta, no uses palabras antisonantes ni spoilers.</div>
+                    </div>
+                    <div class="plus-col">
+                        <div class="inst-item"><span class="inst-num">4</span> Publica tu reseña.</div>
+                        <div class="inst-item"><span class="inst-num">5</span> Espera aprobación por parte de la administración.</div>
+                        <div class="inst-item"><span class="inst-num">6</span> Una vez aprobada, puedes compartirla en tus redes sociales.</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // 2. POPULARES AHORA (Artículos con popular: true) - Orden más reciente agregado
+    const populares = (typeof globalData !== 'undefined' ? globalData : [])
+        .filter(p => p.popular === true)
+        .reverse()
+        .slice(0, 4);
+    let popularesHtml = populares.map(p => {
+        const pJson = JSON.stringify(p).replace(/'/g, "&apos;");
+        return `
+            <div class="sidebar-movie-card" onclick='abrirModal(${pJson})'>
+                <div class="img-container">
+                    <img src="${p.portada}" alt="${p.titulo}">
+                </div>
+                <div class="movie-mini-info">
+                    <h4>${p.titulo}</h4>
+                    <p>${p.calificacion} ★</p>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    const adminSection = user.role === 'admin' ? `
+        <div class="admin-moderation-section">
+            <div class="admin-header">
+                <h2>Panel de Moderación <span class="admin-badge">ADMIN</span></h2>
+                <p>Reseñas pendientes de aprobación.</p>
+            </div>
+            <div id="admin-moderation-panel" class="moderation-grid">
+                <div class="loading-spinner">Cargando pendientes...</div>
+            </div>
+        </div>
+    ` : "";
+
+    main.innerHTML = `
+        <div class="seccion-reviews">
+            <div class="reviews-header-info">
+                <h1>Reseñas de la Comunidad</h1>
+                <p>Descubre las opiniones sobre los estrenos más recientes y los clásicos de siempre.</p>
+            </div>
+
+            ${adminSection}
+            ${bannerHtml}
+
+            <div class="reviews-main-grid">
+                <aside class="reviews-sidebar">
+                    <h2>Populares ahora <span class="ver-todo" onclick="window.navigateTo('home')">Ver todo</span></h2>
+                    <div class="sidebar-cards">
+                        ${popularesHtml}
+                    </div>
+                </aside>
+
+                <section class="reviews-content-area">
+                    <h2>Últimas reseñas <span class="recientes-filter">Recientes ▾</span></h2>
+                    <div class="reviews-search-wrapper">
+                        <input type="text" id="reviews-search-input" class="reviews-search-input" placeholder="Buscar por película o usuario...">
+                    </div>
+                    <div id="paginated-reviews-container">
+                        <!-- Aquí se inyectan las reseñas paginadas -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    `;
+
+    // Renderizar primera página de reseñas públicas
+    window.renderPaginatedReviews(1);
+
+    // Botón de ordenamiento Recientes
+    setTimeout(() => {
+        const filtroBtn = document.querySelector('.recientes-filter');
+        if (filtroBtn) {
+            filtroBtn.onclick = () => {
+                reviewsSortOrder = reviewsSortOrder === 'DESC' ? 'ASC' : 'DESC';
+                filtroBtn.textContent = reviewsSortOrder === 'DESC' ? 'Recientes ▾' : 'Antiguas ▴';
+                filtroBtn.style.color = reviewsSortOrder === 'ASC' ? '#e50914' : '';
+                window.renderPaginatedReviews(1);
+            };
+        }
+
+        // Buscador de reseñas (filtra tarjetas visibles por título y username)
+        const searchInput = document.getElementById('reviews-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim().toLowerCase();
+                const cards = document.querySelectorAll('.review-card');
+                cards.forEach(card => {
+                    const title = (card.querySelector('.review-movie-title')?.textContent || '').toLowerCase();
+                    const user = (card.querySelector('.user-meta h4')?.textContent || '').toLowerCase();
+                    card.style.display = (!query || title.includes(query) || user.includes(query)) ? '' : 'none';
+                });
+                // Mostrar mensaje si no hay resultados
+                const container = document.getElementById('paginated-reviews-container');
+                if (container) {
+                    let noResults = container.querySelector('.no-search-results');
+                    const visibles = [...cards].filter(c => c.style.display !== 'none');
+                    if (query && visibles.length === 0) {
+                        if (!noResults) {
+                            noResults = document.createElement('div');
+                            noResults.className = 'no-search-results';
+                            noResults.style.cssText = 'padding:2rem; text-align:center; color:#555; font-size:0.95rem;';
+                            noResults.textContent = `No hay reseñas que coincidan con "${searchInput.value}"`;
+                            container.appendChild(noResults);
+                        }
+                    } else if (noResults) {
+                        noResults.remove();
+                    }
+                }
+            });
+        }
+    }, 100);
+
+    // Si es admin, renderizar panel de moderación
+    if (user.role === 'admin') {
+        window.renderAdminModerationPanel();
+    }
+};
+
+let openDiscussionIndex = null; // Trackea qué discusión está abierta
+let reviewsSortOrder = 'DESC'; // 'DESC' = más reciente, 'ASC' = más antiguo
+
+window.renderPaginatedReviews = async function (page) {
+    const container = document.getElementById('paginated-reviews-container');
+    if (!container) return;
+
+    reviewsCurrentPage = page;
+
+    try {
+        const REVIEWS_PER_PAGE = 10;
+        const limit = REVIEWS_PER_PAGE;
+        const token = localStorage.getItem('vanacue_token');
+        const response = await fetch(`${API_URL}/api/reviews?page=${page}&limit=${limit}&order=${reviewsSortOrder}`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const data = await response.json();
+
+        if (!data.success || !data.reviews) {
+            container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No hay reseñas disponibles aún.</div>';
+            return;
+        }
+
+        const reviews = data.reviews;
+
+        if (reviews.length === 0 && page === 1) {
+            container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No hay reseñas disponibles aún.</div>';
+            return;
+        }
+
+        // Generar HTML de paginación
+        let paginationHtml = `<div class="reviews-pagination">`;
+        if (page > 1) {
+            paginationHtml += `<button onclick="window.renderPaginatedReviews(${page - 1})">Anterior</button>`;
+        }
+        if (reviews.length === limit) {
+            paginationHtml += `<button onclick="window.renderPaginatedReviews(${page + 1})">Siguiente</button>`;
+        }
+        paginationHtml += `</div>`;
+
+        const currentUserRole = (() => { try { return JSON.parse(localStorage.getItem('vanacue_user') || '{}').role; } catch (e) { return null; } })();
+        const isAdmin = currentUserRole === 'admin';
+
+        let reviewsHtml = reviews.map((r, idx) => {
+            const isLiked = r.user_has_liked === 1;
+            const isDisliked = r.user_has_disliked === 1;
+            const isCommented = false;
+            const isExpanded = openDiscussionIndex === r.id;
+
+            return `
+            <div class="review-card ${isExpanded ? 'is-expanded' : ''}" data-id="${r.id}">
+                <div class="review-card-header">
+                    <div class="user-info-row">
+                        <img src="Multimedia/Profiles/${r.profile_pic || 'alucard.jpg'}" alt="Avatar" class="user-avatar" onerror="this.src='Multimedia/logo.png'">
+                        <div class="user-meta">
+                            <h4>${r.username}</h4>
+                            <p>Reseñado el ${new Date(r.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        </div>
+                    </div>
+                    <div class="review-stars">
+                        ${Array(5).fill(0).map((_, i) => `<img src="Multimedia/star_r.svg" class="star-icon ${i >= r.rating ? 'empty' : ''}">`).join("")}
+                    </div>
+                </div>
+                <div class="review-movie-title">${r.movie_title} (${r.movie_year})</div>
+                <p class="review-comment">"${r.comment}"</p>
+                <div class="review-card-footer">
+                    <div class="footer-action" onclick="window.toggleReviewLike(${r.id})">
+                        <img src="Multimedia/${isLiked ? 'like_2.svg' : 'like_1.svg'}" class="footer-icon-svg ${isLiked ? 'active' : ''}">
+                        <span class="like-count">${r.likes}</span>
+                    </div>
+                    <div class="footer-action" onclick="window.toggleReviewDislike(${r.id})">
+                        <img src="Multimedia/${isDisliked ? 'dislike_2.svg' : 'dislike_1.svg'}" class="footer-icon-svg ${isDisliked ? 'active' : ''}">
+                        <span class="dislike-count">${r.dislikes}</span>
+                    </div>
+                    <div class="footer-action" onclick="window.toggleReviewComment(${r.id})">
+                        <img src="Multimedia/${isCommented ? 'comment_2.svg' : 'comment_1.svg'}" class="footer-icon-svg ${isCommented ? 'active' : ''}">
+                        <span>${r.comments_count}</span>
+                    </div>
+                    <div class="footer-action" onclick="window.openShareModalBackend(${r.id})">
+                        <img src="Multimedia/share_r.svg" class="footer-icon-svg">
+                        <span>Compartir</span>
+                    </div>
+                    ${isAdmin ? `<div class="footer-action footer-action-delete" onclick="window.deleteReview(${r.id})">
+                        <img src="Multimedia/delete.svg" class="footer-icon-svg" onerror="this.style.display='none'">
+                        <span>Eliminar</span>
+                    </div>` : ''}
+                </div>
+
+                <div class="discussion-container" id="discussion-${r.id}" style="${isExpanded ? 'display:block' : 'display:none'}">
+                    <!-- Área de Comentarios -->
+                </div>
+            </div>
+            `;
+        }).join("");
+
+        // 1. Inyectar el HTML de las reseñas
+        container.innerHTML = reviewsHtml + paginationHtml;
+
+        // 2. Si hay una discusión abierta, cargar sus comentarios
+        if (openDiscussionIndex !== null) {
+            const discussionContainer = document.getElementById(`discussion-${openDiscussionIndex}`);
+            if (discussionContainer) {
+                renderDiscussionArea(openDiscussionIndex, discussionContainer);
+            }
+        }
+
+        // 3. Sobrescribir los onclick de compartir para pasar el objeto completo
+        reviews.forEach(r => {
+            const card = container.querySelector(`.review-card[data-id="${r.id}"]`);
+            if (card) {
+                const shareBtn = card.querySelector('[onclick*="openShareModalBackend"]');
+                if (shareBtn) shareBtn.onclick = (e) => { e.stopPropagation(); window.openShareModal(r); };
+            }
+        });
+
+    } catch (e) {
+        console.error("Error al cargar reseñas:", e);
+        container.innerHTML = `<div style="padding:15px; text-align:center; color:#f00;">Error: ${e.message}</div>`;
+    }
+};
+
+window.toggleReviewLike = async function (reviewId) {
+    await handleReviewReaction(reviewId, 'like');
+};
+
+window.toggleReviewDislike = async function (reviewId) {
+    await handleReviewReaction(reviewId, 'dislike');
+};
+
+async function handleReviewReaction(reviewId, type) {
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return mostrarToast("Inicia sesión para reaccionar.");
+
+    const userStr = localStorage.getItem('vanacue_user');
+    const userRole = userStr ? JSON.parse(userStr).role : 'free';
+    if (userRole === 'free') {
+        return mostrarToast("Necesitas suscripción premium para realizar esta acción.");
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/reviews/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ review_id: reviewId, type })
+        });
+        const data = await response.json();
+        console.log('[Like] Server response:', data);
+        if (data.success) {
+            // Actualización quirúrgica del DOM
+            const card = document.querySelector(`.review-card[data-id="${reviewId}"]`);
+            if (card) {
+                const footer = card.querySelector('.review-card-footer');
+                const likeBtn = footer ? footer.querySelector('[onclick*="toggleReviewLike"]') : null;
+                const dislikeBtn = footer ? footer.querySelector('[onclick*="toggleReviewDislike"]') : null;
+
+                const likeCount = likeBtn ? likeBtn.querySelector('.like-count') : card.querySelector('.like-count');
+                const dislikeCount = dislikeBtn ? dislikeBtn.querySelector('.dislike-count') : card.querySelector('.dislike-count');
+                const likeIcon = likeBtn ? likeBtn.querySelector('.footer-icon-svg') : null;
+                const dislikeIcon = dislikeBtn ? dislikeBtn.querySelector('.footer-icon-svg') : null;
+
+                const newLikes = typeof data.likes === 'number' ? data.likes : parseInt(data.likes) || 0;
+                const newDislikes = typeof data.dislikes === 'number' ? data.dislikes : parseInt(data.dislikes) || 0;
+
+                if (likeCount) likeCount.innerText = newLikes;
+                if (dislikeCount) dislikeCount.innerText = newDislikes;
+
+                if (likeIcon) {
+                    likeIcon.src = data.user_has_liked ? 'Multimedia/like_2.svg' : 'Multimedia/like_1.svg';
+                    likeIcon.classList.toggle('active', !!data.user_has_liked);
+                }
+                if (dislikeIcon) {
+                    dislikeIcon.src = data.user_has_disliked ? 'Multimedia/dislike_2.svg' : 'Multimedia/dislike_1.svg';
+                    dislikeIcon.classList.toggle('active', !!data.user_has_disliked);
+                }
+            }
+        } else {
+            mostrarToast(data.message || 'Error al reaccionar.');
+        }
+    } catch (e) {
+        console.error('[Like] Error:', e);
+    }
+}
+
+window.deleteReview = async function (reviewId) {
+    if (!confirm('¿Eliminar esta reseña? Esta acción no se puede deshacer.')) return;
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return;
+    try {
+        const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+            const card = document.querySelector(`.review-card[data-id="${reviewId}"]`);
+            if (card) {
+                card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => card.remove(), 300);
+            }
+            mostrarToast('Reseña eliminada correctamente.');
+        } else {
+            mostrarToast(data.message || 'Error al eliminar.');
+        }
+    } catch (e) {
+        console.error('[DeleteReview]', e);
+        mostrarToast('Error de conexión.');
+    }
+};
+
+window.formatRelativeDate = function (dateString) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return 'hace unos segundos';
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `hace ${diffInMinutes} ${diffInMinutes === 1 ? 'minuto' : 'minutos'}`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `hace ${diffInHours} ${diffInHours === 1 ? 'hora' : 'horas'}`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `hace ${diffInDays} ${diffInDays === 1 ? 'día' : 'días'}`;
+
+    return date.toLocaleDateString();
+};
+
+window.toggleReviewComment = function (reviewId) {
+    const container = document.getElementById(`discussion-${reviewId}`);
+    if (!container) return;
+
+    if (openDiscussionIndex === reviewId) {
+        // Cerrar
+        openDiscussionIndex = null;
+        container.style.display = 'none';
+        document.querySelector(`.review-card[data-id="${reviewId}"]`).classList.remove('is-expanded');
+    } else {
+        // Abrir (y cerrar previa si hubiera)
+        if (openDiscussionIndex !== null) {
+            const prev = document.getElementById(`discussion-${openDiscussionIndex}`);
+            if (prev) prev.style.display = 'none';
+            const prevCard = document.querySelector(`.review-card[data-id="${openDiscussionIndex}"]`);
+            if (prevCard) prevCard.classList.remove('is-expanded');
+        }
+
+        openDiscussionIndex = reviewId;
+        container.style.display = 'block';
+        document.querySelector(`.review-card[data-id="${reviewId}"]`).classList.add('is-expanded');
+        renderDiscussionArea(reviewId, container);
+    }
+};
+
+async function renderDiscussionArea(reviewId, container, shouldScroll = false) {
+    try {
+        const response = await fetch(`${API_URL}/api/reviews/${reviewId}/comments`);
+        const data = await response.json();
+
+        const comments = data.success ? data.comments : [];
+        const userStr = localStorage.getItem('vanacue_user');
+        let currentUserPic = 'alucard.jpg';
+        if (userStr) {
+            try {
+                const u = JSON.parse(userStr);
+                currentUserPic = u.profile_pic || 'alucard.jpg';
+            } catch (e) { }
+        }
+
+        container.innerHTML = `
+            <div class="comments-list-wrapper custom-scrollbar" id="comments-wrapper-${reviewId}">
+                <div class="comments-list" id="comments-list-${reviewId}">
+                    ${(() => {
+                const userStr = localStorage.getItem('vanacue_user');
+                const userData = userStr ? JSON.parse(userStr) : null;
+                const currentUserName = userData ? userData.username : null;
+                const currentUserRole = userData ? userData.role : null;
+
+                return comments.map(c => {
+                    const isAdmin = c.role === 'admin';
+                    const isMe = currentUserName && c.username === currentUserName;
+                    const canDelete = currentUserRole === 'admin';
+
+                    // Forzar interpretación como UTC si viene de SQLite sin indicador
+                    const dateStr = c.created_at.includes('T') ? c.created_at : c.created_at.replace(' ', 'T') + 'Z';
+                    const d = new Date(dateStr);
+                    const months = ["Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic."];
+                    const day = d.getDate();
+                    const month = months[d.getMonth()];
+                    const year = d.getFullYear();
+
+                    let hours = d.getHours();
+                    const ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12 || 12;
+                    const minutes = d.getMinutes().toString().padStart(2, '0');
+                    const formattedDate = `${day} ${month} a las ${hours}:${minutes} ${ampm} ${year}`;
+                    return `
+                        <div class="comment-item ${isAdmin ? 'is-admin' : ''} ${isMe ? 'is-me' : ''}">
+                            <div class="comment-user-info">
+                                <img src="Multimedia/Profiles/${c.profile_pic || 'alucard.jpg'}" alt="Avatar" class="comment-avatar" onerror="this.src='Multimedia/logo.png'">
+                                <div class="comment-user-text">
+                                    <div class="comment-user-row">
+                                        <span class="comment-user">${c.username}</span>
+                                        ${isAdmin ? '<span class="comment-admin-badge">ADMIN</span>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-content-row">
+                                <div class="comment-bubble">
+                                    <span class="comment-text">${c.comment}</span>
+                                </div>
+                                ${canDelete ? `<button class="btn-comment-delete" title="Eliminar Comentario" onclick="window.deleteComment(${c.id}, ${reviewId})">Eliminar</button>` : ''}
+                            </div>
+                            <span class="comment-date">${formattedDate}</span>
+                        </div>
+                    `;
+                }).join("");
+            })()}
+                </div>
+            </div>
+            <div class="reply-area">
+                <div class="reply-main">
+                    <img src="Multimedia/Profiles/${currentUserPic}" alt="Tu Avatar" class="reply-avatar" onerror="this.src='Multimedia/logo.png'">
+                    <div class="reply-input-wrapper">
+                        <textarea placeholder="Añadir un comentario..." id="reply-input-${reviewId}" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    </div>
+                </div>
+                <div class="reply-actions" id="reply-actions-${reviewId}">
+                    <button class="btn-reply-cancel" onclick="window.toggleReviewComment(${reviewId})">Cancelar</button>
+                    <button class="btn-reply-send" id="btn-reply-send-${reviewId}" onclick="window.postComment(${reviewId})">Responder</button>
+                </div>
+            </div>
+        `;
+        container.style.display = 'block';
+
+        if (shouldScroll) {
+            setTimeout(() => {
+                const wrapper = document.getElementById(`comments-wrapper-${reviewId}`);
+                if (wrapper) wrapper.scrollTop = wrapper.scrollHeight;
+            }, 100);
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+window.postComment = async function (reviewId) {
+    const input = document.getElementById(`reply-input-${reviewId}`);
+    const btnSend = document.getElementById(`btn-reply-send-${reviewId}`);
+    const comment = input.value.trim();
+    if (!comment) return;
+
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return mostrarToast("Inicia sesión para comentar.");
+
+    const userStr = localStorage.getItem('vanacue_user');
+    const userRole = userStr ? JSON.parse(userStr).role : 'free';
+    if (userRole === 'free') {
+        return mostrarToast("Necesitas suscripción premium para realizar esta acción.");
+    }
+
+    try {
+        if (btnSend) {
+            btnSend.disabled = true;
+            btnSend.innerText = "...";
+        }
+
+        const response = await fetch(`${API_URL}/api/reviews/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ review_id: reviewId, comment })
+        });
+        const data = await response.json();
+        if (data.success) {
+            input.value = '';
+            const list = document.getElementById(`comments-list-${reviewId}`);
+            if (list) {
+                const isAdmin = data.comment_data.role === 'admin';
+                const userStr = localStorage.getItem('vanacue_user');
+                const userData = userStr ? JSON.parse(userStr) : null;
+                const canDelete = userData && userData.role === 'admin';
+
+                const d = new Date();
+                const months = ["Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic."];
+                const day = d.getDate();
+                const month = months[d.getMonth()];
+                const year = d.getFullYear();
+
+                let hours = d.getHours();
+                const ampm = hours >= 12 ? 'pm' : 'am';
+                hours = hours % 12 || 12;
+                const minutes = d.getMinutes().toString().padStart(2, '0');
+                const formattedDate = `${day} ${month} a las ${hours}:${minutes} ${ampm} ${year}`;
+
+                const newCommentHtml = `
+                    <div class="comment-item ${isAdmin ? 'is-admin' : ''} is-me" style="opacity:0; transform:translateY(10px); transition:all 0.3s ease;">
+                        <div class="comment-user-info">
+                            <img src="Multimedia/Profiles/${data.comment_data.profile_pic || 'alucard.jpg'}" alt="Avatar" class="comment-avatar" onerror="this.src='Multimedia/logo.png'">
+                            <div class="comment-user-text">
+                                <div class="comment-user-row">
+                                    <span class="comment-user">${data.comment_data.username}</span>
+                                    ${isAdmin ? '<span class="comment-admin-badge">ADMIN</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-content-row">
+                            <div class="comment-bubble">
+                                <span class="comment-text">${data.comment_data.comment}</span>
+                            </div>
+                            ${canDelete ? `<button class="btn-comment-delete" title="Eliminar Comentario" onclick="window.deleteComment(${data.comment_data.id}, ${reviewId})">Eliminar</button>` : ''}
+                        </div>
+                        <span class="comment-date">${formattedDate}</span>
+                    </div>
+                `;
+                list.insertAdjacentHTML('beforeend', newCommentHtml);
+
+                if (btnSend) {
+                    btnSend.disabled = false;
+                    btnSend.innerText = "Responder";
+                }
+
+                // Animación de entrada
+                const newEl = list.lastElementChild;
+                setTimeout(() => {
+                    newEl.style.opacity = '1';
+                    newEl.style.transform = 'translateY(0)';
+                }, 10);
+
+                // Scroll suave al nuevo comentario
+                const wrapper = document.getElementById(`comments-wrapper-${reviewId}`);
+                if (wrapper) {
+                    wrapper.scrollTo({
+                        top: wrapper.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+
+                // Actualizar contador en el footer
+                const card = document.querySelector(`.review-card[data-id="${reviewId}"]`);
+                if (card) {
+                    const commentCountSpan = card.querySelector('.footer-action:nth-child(3) span');
+                    if (commentCountSpan) {
+                        const currentCount = parseInt(commentCountSpan.innerText) || 0;
+                        commentCountSpan.innerText = currentCount + 1;
+                    }
+                }
+            }
+        } else {
+            mostrarToast(data.message);
+            if (btnSend) {
+                btnSend.disabled = false;
+                btnSend.innerText = "Responder";
+            }
+        }
+    } catch (e) {
+        console.error(e);
+        if (btnSend) {
+            btnSend.disabled = false;
+            btnSend.innerText = "Responder";
+        }
+    }
+};
+
+window.renderAdminModerationPanel = async function () {
+    const container = document.getElementById('admin-moderation-panel');
+    if (!container) return;
+
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${API_URL}/api/admin/reviews/pending`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (!data.success || data.reviews.length === 0) {
+            container.innerHTML = '<div class="no-pending">No hay reseñas pendientes.</div>';
+            return;
+        }
+
+        container.innerHTML = data.reviews.map(r => `
+            <div class="moderation-card" id="mod-card-${r.id}">
+                <div class="mod-card-header">
+                    <img src="Multimedia/Profiles/${r.profile_pic || 'alucard.jpg'}" alt="Avatar" class="user-avatar" onerror="this.src='Multimedia/logo.png'">
+                    <div class="user-meta">
+                        <h4>${r.username}</h4>
+                        <p>${r.movie_title} (${r.movie_year})</p>
+                    </div>
+                    <div class="mod-stars">
+                        ${r.rating} ★
+                    </div>
+                </div>
+                <p class="mod-comment">"${r.comment}"</p>
+                <div class="mod-actions">
+                    <button class="btn-mod-reject" onclick="window.moderateReview(${r.id}, false)">Rechazar</button>
+                    <button class="btn-mod-approve" onclick="window.moderateReview(${r.id}, true)">Aprobar</button>
+                </div>
+            </div>
+        `).join("");
+
+    } catch (e) {
+        console.error("Error cargando panel de moderación:", e);
+        container.innerHTML = '<div class="error">Error al conectar con el servidor.</div>';
+    }
+};
+
+window.moderateReview = async function (reviewId, approve) {
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return;
+
+    const btnText = approve ? 'Aprobando...' : 'Rechazando...';
+    const card = document.getElementById(`mod-card-${reviewId}`);
+    if (card) card.style.opacity = '0.5';
+
+    try {
+        const response = await fetch(`${API_URL}/api/admin/reviews/moderate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ review_id: reviewId, approve })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            mostrarToast(approve ? "Reseña aprobada" : "Reseña rechazada");
+            window.renderAdminModerationPanel(); // Recargar lista de pendientes
+            window.renderPaginatedReviews(1);    // Recargar lista pública si se aprobó
+        } else {
+            mostrarToast(data.message);
+            if (card) card.style.opacity = '1';
+        }
+    } catch (e) {
+        console.error(e);
+        mostrarToast("Error de conexión");
+        if (card) card.style.opacity = '1';
+    }
+};
+// Bloque de código eliminado por redundancia con la integración del backend
 
 // PopState Handler (Browser Back Button)
 window.addEventListener("popstate", (event) => {
@@ -1177,7 +1983,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Usamos la función que creamos antes
                 const last = typeof getLastEpisode === 'function' ? getLastEpisode(item.titulo) : null;
                 if (last) {
-                    textoBoton = `▶ Continuar T${last.seasonNumber}:E${last.episodeNumber}`;
+                    textoBoton = `▶ Continuar T${last.seasonNumber}:E${last.episodeNumber} `;
                 }
             }
 
@@ -1187,23 +1993,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const telegramUrl = item.enlaceTelegram || ""; // Usamos el del hero o datos
 
             slide.innerHTML = `
-              <img src="${item.imagen}" alt="${item.titulo}" class="hero-img">
-              <div class="hero-content">
-                  <img src="${item.logo}" alt="Título ${item.titulo}" class="hero-logo">
-                  <p class="hero-subtitle">${item.subtitulo}</p>
-                  
-                  <div class="hero-botones-wrapper">
-                      <button class="hero-btn play-trigger" data-titulo="${item.titulo}">
-                          ${textoBoton}
-                      </button>
+                <img src="${item.imagen}" alt="${item.titulo}" class="hero-img">
+                    <div class="hero-content">
+                        <img src="${item.logo}" alt="Título ${item.titulo}" class="hero-logo">
+                            <p class="hero-subtitle">${item.subtitulo}</p>
 
-                      ${telegramUrl ? `
+                            <div class="hero-botones-wrapper">
+                                <button class="hero-btn play-trigger" data-titulo="${item.titulo}">
+                                    ${textoBoton}
+                                </button>
+
+                                ${telegramUrl ? `
                       <a href="${telegramUrl}" target="_blank" class="btn-hero-telegram">
                           <img src="Multimedia/telegram.svg" alt="Ver en Telegram">
                       </a>` : ''}
-                  </div>
-              </div>
-          `;
+                            </div>
+                    </div>
+            `;
             heroContainer.appendChild(slide);
 
             // Crear Dot
@@ -1272,7 +2078,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const userStr = localStorage.getItem('vanacue_user');
             const usuario = userStr ? JSON.parse(userStr) : { role: 'free' };
 
-            if (dataCompleta.premium === true && usuario.role !== 'premium') {
+            if (dataCompleta.premium === true && usuario.role !== 'premium' && usuario.role !== 'admin') {
                 abrirModal(dataCompleta);
                 mostrarToast("Contenido Premium\nContacta a soporte en Telegram");
                 return;
@@ -1672,7 +2478,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
                 .reverse();
 
-            console.log(`Género: ${generoNombre} → Encontradas:`, peliculasFiltradas.map(p => p.titulo));
+            console.log(`Género: ${generoNombre} → Encontradas: `, peliculasFiltradas.map(p => p.titulo));
 
             // === Renderizar tarjetas ===
             peliculasFiltradas.forEach(pelicula => {
@@ -1736,6 +2542,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.navigateTo('plans');
             } else {
                 window.location.href = 'index.html?accion=planes';
+            }
+        });
+    }
+
+    const btnReviews = document.getElementById("link-reviews");
+    if (btnReviews) {
+        btnReviews.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (document.getElementById("mainContent")) {
+                window.navigateTo('reviews');
+            } else {
+                window.location.href = 'index.html?accion=reseñas';
             }
         });
     }
@@ -1917,7 +2735,7 @@ function renderizarEpisodios(serie, indiceTemporada) {
             const usuario = userStr ? JSON.parse(userStr) : { role: 'free' };
 
             // Usamos el objeto 'serie' que ya recibimos como parámetro en la función
-            if (serie.premium === true && usuario.role !== 'premium') {
+            if (serie.premium === true && usuario.role !== 'premium' && usuario.role !== 'admin') {
                 mostrarToast("Contenido Premium\nContacta a soporte en Telegram.");
                 return;
             }
@@ -1978,7 +2796,7 @@ function renderizarEpisodios(serie, indiceTemporada) {
                 </div>
                 <p class="episodio-sinopsis">${ep.sinopsis}</p>
             </div>
-        `;
+            `;
 
         listaContainer.appendChild(row);
     });
@@ -1994,7 +2812,7 @@ function actualizarUrlAlAbrir(pelicula) {
     if (id) {
         // Esto cambia la URL visualmente sin recargar la página
         // Guardamos un "estado" para saber que hay un modal abierto
-        const nuevaUrl = `?watch=${id}`;
+        const nuevaUrl = `? watch = ${id} `;
         window.history.pushState({ modalAbierto: true, id: id }, '', nuevaUrl);
     }
 }
@@ -2039,7 +2857,7 @@ function abrirModal(pelicula) {
     const tituloElem = document.getElementById('modal-titulo');
     if (tituloElem) tituloElem.innerText = pelicula.titulo;
 
-    document.getElementById('modal-calificacion').innerText = `Match ${Math.round(pelicula.calificacion * 10)}%`;
+    document.getElementById('modal-calificacion').innerText = `Match ${Math.round(pelicula.calificacion * 10)}% `;
     document.getElementById('modal-fecha').innerText = pelicula.fecha.substring(0, 4);
 
     // Ajuste visual para duración: si es serie, mostramos "X temporadas" o lo que venga en JSON
@@ -2053,6 +2871,33 @@ function abrirModal(pelicula) {
     document.getElementById('modal-director').innerText = pelicula.director || 'Desconocido';
     document.getElementById('modal-elenco').innerText = elencoStr;
     document.getElementById('modal-genero').innerText = generoStr;
+
+    // Botón "Ver reseñas"
+    const btnVerResenas = document.getElementById('modal-btn-ver-resenas');
+    if (btnVerResenas) {
+        btnVerResenas.style.display = 'inline-flex';
+        const tituloPelicula = pelicula.titulo || '';
+        btnVerResenas.onclick = () => {
+            // Cerrar modal y resetear overflow (fix del bug de scroll)
+            const modalInfo = document.getElementById('modal-info');
+            if (modalInfo) modalInfo.classList.add('hidden');
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+
+            window.navigateTo('reviews');
+
+            // Tras renderizar, volcar el título en el buscador y hacer scroll
+            setTimeout(() => {
+                const searchInput = document.getElementById('reviews-search-input');
+                if (searchInput && tituloPelicula) {
+                    searchInput.value = tituloPelicula;
+                    searchInput.dispatchEvent(new Event('input'));
+                }
+                const container = document.getElementById('paginated-reviews-container');
+                if (container) container.scrollIntoView({ behavior: 'smooth' });
+            }, 600);
+        };
+    }
 
     // 4. LÓGICA DE SERIES VS PELÍCULAS
     const seccionEpisodios = document.getElementById('seccion-episodios');
@@ -2091,7 +2936,6 @@ function abrirModal(pelicula) {
                 if (lastWatched && lastWatched.streamUrl) {
                     // CASO 1: TIENE HISTORIAL
                     const tituloRep = `T${lastWatched.seasonNumber}:E${lastWatched.episodeNumber} - ${lastWatched.titulo}`;
-                    // AGREGAMOS EL 4to ARGUMENTO: pelicula.subtitulos (o null si es por episodio específico, ver nota abajo)
                     // Reconstruir contexto desde historial (aproximado)
                     const contexto = {
                         tipo: 'serie',
@@ -2102,7 +2946,13 @@ function abrirModal(pelicula) {
                         episodioNumero: lastWatched.episodeNumber
                     };
 
-                    iniciarReproduccion(lastWatched.streamUrl, tituloRep, pelicula.fecha, pelicula.subtitulos, contexto);
+                    let episodioData = null;
+                    if (pelicula.temporadas && pelicula.temporadas[lastWatched.seasonIndex]) {
+                        episodioData = pelicula.temporadas[lastWatched.seasonIndex].episodios[lastWatched.episodeIndex];
+                    }
+                    const subs = episodioData && episodioData.subtitulos ? episodioData.subtitulos : [];
+
+                    iniciarReproduccion(lastWatched.streamUrl, tituloRep, pelicula.fecha, subs, contexto);
 
                 } else {
                     // CASO 2: EMPEZAR DESDE CERO
@@ -2134,7 +2984,8 @@ function abrirModal(pelicula) {
                         fechaSerie: pelicula.fecha
                     });
 
-                    iniciarReproduccion(primerEp.streamUrl, tituloRep, pelicula.fecha, pelicula.subtitulos, contexto);
+                    const subs = primerEp.subtitulos || [];
+                    iniciarReproduccion(primerEp.streamUrl, tituloRep, pelicula.fecha, subs, contexto);
                 }
 
             } else {
@@ -2160,7 +3011,7 @@ function abrirModal(pelicula) {
         if (pelicula.tipo === "Serie") {
             const lastWatched = getLastEpisode(pelicula.titulo);
             if (lastWatched) {
-                spanTexto.innerText = `Continuar T${lastWatched.seasonNumber}:E${lastWatched.episodeNumber}`;
+                spanTexto.innerText = `Continuar T${lastWatched.seasonNumber}:E${lastWatched.episodeNumber} `;
             } else {
                 spanTexto.innerText = "Reproducir T1:E1";
             }
@@ -2199,7 +3050,7 @@ function abrirModal(pelicula) {
         pelicula.temporadas.forEach((temp, index) => {
             const option = document.createElement('option');
             option.value = index; // Usamos el índice del array (0, 1, 2...)
-            option.text = temp.nombre || `Temporada ${temp.numero}`;
+            option.text = temp.nombre || `Temporada ${temp.numero} `;
 
             if (index === seasonIndexToRender) {
                 option.selected = true;
@@ -2277,6 +3128,35 @@ function abrirModal(pelicula) {
         });
     }
 
+    // ARREGLO PARA BOTÓN RESEÑA (PENCIL)
+    const btnReview = document.getElementById('modal-btn-review');
+    if (btnReview) {
+        // Hacemos el botón visible siempre
+        btnReview.classList.remove('hidden');
+        btnReview.style.display = 'flex';
+
+        // Clonamos para limpiar listeners previos
+        const newBtnReview = btnReview.cloneNode(true);
+        if (btnReview.parentNode) btnReview.parentNode.replaceChild(newBtnReview, btnReview);
+
+        newBtnReview.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Verificación unificada de "Premium/Admin"
+            const userStr = localStorage.getItem('vanacue_user');
+            const user = userStr ? JSON.parse(userStr) : { role: 'free' };
+            const isPremium = user.role === 'premium' || user.role === 'admin';
+
+            if (!isPremium) {
+                mostrarToast("Necesitas suscripción premium para realizar esta acción.");
+                return;
+            }
+
+            window.openWriteReviewModal(pelicula);
+        });
+    }
+
     // 5. CONFIGURACIÓN BOTÓN FAVORITOS (CORREGIDO)
     const btnFav = document.getElementById('modal-btn-favorito');
 
@@ -2341,6 +3221,16 @@ function resolverUrlVideo(url) {
 
 // === FUNCIÓN INICIAR REPRODUCCIÓN (ACTUALIZADA CON CONTEXTO) ===
 function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contexto = null) {
+    let displayYear = "";
+    if (fechaObra) {
+        const yearMatch = String(fechaObra).match(/^(\d{4})/);
+        if (yearMatch) {
+            displayYear = ` (${yearMatch[1]})`;
+        } else {
+            displayYear = ` (${fechaObra})`;
+        }
+    }
+    window.currentMediaWatching = tituloObra + displayYear;
 
     url = resolverUrlVideo(url);
 
@@ -2570,7 +3460,7 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
     // Creamos una nueva variable con la firma ?u=NombreUsuario
     const urlConUsuario = `${url}?u=${encodeURIComponent(usuarioLog)}`;
     // =============================================
-    const videoId = tituloObra.replace(/\s/g, '_').toLowerCase() + '_' + fechaObra;
+    const videoId = tituloObra.trim().replace(/\s/g, '_').toLowerCase() + '_' + fechaObra;
     const heroContainer = document.querySelector('.modal-hero');
     if (!heroContainer) return;
 
@@ -2599,13 +3489,20 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
 
     // Inyectar Subtítulos al DOM (<track>)
     if (subtitulos && Array.isArray(subtitulos)) {
-        subtitulos.forEach(sub => {
+        let hasDefault = subtitulos.some(s => s.default);
+
+        subtitulos.forEach((sub, idx) => {
             const track = document.createElement('track');
             track.kind = 'captions';
             track.label = sub.label;
             track.srclang = sub.lang;
-            track.src = sub.url;
-            if (sub.default) track.default = true;
+            track.src = resolverUrlVideo(sub.url);
+
+            if (sub.default) {
+                track.default = true;
+            } else if (!hasDefault && idx === 0) {
+                track.default = true; // Fix para algunos navegadores que ignoran la carga visual sin un default track
+            }
             videoElement.appendChild(track);
         });
     }
@@ -2617,8 +3514,9 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
         controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
         clickToPlay: false,
         // Active: true es vital para que Plyr renderice su propia UI de subtítulos
+        // language: 'auto' puede causar problemas en Safari si no hay metadata clara
         captions: { active: true, update: true, language: 'auto' },
-        fullscreen: { iosNative: true }
+        fullscreen: { iosNative: true, container: null } // iosNative true es necesario para iPhone
     };
 
     // ===============================================
@@ -2658,6 +3556,18 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
     const setupCustomControls = (playerInstance) => {
         const plyrContainer = playerInstance.elements.container;
         if (!plyrContainer) return;
+
+        // --- FIX IPHONE: Sincronización manual de TextTracks ---
+        const synchronizeNativeTracks = (activeIndex) => {
+            const tracks = videoElement.textTracks;
+            for (let i = 0; i < tracks.length; i++) {
+                if (i === activeIndex) {
+                    tracks[i].mode = 'showing';
+                } else {
+                    tracks[i].mode = 'hidden';
+                }
+            }
+        };
 
         // 1. LIMPIEZA
         const oldUI = plyrContainer.querySelectorAll('.custom-video-overlay, .video-overlay-title, .seek-feedback, .btn-close-video, .netflix-menu-overlay, .btn-next-episode');
@@ -2845,6 +3755,7 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
 
                 if (shouldTrigger) {
                     postPlayTriggered = true;
+                    playerInstance.isVideoFinished = true; // Avisamos a timeupdate para que elimine progreso
                     // Pasamos 'tituloObra' para evitar recomendarnos a nosotros mismos
                     // Y pasamos callback para manejar el "Cancel" (resetear flags si fuera necesario, pero aquí solo ocultamos)
                     mostrarPostPlay(tituloObra, contexto, () => {
@@ -2863,6 +3774,7 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
             if (timeRemaining > (triggerSeconds + 5)) { // Damos un margen de 5s
                 postPlayTriggered = false;
                 postPlayCancelled = false;
+                playerInstance.isVideoFinished = false; // Reset flag
                 ocultarPostPlay();
             }
         });
@@ -2988,7 +3900,13 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
             const offDiv = document.createElement('div');
             offDiv.className = `netflix-option ${isOff ? 'selected' : ''}`;
             offDiv.innerText = "Desactivado";
-            offDiv.onclick = (e) => { e.stopPropagation(); playerInstance.toggleCaptions(false); playerInstance.currentTrack = -1; renderMenuOptions(); };
+            offDiv.onclick = (e) => {
+                e.stopPropagation();
+                playerInstance.toggleCaptions(false);
+                playerInstance.currentTrack = -1;
+                synchronizeNativeTracks(-1); // Desactivar nativos
+                renderMenuOptions();
+            };
             listSubs.appendChild(offDiv);
 
             if (subtitulos.length > 0) {
@@ -2997,7 +3915,14 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
                     const div = document.createElement('div');
                     div.className = `netflix-option ${isActive ? 'selected' : ''}`;
                     div.innerText = sub.label;
-                    div.onclick = (e) => { e.stopPropagation(); playerInstance.currentTrack = idx; playerInstance.toggleCaptions(true); mostrarToast(`Subtítulos: ${sub.label}`); renderMenuOptions(); };
+                    div.onclick = (e) => {
+                        e.stopPropagation();
+                        playerInstance.currentTrack = idx;
+                        playerInstance.toggleCaptions(true);
+                        synchronizeNativeTracks(idx); // Sincronizar nativos para Safari
+                        mostrarToast(`Subtítulos: ${sub.label}`);
+                        renderMenuOptions();
+                    };
                     listSubs.appendChild(div);
                 });
             }
@@ -3099,9 +4024,11 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
                 setTimeout(() => {
                     plyrInstance.currentTrack = defaultSubIndex;
                     plyrInstance.toggleCaptions(true);
+                    synchronizeNativeTracks(defaultSubIndex); // Inicializar nativos
                 }, 200);
             } else {
                 plyrInstance.toggleCaptions(false);
+                synchronizeNativeTracks(-1);
             }
 
             // FIX: Red de seguridad - Si el resume nivel 1 (HLS) falló
@@ -3143,38 +4070,12 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
             }
 
             // LÓGICA DE FINALIZACIÓN (PRIORIDAD ALTA)
-            // Si ya cruzamos el umbral de Post-Play, borramos progreso y salimos.
-            // Esto asegura que si reanudas y terminas en <10s, se marque como visto.
-            if (plyrInstance.duration > 0) {
-                const ppOffset = getPostPlayThreshold();
-                // console.log("TimeLeft:", plyrInstance.duration - currentTime, "Offset:", ppOffset);
-                if ((plyrInstance.duration - currentTime) <= ppOffset) {
-                    // console.log("Finishing video:", videoId);
-                    removeVideoProgress(videoId);
-                    return; // No guardamos nada más
-                }
-            }
-
-            // LÓGICA DE GUARDADO (sessionWatchTime >= 10s)
-            if (hasReachedThreshold) {
-                // Preparamos metadata extra para la UI de "Continuar viendo"
-                const metadata = {
-                    titulo: tituloObra,
-                    fecha: fechaObra,
-                    portada: contexto?.serie?.portada || contexto?.pelicula?.portada,
-                    backdrop: contexto?.serie?.backdrop || contexto?.pelicula?.backdrop,
-                    // Logica Serie
-                    esSerie: contexto && contexto.tipo === 'serie',
-                    temporadaStr: contexto && contexto.tipo === 'serie' ? `T${contexto.temporadaNumero}:E${contexto.episodioNumero}` : null,
-                    subtitulo: contexto && contexto.tipo === 'serie' ? contexto.serie.titulo : null
-                };
-
-                // Guardamos progreso normal (forceFinish = false siempre aquí, porque si fuera true ya habríamos retornado arriba)
-                saveVideoProgress(videoId, currentTime, plyrInstance.duration, metadata, false);
-            }
+            // (Eliminado: delegamos el borrado al momento exacto en el que aparecen los botones de Post-Play/Next Episode)
 
             // === LÓGICA DE SIGUIENTE EPISODIO (DURANTE CRÉDITOS) ===
             // console.log("TimeUpdate ctx:", contexto, "Duration:", plyrInstance.duration, "Current:", plyrInstance.currentTime);
+
+            let esMomentoCreditos = false;
 
             if (contexto && contexto.tipo === 'serie') {
                 const duration = plyrInstance.duration;
@@ -3196,9 +4097,12 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
 
                     const epData = contexto.serie.temporadas[contexto.temporadaIndex].episodios[contexto.episodioIndex];
 
-                    // Si existe el parámetro time_next_episode (en minutos)
+                    // Si existe el parámetro time_next_episode (formato M.SS)
                     if (epData.time_next_episode && !isNaN(epData.time_next_episode)) {
-                        UMBRAL_CREDITOS = epData.time_next_episode * 100;
+                        let timeValue = epData.time_next_episode;
+                        let minutos = Math.floor(timeValue);
+                        let segundos = Math.round((timeValue - minutos) * 100);
+                        UMBRAL_CREDITOS = (minutos * 60) + segundos;
                         usarHeuristica = false; // Ya tenemos dato preciso, ignorar %
                         console.log("Usando tiempo personalizado Next Episode:", UMBRAL_CREDITOS, "segundos");
                     }
@@ -3210,8 +4114,6 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
                 // CRITERIO:
                 // 1. Si hay dato preciso: Faltan X segundos (UMBRAL_CREDITOS)
                 // 2. Si NO hay dato: Faltan 60s O se vio el 95%
-                let esMomentoCreditos = false;
-
                 if (!usarHeuristica) {
                     esMomentoCreditos = (timeLeft <= UMBRAL_CREDITOS);
                 } else {
@@ -3236,8 +4138,36 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
                     if (btnNext && btnNext.classList.contains('visible')) {
                         console.log("Ocultando botón Next Episode (usuario retrocedió)");
                         btnNext.classList.remove('visible');
+
+                        // Deshacer la precarga del siguiente episodio
+                        if (plyrInstance.nextEpisodeQueuedId) {
+                            removeVideoProgress(plyrInstance.nextEpisodeQueuedId);
+                            plyrInstance.nextEpisodeQueued = false;
+                            plyrInstance.nextEpisodeQueuedId = null;
+                            console.log("Precarga del siguiente episodio cancelada.");
+                        }
                     }
                 }
+            }
+
+            // ForceFinish si el botón de Post Play (Movie) o Siguiente Episodio (Serie) está visible
+            const forceFinish = (plyrInstance.isVideoFinished === true) || esMomentoCreditos;
+
+            // LÓGICA DE GUARDADO (sessionWatchTime >= 10s O se forzó finalización)
+            if (hasReachedThreshold || forceFinish) {
+                // Preparamos metadata extra para la UI de "Continuar viendo"
+                const metadata = {
+                    titulo: tituloObra,
+                    fecha: fechaObra,
+                    portada: contexto?.serie?.portada || contexto?.pelicula?.portada,
+                    backdrop: contexto?.serie?.backdrop || contexto?.pelicula?.backdrop,
+                    // Logica Serie
+                    esSerie: contexto && contexto.tipo === 'serie',
+                    temporadaStr: contexto && contexto.tipo === 'serie' ? `T${contexto.temporadaNumero}:E${contexto.episodioNumero}` : null,
+                    subtitulo: contexto && contexto.tipo === 'serie' ? contexto.serie.titulo : null
+                };
+
+                saveVideoProgress(videoId, currentTime, plyrInstance.duration, metadata, forceFinish);
             }
         });
 
@@ -3334,7 +4264,7 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
                     }
                 }
 
-                iniciarReproduccion(nextEpData.streamUrl, tituloRep, ctx.serie.fecha, ctx.serie.subtitulos, nuevoContexto);
+                iniciarReproduccion(nextEpData.streamUrl, tituloRep, ctx.serie.fecha, nextEpData.subtitulos || [], nuevoContexto);
             });
 
             // Insertar antes del volumen
@@ -3375,6 +4305,45 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
 
         if (nextEpData) {
             console.log("Siguiente episodio encontrado:", nextEpData.titulo);
+
+            // === NUEVO: PRECARGAMOS EL SIGUIENTE EPISODIO EN "CONTINUAR VIENDO" ===
+            if (!playerInst.nextEpisodeQueued) {
+                playerInst.nextEpisodeQueued = true;
+                const nuevoTemporadaNumero = ctx.serie.temporadas[nextSeasonIdx].numero;
+                const nuevoEpisodioNumero = nextEpData.episodio;
+                const tituloRep = `T${nuevoTemporadaNumero}:E${nuevoEpisodioNumero} - ${nextEpData.titulo}`;
+                const nextVideoId = tituloRep.trim().replace(/\s/g, '_').toLowerCase() + '_' + ctx.serie.fecha;
+
+                playerInst.nextEpisodeQueuedId = nextVideoId;
+
+                const nextMetadata = {
+                    titulo: tituloRep,
+                    fecha: ctx.serie.fecha,
+                    portada: ctx.serie.portada,
+                    backdrop: ctx.serie.backdrop,
+                    esSerie: true,
+                    temporadaStr: `T${nuevoTemporadaNumero}:E${nuevoEpisodioNumero}`,
+                    subtitulo: ctx.serie.titulo
+                };
+
+                // Lo guardamos con progreso de 1 segundo para forzar su aparición en la lista
+                saveVideoProgress(nextVideoId, 1, 0, nextMetadata, false);
+
+                // IMPORTANTE: También actualizamos el historial de series para que al abrir el modal 
+                // ya esté seleccionado este nuevo episodio
+                saveLastEpisode(ctx.serie.titulo, {
+                    seasonIndex: nextSeasonIdx,
+                    episodeIndex: nextEpisodeIdx,
+                    seasonNumber: nuevoTemporadaNumero,
+                    episodeNumber: nuevoEpisodioNumero,
+                    titulo: nextEpData.titulo,
+                    streamUrl: nextEpData.streamUrl,
+                    fechaSerie: ctx.serie.fecha
+                });
+
+                console.log("Siguiente episodio pre-encolado en Continuar Viendo:", tituloRep);
+            }
+
             // CREAR BOTÓN
             const btn = document.createElement('div');
             btn.className = 'btn-next-episode';
@@ -3425,7 +4394,7 @@ function iniciarReproduccion(url, tituloObra, fechaObra, subtitulos = [], contex
                 }
 
                 // Reproducir siguiente
-                iniciarReproduccion(nextEpData.streamUrl, tituloRep, ctx.serie.fecha, ctx.serie.subtitulos, nuevoContexto);
+                iniciarReproduccion(nextEpData.streamUrl, tituloRep, ctx.serie.fecha, nextEpData.subtitulos || [], nuevoContexto);
             });
 
             // Añadir al contenedor
@@ -3516,8 +4485,8 @@ function generarSimilares(peliculaActual) {
         return tienenGeneroComun;
     });
 
-    // Tomar solo los primeros 6 resultados para no saturar
-    const seleccionadas = similares.slice(0, 6);
+    // Tomar solo los últimos 6 agregados (orden inverso del JSON) para no saturar
+    const seleccionadas = similares.reverse().slice(0, 6);
 
     if (seleccionadas.length === 0) {
         contenedor.innerHTML = '<p style="color: #777;">No hay títulos similares disponibles.</p>';
@@ -3547,6 +4516,7 @@ function generarSimilares(peliculaActual) {
 
 // === FUNCIÓN CERRAR MODAL ===
 function cerrarModal() {
+    window.currentMediaWatching = 'Ninguna';
     limpiarUrlAlCerrar();
 
     if (modalOverlay) modalOverlay.classList.add('hidden');
@@ -3688,112 +4658,190 @@ document.addEventListener('keydown', (event) => {
 }, true);
 
 // ==========================================
-// EDITAR USUARIO
+// 🛠️ LÓGICA DE CONFIGURAR PERFIL (UNIFICADA)
 // ==========================================
 
 const modalEdit = document.getElementById('modal-edit-user');
-const btnOpenEdit = document.getElementById('btn-open-edit');
 const btnCancelEdit = document.getElementById('btn-cancel-edit');
-const btnSaveEdit = document.getElementById('btn-save-edit');
-
+const btnSaveAll = document.getElementById('btn-save-all');
+const editProfileImg = document.getElementById('edit-modal-profile-img');
+const btnChangePhotoEdit = document.getElementById('btn-change-photo-edit');
+const currentUsernameDisplay = document.getElementById('current-username-display');
+const btnTriggerNameChange = document.getElementById('btn-trigger-name-change');
+const nameChangeFields = document.getElementById('name-change-fields');
 const inputNewUser = document.getElementById('input-new-username');
 const inputConfirmPass = document.getElementById('input-confirm-password');
-const currentNameLabel = document.getElementById('current-username-label');
 const editFeedback = document.getElementById('edit-feedback');
 
-// ABRIR MODAL
-if (btnOpenEdit) {
-    btnOpenEdit.addEventListener('click', () => {
-        modalEdit.classList.remove('hidden');
+const PROFILE_IMAGES = [
+    "alucard.jpg", "chunchi.jpg", "daria.jpg", "elliot.jpg", "godz.jpg",
+    "knight.jpg", "pennywise.jpg", "pirate.jpg", "princess.jpg", "superman.jpg"
+];
 
-        // Obtener usuario actual para mostrarlo
-        const userStr = localStorage.getItem('vanacue_user');
-        const usuario = userStr ? JSON.parse(userStr) : { username: '...' };
+let selectedProfilePic = "";
+let gridSelectedPic = "";
 
-        if (currentNameLabel) currentNameLabel.innerText = usuario.username;
+function renderProfileOptions() {
+    const grid = document.getElementById("profile-options-grid");
+    const btnSaveProfile = document.getElementById("btn-save-profile");
+    if (!grid) return;
+    grid.innerHTML = "";
 
-        // Limpiar inputs
-        inputNewUser.value = usuario.username; // Pre-fill with current username
-        inputConfirmPass.value = "";
-        editFeedback.innerText = "";
+    // Al abrir, reseteamos la selección local al valor actual
+    gridSelectedPic = tempSelectedPic;
+    if (btnSaveProfile) btnSaveProfile.disabled = true;
 
-        inputNewUser.focus();
+    PROFILE_IMAGES.forEach(imgName => {
+        const div = document.createElement("div");
+        div.className = `profile-option ${imgName === gridSelectedPic ? "active" : ""}`;
+        div.innerHTML = `<img src="Multimedia/Profiles/${imgName}" alt="${imgName}">`;
+
+        div.onclick = () => {
+            document.querySelectorAll(".profile-option").forEach(opt => opt.classList.remove("active"));
+            div.classList.add("active");
+            gridSelectedPic = imgName;
+            if (btnSaveProfile) btnSaveProfile.disabled = false;
+        };
+        grid.appendChild(div);
     });
 }
 
-// CERRAR MODAL
-if (btnCancelEdit) {
-    btnCancelEdit.addEventListener('click', () => {
-        modalEdit.classList.add('hidden');
-    });
+function openEditProfileModal() {
+    const user = JSON.parse(localStorage.getItem('vanacue_user') || '{}');
+    modalEdit.classList.remove('hidden');
+
+    // Reset fields
+    tempSelectedPic = user.profile_pic || "alucard.jpg";
+    editProfileImg.src = `Multimedia/Profiles/${tempSelectedPic}`;
+    currentUsernameDisplay.innerText = user.username;
+    inputNewUser.value = user.username;
+    inputConfirmPass.value = "";
+    editFeedback.innerText = "";
+
+    nameChangeFields.classList.remove('visible');
+    // Si hay un modal de config desplegable, lo cerramos
+    const configModal = document.getElementById('config-modal');
+    if (configModal) configModal.classList.add('hidden');
 }
 
-// GUARDAR CAMBIOS
-if (btnSaveEdit) {
-    btnSaveEdit.addEventListener('click', async () => {
-        const newUsername = inputNewUser.value.trim();
-        const password = inputConfirmPass.value; // Capturamos pass
+if (btnCancelEdit) btnCancelEdit.onclick = () => modalEdit.classList.add('hidden');
+
+// Toggle campos de nombre
+if (btnTriggerNameChange) {
+    btnTriggerNameChange.onclick = () => {
+        nameChangeFields.classList.toggle('visible');
+        if (nameChangeFields.classList.contains('visible')) {
+            inputNewUser.focus();
+        }
+    };
+}
+
+// Abrir selector de foto (reutilizamos el modal que creamos antes)
+if (btnChangePhotoEdit) {
+    btnChangePhotoEdit.onclick = () => {
+        const modalSelect = document.getElementById('modal-select-profile');
+        if (typeof renderProfileOptions === 'function' && modalSelect) {
+            renderProfileOptions();
+            modalSelect.classList.remove('hidden');
+
+            // Configurar botones del modal de selección UNA SOLA VEZ
+            const btnCancelProfile = document.getElementById('btn-cancel-profile');
+            const btnSaveProfile = document.getElementById('btn-save-profile');
+
+            if (btnCancelProfile) {
+                btnCancelProfile.onclick = () => modalSelect.classList.add('hidden');
+            }
+            if (btnSaveProfile) {
+                btnSaveProfile.onclick = () => {
+                    if (gridSelectedPic) {
+                        tempSelectedPic = gridSelectedPic;
+                        const editModalImg = document.getElementById('edit-modal-profile-img');
+                        if (editModalImg) editModalImg.src = `Multimedia/Profiles/${tempSelectedPic}`;
+                        modalSelect.classList.add('hidden');
+                    }
+                };
+            }
+        }
+    };
+}
+
+// Sobrescribimos la lógica del selector de fotos para que actualice el modal de edición
+window.handleProfileSelection = function (imgName) {
+    tempSelectedPic = imgName;
+    editProfileImg.src = `Multimedia/Profiles/${imgName}`;
+    document.getElementById('modal-select-profile').classList.add('hidden');
+    if (typeof mostrarToast === 'function') mostrarToast("Imagen seleccionada.");
+};
+
+if (btnSaveAll) {
+    btnSaveAll.onclick = async () => {
+        const user = JSON.parse(localStorage.getItem('vanacue_user') || '{}');
         const token = localStorage.getItem('vanacue_token');
+        let photoChanged = (tempSelectedPic !== user.profile_pic);
+        let nameChanged = (nameChangeFields.classList.contains('visible') && inputNewUser.value.trim() !== user.username);
 
-        // Validacion Frontend
-        if (newUsername.length < 4) {
-            editFeedback.style.color = '#ff3333';
-            editFeedback.innerText = "El nombre debe tener mínimo 4 caracteres.";
-            return;
-        }
-        if (!password) {
-            editFeedback.style.color = '#ff3333';
-            editFeedback.innerText = "Debes ingresar tu contraseña.";
+        if (!photoChanged && !nameChanged) {
+            modalEdit.classList.add('hidden');
             return;
         }
 
-        editFeedback.style.color = '#fff';
-        editFeedback.innerText = "Verificando...";
+        editFeedback.innerText = "Guardando cambios...";
+        editFeedback.style.color = "#fff";
 
         try {
-            // Petición al Backend
-            // enviamos newUsername Y password
-            const response = await fetch(`${API_URL}/api/update-username`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ newUsername, password })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                editFeedback.style.color = '#00ff00';
-                editFeedback.innerText = "¡Actualizado correctamente!";
-
-                // Actualizar interfaz visualmente
-                document.getElementById('user-display').innerText = newUsername;
-
-                // Actualizar LocalStorage
-                const userObj = JSON.parse(localStorage.getItem('vanacue_user'));
-                userObj.username = newUsername;
-                localStorage.setItem('vanacue_user', JSON.stringify(userObj));
-
-                // Cerrar modal
-                setTimeout(() => {
-                    modalEdit.classList.add('hidden');
-                }, 1000);
-
-            } else {
-                // ERROR (Contraseña incorrecta o usuario ocupado)
-                editFeedback.style.color = '#ff3333';
-                editFeedback.innerText = data.message;
+            // 1. Foto (No requiere pass)
+            if (photoChanged) {
+                const resPhoto = await fetch(`${API_URL}/api/update-profile-pic`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ profilePic: tempSelectedPic })
+                });
+                const dataPhoto = await resPhoto.json();
+                if (!dataPhoto.success) throw new Error(dataPhoto.message);
             }
 
-        } catch (error) {
-            console.error(error);
-            editFeedback.style.color = '#ff3333';
-            editFeedback.innerText = "Error de conexión con el servidor.";
+            // 2. Nombre (Requiere pass)
+            if (nameChanged) {
+                const newName = inputNewUser.value.trim();
+                const pass = inputConfirmPass.value;
+                if (newName.length < 4) throw new Error("Nombre muy corto.");
+                if (!pass) throw new Error("Se requiere contraseña para cambiar nombre.");
+
+                const resName = await fetch(`${API_URL}/api/update-username`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ newUsername: newName, password: pass })
+                });
+                const dataName = await resName.json();
+                if (!dataName.success) throw new Error(dataName.message);
+                user.username = newName;
+            }
+
+            // Actualizar Todo
+            user.profile_pic = tempSelectedPic;
+            localStorage.setItem('vanacue_user', JSON.stringify(user));
+
+            // Refrescar UI
+            const pUrl = `Multimedia/Profiles/${tempSelectedPic}`;
+            const ddImg = document.getElementById('dropdown-profile-img');
+            if (ddImg) ddImg.src = pUrl;
+
+            const configName = document.getElementById('config-user-name');
+            if (configName) configName.innerText = user.username;
+
+            const modalImg = document.getElementById('modal-profile-img');
+            if (modalImg) modalImg.src = pUrl;
+
+            modalEdit.classList.add('hidden');
+            if (typeof mostrarToast === 'function') mostrarToast("¡Perfil actualizado!");
+
+        } catch (err) {
+            editFeedback.innerText = err.message;
+            editFeedback.style.color = "#ff4444";
         }
-    });
+    };
 }
+
 
 // =========================================
 // === BOTÓN SCROLL TOP (VOLVER ARRIBA) ===
@@ -3992,6 +5040,12 @@ function ocultarPostPlay() {
 // ======== LÓGICA DEL NUEVO MENUBAR ========
 // ==========================================
 
+// Función auxiliar para normalizar texto (quitar acentos y a minúsculas)
+const normalizeString = (str) => {
+    if (!str) return "";
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+};
+
 function setupMenubarInteractions() {
     console.log("INIT: Configurando interacciones del Menú Cloud...");
 
@@ -4025,7 +5079,7 @@ function setupMenubarInteractions() {
             clearTimeout(searchTimeout);
 
             searchTimeout = setTimeout(() => {
-                const query = e.target.value.trim().toLowerCase();
+                const query = e.target.value.trim();
 
                 // Ocultar siempre el overlay viejo por si acaso
                 if (buscadorOverlay && !buscadorOverlay.classList.contains('hidden')) {
@@ -4039,9 +5093,16 @@ function setupMenubarInteractions() {
                 }
 
                 // A partir de 1 caracter, mostramos resultados
+                const normalizedQuery = normalizeString(query);
+
                 const resultados = globalData.filter(item => {
-                    return item.titulo.toLowerCase().includes(query) ||
-                        (item.genero && item.genero.some(g => g.toLowerCase().includes(query)));
+                    const titulo = normalizeString(item.titulo || "");
+                    const tituloOrg = normalizeString(item.titulo_original || "");
+                    const generos = (item.genero || []).map(g => normalizeString(g));
+
+                    return titulo.includes(normalizedQuery) ||
+                        tituloOrg.includes(normalizedQuery) ||
+                        generos.some(g => g.includes(normalizedQuery));
                 });
 
                 // RENDERIZAR EN MAIN (Limpiando todo lo demás)
@@ -4059,24 +5120,193 @@ function setupMenubarInteractions() {
             }
         });
     }
+}
+
+// 2. NOTIFICACIONES
+const btnNotif = document.getElementById('btn-notifications');
+const notifDropdown = document.getElementById('notification-dropdown');
+
+if (btnNotif && notifDropdown) {
+    // Cargar Notificaciones Reales
+    loadNotifications(notifDropdown);
+
+    btnNotif.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // ANIMACIÓN SWING
+        btnNotif.classList.remove('swing'); // Reset
+        void btnNotif.offsetWidth; // Force reflow
+        btnNotif.classList.add('swing');
+
+        // CLEAR BADGE
+        localStorage.setItem('seenNotifs', lastKnownTotalNotifs);
+        const desktopBadge = document.getElementById('desktop-notif-badge');
+        const mobileBadge = document.getElementById('mobile-notif-badge');
+        if (desktopBadge) desktopBadge.classList.add('hidden');
+        if (mobileBadge) mobileBadge.classList.add('hidden');
+
+        // TOGGLE DROPDOWN
+        const isHidden = notifDropdown.classList.contains('hidden');
+        if (isHidden) {
+            notifDropdown.classList.remove('hidden');
+            loadNotifications(notifDropdown); // Recargar al abrir
+        } else {
+            notifDropdown.classList.add('hidden');
+        }
+
+        // Cerrar otros
+        const configModal = document.getElementById('config-modal');
+        if (configModal) configModal.classList.add('hidden');
+        const btnConfig = document.getElementById('btn-config');
+        if (btnConfig) btnConfig.classList.remove('rotated');
+    });
+}
+
+// LÓGICA DE CREACIÓN DE NOTIFICACIÓN (ADMIN)
+const btnSendNotif = document.getElementById('btn-send-notif');
+const btnCancelNotif = document.getElementById('btn-cancel-notif');
+const modalNotif = document.getElementById('modal-new-notification');
+
+if (btnSendNotif && modalNotif) {
+    btnSendNotif.addEventListener('click', async () => {
+        const title = document.getElementById('notif-title').value;
+        const message = document.getElementById('notif-message').value;
+        // Mapeo seguro: index 0 -> info, index 1 -> alert
+        const typeSelect = document.getElementById('notif-type');
+        const type = typeSelect.value;
+
+        if (!title || !message) {
+            alert("Por favor completa el título y mensaje.");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('vanacue_token');
+            const response = await fetch(`${API_URL}/api/notifications`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ title, message, type })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Notificación enviada.");
+                modalNotif.classList.add('hidden');
+                // Limpiar
+                document.getElementById('notif-title').value = '';
+                document.getElementById('notif-message').value = '';
+
+                // RECARGAR SIEMPRE para actualizar badge y lista
+                if (notifDropdown) loadNotifications(notifDropdown);
+            } else {
+                alert("Error: " + data.message);
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error de conexión.");
+        }
+    });
+
+    if (btnCancelNotif) {
+        btnCancelNotif.addEventListener('click', () => {
+            modalNotif.classList.add('hidden');
+        });
+    }
+}
 
 
-    // 2. NOTIFICACIONES
-    const btnNotif = document.getElementById('btn-notifications');
-    const notifDropdown = document.getElementById('notification-dropdown');
+// 3. CONFIGURACIÓN / PERFIL
+const btnConfig = document.getElementById('btn-config');
+const configModal = document.getElementById('config-modal');
+const configUserName = document.getElementById('config-user-name');
+const configSubscription = document.getElementById('subscription-badge');
+const btnEditUserConfig = document.getElementById('btn-edit-user-config');
 
-    if (btnNotif && notifDropdown) {
-        // Cargar Notificaciones Reales
-        loadNotifications(notifDropdown);
+if (btnConfig && configModal) {
+    btnConfig.addEventListener('click', (e) => {
+        e.stopPropagation();
 
-        btnNotif.addEventListener('click', (e) => {
-            e.stopPropagation();
+        const isHidden = configModal.classList.contains('hidden');
+        const icon = btnConfig.querySelector('.nav-icon');
+        if (isHidden) {
+            configModal.classList.remove('hidden');
+            if (icon) icon.classList.add('rotated');
+        } else {
+            configModal.classList.add('hidden');
+            if (icon) icon.classList.remove('rotated');
+        }
 
-            // ANIMACIÓN SWING
-            btnNotif.classList.remove('swing'); // Reset
-            void btnNotif.offsetWidth; // Force reflow
-            btnNotif.classList.add('swing');
+        // Cerrar otros
+        if (notifDropdown) notifDropdown.classList.add('hidden');
 
+        // Cargar datos frescos
+        const userStr = localStorage.getItem('vanacue_user');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            if (configUserName) configUserName.textContent = user.username;
+
+            // Lógica simple de badge (mock o basado en user role si existiera)
+            if (configSubscription) {
+                if (user.role === 'admin') {
+                    configSubscription.textContent = "ADMIN";
+                    configSubscription.className = "badge-admin";
+                } else if (user.role === 'premium') {
+                    configSubscription.textContent = "Premium";
+                    configSubscription.className = "badge-premium";
+                } else {
+                    configSubscription.textContent = "Free";
+                    configSubscription.className = "badge-free";
+                }
+            }
+        }
+    });
+
+    // Botón Logout del modal nuevo
+    const btnLogoutFull = document.getElementById('btn-logout-config');
+    if (btnLogoutFull) {
+        btnLogoutFull.addEventListener('click', () => {
+            localStorage.removeItem('vanacue_token');
+            localStorage.removeItem('vanacue_user');
+            window.location.href = 'login.html';
+        });
+    }
+
+    // --- POLLING DE NOTIFICACIONES (60s) ---
+    // Refrezcar badge y lista automáticamente
+    // Solo si el usuario está logueado (token existe)
+    if (localStorage.getItem('vanacue_token')) {
+        setInterval(() => {
+            const notifDropdown = document.getElementById('notification-dropdown');
+            if (notifDropdown) loadNotifications(notifDropdown);
+        }, 60000);
+    }
+
+    // Botón Editar Usuario (reutilizar modal existente)
+    if (btnEditUserConfig) {
+        btnEditUserConfig.onclick = openEditProfileModal;
+    }
+}
+
+// 4. MENU RESPONSIVE (MOBILE)
+const btnMobileMenu = document.getElementById('btn-mobile-menu');
+const responsiveDropdown = document.getElementById('responsive-dropdown');
+const btnMobileNotif = document.getElementById('btn-mobile-notif');
+const btnMobileConfig = document.getElementById('btn-mobile-config');
+
+if (btnMobileMenu && responsiveDropdown) {
+    // Inicializar contenido del menú lateral
+    renderMobileMenuContent(responsiveDropdown);
+
+    btnMobileMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // Lógica de ICONO (Swap con animación)
+        if (responsiveDropdown.classList.contains('hidden')) {
+            // ABRIR
             // CLEAR BADGE
             localStorage.setItem('seenNotifs', lastKnownTotalNotifs);
             const desktopBadge = document.getElementById('desktop-notif-badge');
@@ -4084,316 +5314,129 @@ function setupMenubarInteractions() {
             if (desktopBadge) desktopBadge.classList.add('hidden');
             if (mobileBadge) mobileBadge.classList.add('hidden');
 
-            // TOGGLE DROPDOWN
-            const isHidden = notifDropdown.classList.contains('hidden');
-            if (isHidden) {
-                notifDropdown.classList.remove('hidden');
-                loadNotifications(notifDropdown); // Recargar al abrir
-            } else {
-                notifDropdown.classList.add('hidden');
-            }
-
-            // Cerrar otros
-            const configModal = document.getElementById('config-modal');
-            if (configModal) configModal.classList.add('hidden');
-            const btnConfig = document.getElementById('btn-config');
-            if (btnConfig) btnConfig.classList.remove('rotated');
-        });
-    }
-
-    // LÓGICA DE CREACIÓN DE NOTIFICACIÓN (ADMIN)
-    const btnSendNotif = document.getElementById('btn-send-notif');
-    const btnCancelNotif = document.getElementById('btn-cancel-notif');
-    const modalNotif = document.getElementById('modal-new-notification');
-
-    if (btnSendNotif && modalNotif) {
-        btnSendNotif.addEventListener('click', async () => {
-            const title = document.getElementById('notif-title').value;
-            const message = document.getElementById('notif-message').value;
-            // Mapeo seguro: index 0 -> info, index 1 -> alert
-            const typeSelect = document.getElementById('notif-type');
-            const type = typeSelect.value;
-
-            if (!title || !message) {
-                alert("Por favor completa el título y mensaje.");
-                return;
-            }
-
-            try {
-                const token = localStorage.getItem('vanacue_token');
-                const response = await fetch(`${API_URL}/api/notifications`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, message, type })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert("Notificación enviada.");
-                    modalNotif.classList.add('hidden');
-                    // Limpiar
-                    document.getElementById('notif-title').value = '';
-                    document.getElementById('notif-message').value = '';
-
-                    // RECARGAR SIEMPRE para actualizar badge y lista
-                    if (notifDropdown) loadNotifications(notifDropdown);
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch (e) {
-                console.error(e);
-                alert("Error de conexión.");
-            }
-        });
-
-        if (btnCancelNotif) {
-            btnCancelNotif.addEventListener('click', () => {
-                modalNotif.classList.add('hidden');
-            });
-        }
-    }
-
-
-    // 3. CONFIGURACIÓN / PERFIL
-    const btnConfig = document.getElementById('btn-config');
-    const configModal = document.getElementById('config-modal');
-    const configUserName = document.getElementById('config-user-name');
-    const configSubscription = document.getElementById('subscription-badge');
-    const btnEditUserConfig = document.getElementById('btn-edit-user-config');
-
-    if (btnConfig && configModal) {
-        btnConfig.addEventListener('click', (e) => {
-            e.stopPropagation();
-
-            const isHidden = configModal.classList.contains('hidden');
-            if (isHidden) {
-                configModal.classList.remove('hidden');
-                btnConfig.classList.add('rotated');
-            } else {
-                configModal.classList.add('hidden');
-                btnConfig.classList.remove('rotated');
-            }
-
-            // Cerrar otros
-            if (notifDropdown) notifDropdown.classList.add('hidden');
-
-            // Cargar datos frescos
-            const userStr = localStorage.getItem('vanacue_user');
-            if (userStr) {
-                const user = JSON.parse(userStr);
-                if (configUserName) configUserName.textContent = user.username;
-
-                // Lógica simple de badge (mock o basado en user role si existiera)
-                if (configSubscription) {
-                    if (user.role === 'admin') {
-                        configSubscription.textContent = "ADMIN";
-                        configSubscription.className = "badge-admin";
-                    } else if (user.role === 'premium') {
-                        configSubscription.textContent = "Premium";
-                        configSubscription.className = "badge-premium";
-                    } else {
-                        configSubscription.textContent = "Free";
-                        configSubscription.className = "badge-free";
-                    }
-                }
-            }
-        });
-
-        // Botón Logout del modal nuevo
-        const btnLogoutFull = document.getElementById('btn-logout-config');
-        if (btnLogoutFull) {
-            btnLogoutFull.addEventListener('click', () => {
-                localStorage.removeItem('vanacue_token');
-                localStorage.removeItem('vanacue_user');
-                window.location.href = 'login.html';
-            });
+            btnMobileMenu.style.opacity = '0';
+            btnMobileMenu.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btnMobileMenu.src = 'Multimedia/menu_apertura.svg';
+                btnMobileMenu.style.opacity = '1';
+                btnMobileMenu.style.transform = 'scale(1)';
+            }, 200);
+            responsiveDropdown.classList.remove('hidden');
+        } else {
+            // CERRAR
+            btnMobileMenu.style.opacity = '0';
+            btnMobileMenu.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btnMobileMenu.src = 'Multimedia/menu.svg';
+                btnMobileMenu.style.opacity = '1';
+                btnMobileMenu.style.transform = 'scale(1)';
+            }, 200);
+            responsiveDropdown.classList.add('hidden');
         }
 
-        // --- POLLING DE NOTIFICACIONES (60s) ---
-        // Refrezcar badge y lista automáticamente
-        // Solo si el usuario está logueado (token existe)
-        if (localStorage.getItem('vanacue_token')) {
-            setInterval(() => {
-                const notifDropdown = document.getElementById('notification-dropdown');
-                if (notifDropdown) loadNotifications(notifDropdown);
-            }, 60000);
-        }
-
-        // Botón Editar Usuario (reutilizar modal existente)
-        if (btnEditUserConfig) {
-            btnEditUserConfig.addEventListener('click', () => {
-                configModal.classList.add('hidden');
-
-                // Lógica directa para abrir y poblar el modal de edición
-                const modalEdit = document.getElementById('modal-edit-user');
-                if (modalEdit) {
-                    modalEdit.classList.remove('hidden');
-
-                    const inputNewUser = document.getElementById('input-new-username');
-                    const inputConfirmPass = document.getElementById('input-confirm-password');
-                    const currentNameLabel = document.getElementById('current-username-label');
-                    const editFeedback = document.getElementById('edit-feedback');
-
-                    const userStr = localStorage.getItem('vanacue_user');
-                    const usuario = userStr ? JSON.parse(userStr) : { username: '...' };
-
-                    if (currentNameLabel) currentNameLabel.innerText = usuario.username;
-
-                    // Limpiar inputs y pre-llenar usuario
-                    if (inputNewUser) {
-                        inputNewUser.value = usuario.username;
-                        inputNewUser.focus();
-                    }
-                    if (inputConfirmPass) inputConfirmPass.value = "";
-                    if (editFeedback) editFeedback.innerText = "";
-                }
-            });
-        }
-    }
-
-    // 4. MENU RESPONSIVE (MOBILE)
-    const btnMobileMenu = document.getElementById('btn-mobile-menu');
-    const responsiveDropdown = document.getElementById('responsive-dropdown');
-    const btnMobileNotif = document.getElementById('btn-mobile-notif');
-    const btnMobileConfig = document.getElementById('btn-mobile-config');
-
-    if (btnMobileMenu && responsiveDropdown) {
-        // Inicializar contenido del menú lateral
-        renderMobileMenuContent(responsiveDropdown);
-
-        btnMobileMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-
-            // Lógica de ICONO (Swap con animación)
-            if (responsiveDropdown.classList.contains('hidden')) {
-                // ABRIR
-                // CLEAR BADGE
-                localStorage.setItem('seenNotifs', lastKnownTotalNotifs);
-                const desktopBadge = document.getElementById('desktop-notif-badge');
-                const mobileBadge = document.getElementById('mobile-notif-badge');
-                if (desktopBadge) desktopBadge.classList.add('hidden');
-                if (mobileBadge) mobileBadge.classList.add('hidden');
-
-                btnMobileMenu.style.opacity = '0';
-                btnMobileMenu.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    btnMobileMenu.src = 'Multimedia/menu_apertura.svg';
-                    btnMobileMenu.style.opacity = '1';
-                    btnMobileMenu.style.transform = 'scale(1)';
-                }, 200);
-                responsiveDropdown.classList.remove('hidden');
-            } else {
-                // CERRAR
-                btnMobileMenu.style.opacity = '0';
-                btnMobileMenu.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    btnMobileMenu.src = 'Multimedia/menu.svg';
-                    btnMobileMenu.style.opacity = '1';
-                    btnMobileMenu.style.transform = 'scale(1)';
-                }, 200);
-                responsiveDropdown.classList.add('hidden');
-            }
-
-            // Cerrar otros overlays si estuvieran abiertos
-            if (notifDropdown) notifDropdown.classList.add('hidden');
-            if (configModal) configModal.classList.add('hidden');
-        });
-
-        // Click en Notificaciones (Mobile)
-        if (btnMobileNotif) {
-            btnMobileNotif.addEventListener('click', (e) => {
-                e.stopPropagation();
-                responsiveDropdown.classList.add('hidden'); // Cerrar menú
-
-                // Revertir icono
-                btnMobileMenu.style.opacity = '0';
-                btnMobileMenu.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    btnMobileMenu.src = 'Multimedia/menu.svg';
-                    btnMobileMenu.style.opacity = '1';
-                    btnMobileMenu.style.transform = 'scale(1)';
-                }, 200);
-
-                // Abrir lógica de notificaciones
-                if (notifDropdown) {
-                    notifDropdown.classList.remove('hidden');
-                    // Posicionamiento especial si fuera necesario, o dejar CSS
-                }
-            });
-        }
-
-        // Click en Configuración (Mobile)
-        if (btnMobileConfig) {
-            btnMobileConfig.addEventListener('click', (e) => {
-                e.stopPropagation();
-                responsiveDropdown.classList.add('hidden'); // Cerrar menú
-
-                // Revertir icono
-                btnMobileMenu.style.opacity = '0';
-                btnMobileMenu.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    btnMobileMenu.src = 'Multimedia/menu.svg';
-                    btnMobileMenu.style.opacity = '1';
-                    btnMobileMenu.style.transform = 'scale(1)';
-                }, 200);
-
-                // Abrir modal config
-                if (configModal) {
-                    configModal.classList.remove('hidden');
-                    // Gatillar lógica de carga de usuario
-                    btnConfig.click(); // Reutilizar handler de desktop para cargar datos
-                }
-            });
-        }
-    }
-
-
-    // CERRAR AL HACER CLICK FUERA
-    document.addEventListener('click', (e) => {
-        if (responsiveDropdown && !responsiveDropdown.classList.contains('hidden')) {
-            if (!responsiveDropdown.contains(e.target) && e.target !== btnMobileMenu) {
-                responsiveDropdown.classList.add('hidden');
-                // Revertir icono (si estaba abierto)
-                // Chequeamos si el src es apertura para no animar innecesariamente? 
-                // Mejor animar siempre para consistencia visual si se cierra
-                btnMobileMenu.style.opacity = '0';
-                btnMobileMenu.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    btnMobileMenu.src = 'Multimedia/menu.svg';
-                    btnMobileMenu.style.opacity = '1';
-                    btnMobileMenu.style.transform = 'scale(1)';
-                }, 200);
-            }
-        }
-
-        if (notifDropdown && !notifDropdown.classList.contains('hidden')) {
-            if (!notifDropdown.contains(e.target) && e.target !== btnNotif) {
-                notifDropdown.classList.add('hidden');
-            }
-        }
-        if (configModal && !configModal.classList.contains('hidden')) {
-            if (!configModal.contains(e.target) && e.target !== btnConfig) {
-                configModal.classList.add('hidden');
-                if (btnConfig) btnConfig.classList.remove('rotated');
-            }
-        }
-
-        // Cerrar buscador si click fuera
-        if (searchBox && searchBox.classList.contains('active')) {
-            if (!searchBox.contains(e.target)) {
-                if (searchInput.value === '') {
-                    searchBox.classList.remove('active');
-                }
-            }
-        }
+        // Cerrar otros overlays si estuvieran abiertos
+        if (notifDropdown) notifDropdown.classList.add('hidden');
+        if (configModal) configModal.classList.add('hidden');
     });
+
+    // Click en Notificaciones (Mobile)
+    if (btnMobileNotif) {
+        btnMobileNotif.addEventListener('click', (e) => {
+            e.stopPropagation();
+            responsiveDropdown.classList.add('hidden'); // Cerrar menú
+
+            // Revertir icono
+            btnMobileMenu.style.opacity = '0';
+            btnMobileMenu.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btnMobileMenu.src = 'Multimedia/menu.svg';
+                btnMobileMenu.style.opacity = '1';
+                btnMobileMenu.style.transform = 'scale(1)';
+            }, 200);
+
+            // Abrir lógica de notificaciones
+            if (notifDropdown) {
+                notifDropdown.classList.remove('hidden');
+                // Posicionamiento especial si fuera necesario, o dejar CSS
+            }
+        });
+    }
+
+    // Click en Configuración (Mobile)
+    if (btnMobileConfig) {
+        btnMobileConfig.addEventListener('click', (e) => {
+            e.stopPropagation();
+            responsiveDropdown.classList.add('hidden'); // Cerrar menú
+
+            // Revertir icono
+            btnMobileMenu.style.opacity = '0';
+            btnMobileMenu.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btnMobileMenu.src = 'Multimedia/menu.svg';
+                btnMobileMenu.style.opacity = '1';
+                btnMobileMenu.style.transform = 'scale(1)';
+            }, 200);
+
+            // Abrir modal config
+            if (configModal) {
+                configModal.classList.remove('hidden');
+                // Gatillar lógica de carga de usuario
+                btnConfig.click(); // Reutilizar handler de desktop para cargar datos
+            }
+        });
+    }
 }
 
+
+// CERRAR AL HACER CLICK FUERA
+document.addEventListener('click', (e) => {
+    if (responsiveDropdown && !responsiveDropdown.classList.contains('hidden')) {
+        if (!responsiveDropdown.contains(e.target) && e.target !== btnMobileMenu) {
+            responsiveDropdown.classList.add('hidden');
+            // Revertir icono (si estaba abierto)
+            // Chequeamos si el src es apertura para no animar innecesariamente? 
+            // Mejor animar siempre para consistencia visual si se cierra
+            btnMobileMenu.style.opacity = '0';
+            btnMobileMenu.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btnMobileMenu.src = 'Multimedia/menu.svg';
+                btnMobileMenu.style.opacity = '1';
+                btnMobileMenu.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }
+
+    if (notifDropdown && !notifDropdown.classList.contains('hidden')) {
+        if (!notifDropdown.contains(e.target) && e.target !== btnNotif) {
+            notifDropdown.classList.add('hidden');
+        }
+    }
+    if (configModal && !configModal.classList.contains('hidden')) {
+        if (!configModal.contains(e.target) && e.target !== btnConfig) {
+            configModal.classList.add('hidden');
+            if (btnConfig) {
+                const icon = btnConfig.querySelector('.nav-icon');
+                if (icon) icon.classList.remove('rotated');
+            }
+        }
+    }
+
+    // Cerrar buscador si click fuera
+    if (searchBox && searchBox.classList.contains('active')) {
+        if (!searchBox.contains(e.target)) {
+            if (searchInput.value === '') {
+                searchBox.classList.remove('active');
+            }
+        }
+    }
+});
+
 function renderizarResultadosPage(resultados, query) {
+    // Resetear scroll al inicio para que los resultados se vean desde arriba
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+
+
     const main = document.querySelector("main");
     const menubar = document.querySelector(".menubar");
     const hero = document.querySelector(".hero");
@@ -4734,17 +5777,8 @@ function renderMobileMenuContent(container) {
                     }, 200);
                 }
 
-                const modalEdit = document.getElementById('modal-edit-user');
-                if (modalEdit) {
-                    modalEdit.classList.remove('hidden');
-                    const inputNewUser = document.getElementById('input-new-username');
-                    const currentNameLabel = document.getElementById('current-username-label');
-
-                    if (currentNameLabel) currentNameLabel.innerText = user.username;
-                    if (inputNewUser) {
-                        inputNewUser.value = user.username;
-                        inputNewUser.focus();
-                    }
+                if (typeof openEditProfileModal === 'function') {
+                    openEditProfileModal();
                 }
             });
         }
@@ -4797,4 +5831,499 @@ function renderMobileMenuContent(container) {
 
     logoutSection.appendChild(logoutBtn);
     container.appendChild(logoutSection);
+}
+
+// === SCANNER FEATURE ===
+let scannerInterval = null;
+
+window.mostrarScanner = function () {
+    const main = document.querySelector("main");
+    main.innerHTML = "";
+
+    const userStr = localStorage.getItem('vanacue_user');
+    const user = userStr ? JSON.parse(userStr) : null;
+
+    if (!user || user.role !== 'admin') {
+        main.innerHTML = "<h2 style='color:red; text-align:center; padding: 50px;'>Acceso denegado</h2>";
+        return;
+    }
+
+    const scannerContainer = document.createElement('div');
+    scannerContainer.className = 'seccion-scanner';
+    scannerContainer.innerHTML = `
+        <div class="scanner-header">
+            <h2>Scanner</h2>
+        </div>
+        <div class="scanner-table-container">
+            <table class="scanner-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Estado</th>
+                        <th>Viendo</th>
+                        <th>Última Conexión</th>
+                    </tr>
+                </thead>
+                <tbody id="scanner-tbody">
+                    <tr><td colspan="4" style="text-align:center;">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+    main.appendChild(scannerContainer);
+
+    fetchScannerData();
+
+    if (scannerInterval) clearInterval(scannerInterval);
+    scannerInterval = setInterval(() => {
+        // Solo actualizar si seguimos en la vista de scanner
+        if (window.location.search.includes('accion=scanner')) {
+            fetchScannerData();
+        } else {
+            clearInterval(scannerInterval);
+        }
+    }, 10000);
+};
+
+async function fetchScannerData() {
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${API_URL}/api/scanner`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            renderScannerTable(data.scannerData);
+        }
+    } catch (e) {
+        console.error("Error fetching scanner data:", e);
+    }
+}
+
+function renderScannerTable(users) {
+    const tbody = document.getElementById('scanner-tbody');
+    if (!tbody) return;
+
+    if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay usuarios registrados</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+    users.forEach(u => {
+        const tr = document.createElement('tr');
+
+        const isOnline = u.isOnline;
+        const statusClass = isOnline ? 'online' : 'offline';
+        const roleClass = u.role === 'admin' ? 'admin' : (u.role === 'premium' ? 'premium' : 'free');
+
+        let lastSeenText = 'Nunca';
+        if (u.lastSeen) {
+            const date = new Date(u.lastSeen);
+            lastSeenText = date.toLocaleString();
+        } else if (u.last_login) {
+            const dateString = u.last_login.includes('T') ? u.last_login : u.last_login.replace(' ', 'T') + 'Z';
+            const date = new Date(dateString);
+            lastSeenText = date.toLocaleString();
+        } else if (u.created_at) {
+            const dateString = u.created_at.includes('T') ? u.created_at : u.created_at.replace(' ', 'T') + 'Z';
+            const date = new Date(dateString);
+            lastSeenText = 'Registro: ' + date.toLocaleDateString();
+        }
+
+        tr.innerHTML = `
+            <td>
+                ${u.username}
+                <span class="scanner-badge ${roleClass}">${u.role}</span>
+            </td>
+            <td>
+                <div class="scanner-status">
+                    <span class="status-dot ${statusClass}"></span>
+                    <span>${isOnline ? 'Conectado' : 'Desconectado'}</span>
+                </div>
+            </td>
+            <td>${u.media || 'Ninguna'}</td>
+            <td>${lastSeenText}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+// =======================
+
+// ==========================================
+// LÓGICA DE ESCRITURA DE RESEÑAS (MODAL)
+// ==========================================
+
+let currentReviewMedia = null;
+let currentRating = 0;
+
+window.openWriteReviewModal = function (pelicula) {
+    currentReviewMedia = pelicula;
+    currentRating = 0; // Reset
+
+    const modal = document.getElementById('modal-write-review');
+    const title = document.getElementById('review-media-title');
+    const meta = document.getElementById('review-media-meta');
+    const img = document.getElementById('review-media-img');
+    const textArea = document.getElementById('review-text-input');
+
+    if (title) title.innerText = pelicula.titulo;
+    if (meta) meta.innerText = `${pelicula.tipo} • ${pelicula.fecha.substring(0, 4)}`;
+    if (img) img.src = pelicula.portada;
+    if (textArea) textArea.value = "";
+
+    // Reset stars
+    document.querySelectorAll('#star-rating-input .star-wrapper').forEach(w => {
+        w.classList.remove('active');
+    });
+
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+// Inicializar listeners del modal de reseñas
+document.addEventListener('DOMContentLoaded', () => {
+    const modalReview = document.getElementById('modal-write-review');
+    const btnClose = document.getElementById('btn-close-review');
+    const btnCancel = document.getElementById('btn-cancel-review');
+    const btnSubmit = document.getElementById('btn-submit-review');
+    const starWrappers = document.querySelectorAll('#star-rating-input .star-wrapper');
+
+    const closeModal = () => {
+        if (modalReview) modalReview.classList.add('hidden');
+        // Solo restaurar overflow si el modal de info no está abierto
+        const modalInfo = document.getElementById('modal-info');
+        if (modalInfo && modalInfo.classList.contains('hidden')) {
+            document.body.style.overflow = 'auto';
+        }
+    };
+
+    if (btnClose) btnClose.onclick = closeModal;
+    if (btnCancel) btnCancel.onclick = closeModal;
+
+    starWrappers.forEach(wrapper => {
+        wrapper.onclick = () => {
+            const val = parseInt(wrapper.dataset.value);
+            currentRating = val;
+
+            starWrappers.forEach(w => {
+                const wVal = parseInt(w.dataset.value);
+                if (wVal <= val) {
+                    w.classList.add('active');
+                } else {
+                    w.classList.remove('active');
+                }
+            });
+        };
+    });
+
+    if (btnSubmit) {
+        btnSubmit.onclick = async () => {
+            const text = document.getElementById('review-text-input').value.trim();
+
+            if (currentRating === 0) {
+                if (typeof mostrarToast === 'function') mostrarToast("Por favor, selecciona una puntuación.");
+                return;
+            }
+
+            if (text.length < 10) {
+                if (typeof mostrarToast === 'function') mostrarToast("La reseña es muy corta.");
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('vanacue_token');
+                const response = await fetch(`${API_URL}/api/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        tmdb_id: currentReviewMedia.tmdbId || generateId(currentReviewMedia),
+                        movie_title: currentReviewMedia.titulo,
+                        movie_type: currentReviewMedia.tipo,
+                        movie_year: currentReviewMedia.fecha.substring(0, 4),
+                        rating: currentRating,
+                        comment: text
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (typeof mostrarToast === 'function') {
+                        mostrarToast("Reseña enviada para revisión.");
+                    }
+                    closeModal();
+                } else {
+                    if (typeof mostrarToast === 'function') mostrarToast("Error: " + data.message);
+                }
+            } catch (e) {
+                console.error("Error al publicar reseña:", e);
+                if (typeof mostrarToast === 'function') mostrarToast("Error de conexión.");
+            }
+        };
+
+    }
+});
+
+// --- SISTEMA DE COMPARTIR RESEÑAS (9:16) ---
+
+function truncateText(text, limit) {
+    if (text.length <= limit) return text;
+    return text.substring(0, limit) + "...";
+}
+
+window.openShareModal = function (review) {
+    const modal = document.getElementById('modal-share-review');
+    if (!modal) return;
+
+    // Adaptar campos del backend al formato del ticket
+    const dateStr = new Date(review.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const formattedReview = {
+        user: review.username,
+        date: dateStr,
+        text: review.comment,
+        movie: review.movie_title,
+        year: review.movie_year,
+        stars: review.rating,
+        id: review.id
+    };
+
+    // 1. Poblar datos en Diseño ESTÁNDAR
+    document.getElementById('share-user-name').innerText = formattedReview.user;
+    document.getElementById('share-date').innerText = formattedReview.date;
+    document.getElementById('share-text').innerText = `"${truncateText(formattedReview.text, 180)}"`;
+    document.getElementById('share-movie-title-full').innerText = `${formattedReview.movie} (${formattedReview.year})`;
+
+    // Avatar del autor de la reseña
+    const avatarImg = document.getElementById('share-avatar-img');
+    if (avatarImg) {
+        const picFile = review.profile_pic || 'alucard.jpg';
+        avatarImg.src = `Multimedia/Profiles/${picFile}`;
+        avatarImg.onerror = function () { this.src = 'Multimedia/logo.png'; };
+    }
+
+    // Estrellas
+    const starsS = document.getElementById('share-stars');
+    starsS.innerHTML = Array(5).fill(0).map((_, i) =>
+        `<img src="Multimedia/star_r.svg" style="opacity: ${i >= formattedReview.stars ? '0.2' : '1'}; width: 22px; margin-right: 5px;">`
+    ).join("");
+
+    // 2. Poblar datos en Diseño TICKET
+    document.getElementById('ticket-user-name').innerText = formattedReview.user.toUpperCase();
+    document.getElementById('ticket-date').innerText = formattedReview.date;
+    document.getElementById('ticket-text').innerText = `"${truncateText(formattedReview.text, 200)}"`;
+    document.getElementById('ticket-movie-title-full').innerText = `${formattedReview.movie.toUpperCase()} (${formattedReview.year})`;
+    document.getElementById('ticket-receipt-id').innerText = `RECEIPT ID: #VN-${formattedReview.year}-${1000 + formattedReview.id}`;
+
+    const starsT = document.getElementById('ticket-stars');
+    const isLightInitial = true;
+    const starSrcInitial = isLightInitial ? 'Multimedia/star_black.svg' : 'Multimedia/star_white.svg';
+
+    starsT.innerHTML = Array(5).fill(0).map((_, i) =>
+        `<img src="${starSrcInitial}" style="opacity: ${i >= formattedReview.stars ? '0.2' : '1'}">`
+    ).join("");
+
+    // 3. Resetear ajustes UI
+    const card = document.getElementById('share-card-container');
+    const stdContent = document.getElementById('standard-share-content');
+    const tktContent = document.getElementById('ticket-share-content');
+    const grpStd = document.getElementById('grp-standard-opts');
+    const grpColor = document.getElementById('grp-bg-color');
+
+    // Estado inicial: Estándar
+    card.className = 'share-card-916 has-gradient';
+    stdContent.style.display = 'flex';
+    tktContent.style.display = 'none';
+    grpStd.style.display = 'block';
+    grpColor.style.display = 'none';
+
+    // Botones activos
+    document.getElementById('btn-fmt-standard').classList.add('active');
+    document.getElementById('btn-fmt-ticket').classList.remove('active');
+    document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+    document.querySelector('.color-circle.light').classList.add('active');
+
+    // Chks
+    document.getElementById('chk-include-link').checked = true;
+    document.getElementById('share-footer-link').style.display = 'block';
+
+    const tktFooter = document.getElementById('ticket-footer-promo');
+    if (tktFooter) tktFooter.style.display = 'block';
+
+    modal.style.display = 'block';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => { modal.scrollTop = 0; }, 10);
+
+    document.getElementById('btn-download-share').onclick = () => downloadShareImage(formattedReview);
+};
+
+function closeShareModal() {
+    const modal = document.getElementById('modal-share-review');
+    if (modal) modal.style.display = 'none';
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+}
+
+// Controladores de UI para el modal de compartir
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('modal-share-review');
+    const card = document.getElementById('share-card-container');
+    const stdContent = document.getElementById('standard-share-content');
+    const tktContent = document.getElementById('ticket-share-content');
+    const grpStd = document.getElementById('grp-standard-opts');
+    const grpColor = document.getElementById('grp-bg-color');
+
+    // Toggles de Formato
+    document.getElementById('btn-fmt-standard').onclick = function () {
+        this.classList.add('active');
+        document.getElementById('btn-fmt-ticket').classList.remove('active');
+        stdContent.style.display = 'flex';
+        tktContent.style.display = 'none';
+        grpStd.style.display = 'block';
+        document.getElementById('grp-gradient-opt').style.display = 'block';
+        grpColor.style.display = 'none';
+
+        // Restore gradient if checked, remove light theme
+        card.classList.remove('is-light-theme');
+        card.classList.remove('is-ticket-mode');
+        if (document.getElementById('chk-gradient').checked) {
+            card.classList.add('has-gradient');
+        }
+    };
+
+    document.getElementById('btn-fmt-ticket').onclick = function () {
+        this.classList.add('active');
+        document.getElementById('btn-fmt-standard').classList.remove('active');
+        stdContent.style.display = 'none';
+        tktContent.style.display = 'flex';
+        grpStd.style.display = 'block';
+        document.getElementById('grp-gradient-opt').style.display = 'none';
+        grpColor.style.display = 'block';
+
+        card.classList.add('is-ticket-mode');
+        card.classList.remove('has-gradient');
+        // Mantener el color elegido por el usuario en ticket (por defecto light)
+        if (document.querySelector('.color-circle.light').classList.contains('active')) {
+            card.classList.add('is-light-theme');
+        }
+    };
+
+    // Toggles de Color
+    document.querySelectorAll('.color-circle').forEach(circle => {
+        circle.onclick = function () {
+            document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+
+            const isLight = this.dataset.color === 'light';
+            if (isLight) card.classList.add('is-light-theme');
+            else card.classList.remove('is-light-theme');
+
+            // ACTUALIZAR ESTRELLAS EN MODO TICKET para evitar filtros CSS en el export
+            const ticketStars = document.getElementById('ticket-stars');
+            if (ticketStars) {
+                const starSrc = isLight ? 'Multimedia/star_black.svg' : 'Multimedia/star_white.svg';
+                ticketStars.querySelectorAll('img').forEach(img => {
+                    img.src = starSrc;
+                });
+            }
+        };
+    });
+
+    // Chks Estándar
+    document.getElementById('chk-include-link').onchange = (e) => {
+        const isChecked = e.target.checked;
+        document.getElementById('share-footer-link').style.display = isChecked ? 'block' : 'none';
+
+        // También afectar al footer del ticket si existe
+        const tktFooter = document.getElementById('ticket-footer-promo');
+        if (tktFooter) tktFooter.style.display = isChecked ? 'block' : 'none';
+    };
+
+    document.getElementById('chk-gradient').onchange = (e) => {
+        if (e.target.checked) card.classList.add('has-gradient');
+        else card.classList.remove('has-gradient');
+    }
+
+    // Cerrar modal
+    const closeBtns = ['btn-close-share', 'btn-close-share-desktop', 'btn-cancel-share'];
+    closeBtns.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.onclick = closeShareModal;
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeShareModal();
+    });
+});
+
+async function downloadShareImage(review) {
+    const card = document.getElementById('share-card-container');
+    const btnDown = document.getElementById('btn-download-share');
+
+    if (!card) return;
+
+    const originalBtnText = btnDown.innerHTML;
+    btnDown.innerHTML = "Generando...";
+    btnDown.disabled = true;
+
+    try {
+        // html2canvas captura el elemento y lo convierte a canvas
+        const canvas = await html2canvas(card, {
+            scale: 2, // DOBLE RESOLUCIÓN para que se vea premium
+            backgroundColor: null,
+            logging: false,
+            useCORS: true
+        });
+
+        const image = canvas.toDataURL("image/png", 1.0);
+        const link = document.createElement('a');
+        link.download = `Vanacue_Review_${review.movie.replace(/\s+/g, '_')}.png`;
+        link.href = image;
+        link.click();
+
+        if (typeof mostrarToast === 'function') mostrarToast("Imagen descargada con éxito");
+    } catch (err) {
+        console.error("Error al generar imagen:", err);
+        if (typeof mostrarToast === 'function') mostrarToast("Error al generar la imagen");
+    } finally {
+        btnDown.innerHTML = originalBtnText;
+        btnDown.disabled = false;
+        closeShareModal();
+    }
+}
+
+window.deleteComment = async function (commentId, reviewId) {
+    if (!confirm("¿Segur@ que quieres eliminar este comentario?")) return;
+
+    const token = localStorage.getItem('vanacue_token');
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${API_URL}/api/reviews/comment/${commentId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+            const container = document.getElementById(`discussion-${reviewId}`);
+            if (container) renderDiscussionArea(reviewId, container);
+            mostrarToast("Comentario eliminado.");
+        } else {
+            mostrarToast(data.message);
+        }
+    } catch (e) {
+        console.error(e);
+        mostrarToast("Error de conexión al eliminar.");
+    }
 }

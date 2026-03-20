@@ -101,7 +101,7 @@ body {
   cursor: pointer;
 }
 
-.nav-icon.rotated {
+.nav-icon.rotated { transform: rotate(180deg) !important; transition: transform 0.5s ease;
   transform: rotate(180deg) !important;
 }
 
@@ -3885,6 +3885,7 @@ header {
 .badge-free {
   background-color: #555;
   color: #ccc;
+  margin: 0;
 }
 
 .badge-premium {
@@ -4104,12 +4105,9 @@ header {
 }
 
 .badge-free {
-  background-color: #888;
-  color: #fff;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: bold;
+  background-color: #555;
+  color: #ccc;
+  margin: 0;
 }
 
 .badge-admin {
@@ -4218,3 +4216,324 @@ header {
   /* FEEDBACK: Aprox 3 items */
   overflow-y: auto;
 }
+
+/* === SCANNER SECTION (ADMIN ONLY) === */
+.seccion-scanner {
+  padding: 100px 2rem 2rem 2rem;
+  min-height: 80vh;
+}
+
+.scanner-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.scanner-header h2 {
+  font-size: 2rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.scanner-table-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  background-color: #0e0e0e;
+  border-radius: 8px;
+  border: 1px solid #e50914;
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.2);
+}
+
+.scanner-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  color: #fff;
+}
+
+.scanner-table th,
+.scanner-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scanner-table th {
+  background-color: rgba(229, 9, 20, 0.1);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  color: #e50914;
+}
+
+.scanner-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.scanner-table tr:last-child td {
+  border-bottom: none;
+}
+
+.scanner-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.online {
+  background-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.status-dot.offline {
+  background-color: #6b7280;
+}
+
+.scanner-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.scanner-badge.admin {
+  background-color: #6b21a8;
+  color: #fff;
+}
+
+.scanner-badge.premium {
+  background-color: #fbbf24;
+  color: #000;
+}
+
+.scanner-badge.free {
+  background-color: #6b7280;
+  color: #fff;
+}
+
+/* === RESPONSIVE SCANNER === */
+@media (max-width: 768px) {
+  .scanner-table-container {
+    overflow-x: auto;
+  }
+
+  .scanner-table th,
+  .scanner-table td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+
+  .scanner-table th:nth-child(3),
+  .scanner-table td:nth-child(3) {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .scanner-badge {
+    display: block;
+    margin-top: 5px;
+    margin-left: 0;
+    width: max-content;
+  }
+}/*
+===
+SECCION
+RESEÃƒÆÃ¢â¬ËœAS
+===
+*/
+
+/* --- PERFIL DE USUARIO --- */
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.nav-profile-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  transition: border-color 0.3s;
+}
+
+.profile-trigger:hover .nav-profile-img {
+  border-color: #e50914;
+}
+
+.user-profile-row {
+  display: flex !important;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.profile-pic-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.modal-profile-pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #333;
+}
+
+.edit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-pic-container:hover .edit-overlay {
+  opacity: 1;
+}
+
+.edit-overlay img {
+  width: 32px;
+  filter: brightness(0) invert(1);
+}
+
+.user-info-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#config-user-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Modal de Selecci�n de Perfil */
+.profile-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  margin-top: 15px;
+}
+
+.profile-option {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.profile-option:hover {
+  transform: scale(1.1);
+}
+
+.profile-option.active {
+  border-color: #e50914;
+}
+
+.profile-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 850px) {
+  .profile-selection-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- REFINAMIENTOS DE PERFIL --- */
+.header-username {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #e5e5e5;
+  margin-right: 5px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edit-profile-pic-center {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.username-edit-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.username-edit-row .username-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.edit-icon-small {
+  width: 18px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.edit-icon-small:hover {
+  opacity: 0.7;
+}
+
+.hidden-fields {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hidden-fields.visible {
+  max-height: 200px;
+  opacity: 1;
+  margin-bottom: 15px;
+}
+
+
+
+

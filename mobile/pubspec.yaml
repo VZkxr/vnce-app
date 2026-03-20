@@ -17,6 +17,10 @@ dependencies:
   intl: ^0.19.0
   flutter_svg: ^2.0.9
   url_launcher: ^6.3.0
+  screenshot: ^2.5.0
+  path_provider: ^2.1.4
+  share_plus: ^10.0.0
+  image_gallery_saver_plus: ^3.0.5
 
 dev_dependencies:
   flutter_test:

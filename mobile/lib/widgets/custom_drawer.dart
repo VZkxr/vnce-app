@@ -25,33 +25,43 @@ class CustomDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
                   children: [
-                    Text(
-                      username,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    CircleAvatar(
+                      radius: 26,
+                      backgroundColor: Colors.grey[800],
+                      backgroundImage: NetworkImage('https://vnc-e.com/Multimedia/Profiles/${authProvider.profilePic}'),
                     ),
-                    SizedBox(height: 6),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getRoleColor(authProvider.userRole),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        authProvider.userRole.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          username,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 6),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: _getRoleColor(authProvider.userRole),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            authProvider.userRole.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -248,7 +258,7 @@ class CustomDrawer extends StatelessWidget {
   }
 
   void _showEditUsernameDialog(BuildContext context, AuthProvider authProvider) {
-    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _usernameController = TextEditingController(text: authProvider.username);
     final TextEditingController _passwordController = TextEditingController();
     bool _isLoading = false;
     String? _feedbackMessage;
@@ -265,34 +275,63 @@ class CustomDrawer extends StatelessWidget {
               titlePadding: EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 8),
               contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               actionsPadding: EdgeInsets.only(bottom: 24, right: 24, left: 24),
-              title: Column(
-                children: [
-                  Text('Cambiar Nombre de Usuario', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
-                  SizedBox(height: 4),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Nombre actual: ',
-                      style: TextStyle(color: Colors.grey[400], fontSize: 14),
+              title: Center(
+                child: Column(
+                  children: [
+                    Stack(
+                      alignment: Alignment.bottomRight,
                       children: [
-                        TextSpan(
-                          text: authProvider.username ?? 'Usuario',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey[800],
+                          backgroundImage: NetworkImage('https://vnc-e.com/Multimedia/Profiles/${authProvider.profilePic}'),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Cierra el modal de edición para abrir el selector (o lo sobrepone)
+                            Navigator.pop(context);
+                            _showProfilePicSelectorDialog(context, authProvider);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFE50914),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Color(0xFF1E1E1E), width: 3),
+                            ),
+                            child: Icon(Icons.edit, color: Colors.white, size: 20),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    SizedBox(height: 16),
+                    Text(
+                      authProvider.username ?? 'Usuario',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)
+                    ),
+                    Text(
+                      authProvider.userRole.toUpperCase(),
+                      style: TextStyle(color: Colors.grey[400], fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Divider(color: Colors.grey[800], height: 32),
                   Text(
-                    'Elige un nombre único (mínimo 4 letras) y confirma tu contraseña.',
+                    'Puedes tocar el lápiz en tu foto para cambiarla.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                    style: TextStyle(color: Colors.grey[400], fontSize: 13),
                   ),
-                  SizedBox(height: 20),
-                  // Username Input
+                  SizedBox(height: 16),
+                  Text(
+                    'Para cambiar tu nombre, ingresa uno nuevo (mínimo 4 letras) y confirma tu contraseña.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                  ),
+                  SizedBox(height: 16),
                   TextField(
                     controller: _usernameController,
                     style: TextStyle(color: Colors.white),
@@ -307,7 +346,6 @@ class CustomDrawer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-                  // Password Input
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
@@ -343,7 +381,7 @@ class CustomDrawer extends StatelessWidget {
                           padding: EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                         ),
-                        child: Text('Cancelar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text('Cerrar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     SizedBox(width: 12),
@@ -352,6 +390,11 @@ class CustomDrawer extends StatelessWidget {
                         onPressed: _isLoading ? null : () async {
                           final newUsername = _usernameController.text.trim();
                           final password = _passwordController.text;
+
+                          if (newUsername == authProvider.username && password.isEmpty) {
+                             Navigator.pop(context);
+                             return;
+                          }
 
                           if (newUsername.length < 4) {
                             setState(() {
@@ -362,7 +405,7 @@ class CustomDrawer extends StatelessWidget {
                           }
                           if (password.isEmpty) {
                             setState(() {
-                              _feedbackMessage = "Debes ingresar tu contraseña.";
+                              _feedbackMessage = "Ingresa tu contraseña para cambiar el usuario.";
                               _isSuccess = false;
                             });
                             return;
@@ -370,7 +413,7 @@ class CustomDrawer extends StatelessWidget {
 
                           setState(() {
                             _isLoading = true;
-                            _feedbackMessage = "Verificando...";
+                            _feedbackMessage = "Guardando...";
                             _isSuccess = false;
                           });
 
@@ -400,6 +443,125 @@ class CustomDrawer extends StatelessWidget {
                         child: _isLoading 
                             ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                             : Text('Guardar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showProfilePicSelectorDialog(BuildContext context, AuthProvider authProvider) {
+    const List<String> profileImages = [
+      "alucard.jpg", "chunchi.jpg", "daria.jpg", "elliot.jpg", "godz.jpg",
+      "knight.jpg", "pennywise.jpg", "pirate.jpg", "princess.jpg", "superman.jpg"
+    ];
+
+    String _selectedTemporaryPic = authProvider.profilePic;
+    bool _isSaving = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Color(0xFF1E1E1E),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              titlePadding: EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 16),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              actionsPadding: EdgeInsets.all(24),
+              title: Text('Selecciona una Foto', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.center),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemCount: profileImages.length,
+                  itemBuilder: (context, index) {
+                    final imgFile = profileImages[index];
+                    final isSelected = _selectedTemporaryPic == imgFile;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() { _selectedTemporaryPic = imgFile; });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected ? Color(0xFFE50914) : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey[800],
+                          backgroundImage: NetworkImage('https://vnc-e.com/Multimedia/Profiles/$imgFile'),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isSaving ? null : () {
+                          Navigator.pop(context);
+                          _showEditUsernameDialog(context, authProvider); // Volver al menú anterior
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF404040),
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: Text('Cancelar', style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isSaving ? null : () async {
+                          if (_selectedTemporaryPic == authProvider.profilePic) {
+                            Navigator.pop(context);
+                            _showEditUsernameDialog(context, authProvider);
+                            return;
+                          }
+
+                          setState(() => _isSaving = true);
+                          
+                          final success = await authProvider.updateProfilePic(_selectedTemporaryPic);
+                          
+                          if (context.mounted) {
+                            setState(() => _isSaving = false);
+                            Navigator.pop(context);
+                            // Volvemos a abrir el menú que veníamos usando, ahora con la foto nueva
+                            _showEditUsernameDialog(context, authProvider);
+                            
+                            if (success) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Foto de perfil actualizada'), backgroundColor: Colors.green));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al conectarse a la nube'), backgroundColor: Colors.red));
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFE50914),
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: _isSaving 
+                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : Text('Seleccionar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],

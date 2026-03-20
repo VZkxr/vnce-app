@@ -14,8 +14,13 @@ import '../widgets/movie_detail_modal.dart';
 import '../widgets/series_detail_modal.dart';
 import '../providers/providers.dart';
 import '../services/proxy_server.dart';
+import 'reviews_tab.dart';
 
 class HomeScreen extends StatefulWidget {
+  static final GlobalKey<_HomeScreenState> globalKey = GlobalKey<_HomeScreenState>();
+
+  HomeScreen({Key? key}) : super(key: globalKey);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -50,8 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
   // Grid scroll controller for non-home sections
   final ScrollController _gridScrollController = ScrollController();
 
-  // Debouncer class
   final Debouncer _debouncer = Debouncer(milliseconds: 500);
+
+  void setSection(String section) {
+    setState(() {
+      _currentSection = section;
+    });
+  }
 
   @override
   void initState() {
@@ -98,10 +108,14 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _searchQuery = query;
           if (query.isNotEmpty) {
-             // Filter catalog
+             String _normalize(String str) {
+               return str.toLowerCase().replaceAll('á', 'a').replaceAll('é', 'e').replaceAll('í', 'i').replaceAll('ó', 'o').replaceAll('ú', 'u').replaceAll('ü', 'u');
+             }
+             final qNorm = _normalize(query);
              _searchResults = _catalog.where((item) => 
-               item.titulo.toLowerCase().contains(query.toLowerCase()) || 
-               item.genero.any((g) => g.toLowerCase().contains(query.toLowerCase()))
+               _normalize(item.titulo).contains(qNorm) || 
+               _normalize(item.tituloOriginal ?? '').contains(qNorm) || 
+               item.genero.any((g) => _normalize(g).contains(qNorm))
              ).toList().reversed.toList();
           } else {
             _searchResults = [];
@@ -392,15 +406,23 @@ class _HomeScreenState extends State<HomeScreen> {
                              Container(
                               height: 32,
                               padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildMenuChip('Inicio', _currentSection == 'Inicio'),
-                                  _buildMenuChip('Series', _currentSection == 'Series'),
-                                  _buildMenuChip('Películas', _currentSection == 'Películas'),
-                                  _buildMenuChip('Favoritos', _currentSection == 'Favoritos'),
-                                  _buildMenuChip('Planes', _currentSection == 'Planes'),
-                                ],
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    _buildMenuChip('Inicio', _currentSection == 'Inicio'),
+                                    SizedBox(width: 14),
+                                    _buildMenuChip('Series', _currentSection == 'Series'),
+                                    SizedBox(width: 14),
+                                    _buildMenuChip('Películas', _currentSection == 'Películas'),
+                                    SizedBox(width: 14),
+                                    _buildMenuChip('Favoritos', _currentSection == 'Favoritos'),
+                                    SizedBox(width: 14),
+                                    _buildMenuChip('Reseñas', _currentSection == 'Reseñas'),
+                                    SizedBox(width: 14),
+                                    _buildMenuChip('Planes', _currentSection == 'Planes'),
+                                  ],
+                                ),
                               ),
                             ),
                             SizedBox(height: 4),
@@ -428,6 +450,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return _buildGridSection('Películas', _getSectionItems('Películas'));
       case 'Favoritos':
         return _buildFavoritesSection();
+      case 'Reseñas':
+        return ReviewsTab(catalog: _catalog);
       case 'Planes':
         return _buildPlansSection();
       case 'Inicio':
@@ -941,7 +965,7 @@ class _HomeScreenState extends State<HomeScreen> {
         style: TextStyle(
           color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
           fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-          fontSize: 15,
+          fontSize: 17,
           shadows: [Shadow(color: Colors.black, blurRadius: 4)],
         ),
       ),

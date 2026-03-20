@@ -4,10 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex">
   <title>Vanacue</title>
   <link rel="icon" type="image/png" href="Multimedia/vnce_4.png">
   <link rel="stylesheet" href="normalize.css">
-  <link rel="stylesheet" href="styles.css?v=148">
+  <link rel="stylesheet" href="styles.css?v=160">
+  <link rel="stylesheet" href="reviews.css?v=21">
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -40,7 +42,9 @@
           <a href="#" id="link-series">Series</a>
           <a href="#" id="link-peliculas">Películas</a>
           <a href="#" id="link-favoritos">Favoritos</a>
+          <a href="#" id="link-reviews">Reseñas</a>
           <a href="#" id="link-planes">Planes</a>
+          <a href="#" id="link-scanner" style="display: none;">Scanner</a>
         </nav>
 
         <div class="menu-right">
@@ -74,18 +78,26 @@
 
           <!-- 3. CONFIGURACION + PERFIL (OCULTO EN MOBILE) -->
           <div class="config-container hidden-mobile">
-            <img src="Multimedia/config.svg" alt="Configuración" class="nav-icon" id="btn-config">
+            <div class="profile-trigger" id="btn-config">
+              <img src="Multimedia/config.svg" alt="Configuración" class="nav-icon">
+            </div>
 
             <!-- MODAL DE CONFIGURACIÓN (DESPLEGABLE) -->
             <div id="config-modal" class="config-modal hidden">
               <div class="config-header">
-                <div class="user-profile-row">
-                  <span id="config-user-name">Cargando...</span>
-                  <!-- Icono para editar nombre (reutilizamos lógica existente) -->
-                  <img src="Multimedia/edit.svg" id="btn-edit-user-config" class="edit-icon" title="Editar nombre"
-                    alt="Editar">
+                <div class="user-profile-row"
+                  style="display: flex; align-items: center; gap: 12px; justify-content: flex-start;">
+                  <img src="Multimedia/Profiles/alucard.jpg" alt="Perfil" class="nav-profile-img"
+                    id="dropdown-profile-img" style="width: 44px; height: 44px; flex-shrink: 0;">
+                  <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; align-items: flex-start;">
+                    <span id="config-user-name"
+                      style="font-weight: 600; font-size: 1.05rem; color: #fff; margin: 0; line-height: 1.2;">Usuario</span>
+                    <div id="subscription-badge" class="badge-free"
+                      style="font-size: 0.7rem; padding: 2px 6px; width: fit-content; margin: 0;">Free</div>
+                  </div>
+                  <img src="Multimedia/edit.svg" id="btn-edit-user-config" class="edit-icon" title="Editar perfil"
+                    alt="Editar" style="width: 14px; height: 14px; cursor: pointer; opacity: 0.5; margin-left: 10px;">
                 </div>
-                <div id="subscription-badge" class="badge-free">Free</div>
               </div>
 
               <hr class="config-divider">
@@ -168,6 +180,11 @@
                 <img src="Multimedia/telegram.svg" alt="Ver en Telegram">
               </a>
 
+              <!-- Botón RESEÑA -->
+              <a id="modal-btn-review" href="#" class="btn-hero-review">
+                <img src="Multimedia/pencil.svg" alt="Escribir Reseña">
+              </a>
+
               <!-- Botón COMPARTIR -->
               <a id="modal-btn-share" href="#" class="btn-hero-share">
                 <img src="Multimedia/share.svg" alt="Compartir">
@@ -222,6 +239,9 @@
             <p><span class="label-gris">Director(es):</span> <span id="modal-director">Director</span></p>
             <p><span class="label-gris">Elenco:</span> <span id="modal-elenco">Actor 1, Actor 2</span></p>
             <p><span class="label-gris">Géneros:</span> <span id="modal-genero">Acción, Aventura</span></p>
+            <button id="modal-btn-ver-resenas" class="btn-ver-resenas" style="display:none;">
+              <img src="Multimedia/review.svg" alt="Reseñas" style="width:14px;height:14px;color: white;"> Ver reseñas
+            </button>
           </div>
         </div>
 
@@ -282,30 +302,61 @@
 </body>
 
 <div id="modal-edit-user" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3>Cambiar Nombre de Usuario</h3>
+  <div class="modal-content" style="max-width: 450px;">
+    <h3>Configurar Perfil</h3>
 
-    <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 10px;">
-      Nombre actual: <strong id="current-username-label" style="color: #fff;">...</strong>
-    </p>
+    <div class="edit-profile-pic-center">
+      <div class="profile-pic-container" id="btn-change-photo-edit">
+        <img src="Multimedia/Profiles/alucard.jpg" alt="Perfil" id="edit-modal-profile-img" class="modal-profile-pic">
+        <div class="edit-overlay">
+          <img src="Multimedia/edit.svg" alt="Editar">
+        </div>
+      </div>
+    </div>
 
-    <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px;">
-      Elige un nombre único (mínimo 4 letras) y confirma tu contraseña.
-    </p>
+    <div class="username-edit-row">
+      <span id="current-username-display" class="username-text">...</span>
+      <img src="Multimedia/edit.svg" id="btn-trigger-name-change" class="edit-icon-small"
+        title="Cambiar nombre de usuario">
+    </div>
 
-    <input type="text" id="input-new-username" placeholder="Nuevo nombre" autocomplete="off"
-      style="margin-bottom: 10px;">
+    <div id="name-change-fields" class="hidden-fields">
+      <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">Nuevo nombre (mínimo 4 letras):</p>
+      <input type="text" id="input-new-username" placeholder="Nuevo nombre" autocomplete="off">
+      <p style="font-size: 0.85rem; color: #ccc; margin-top: 5px; margin-bottom: 5px;">Confirma tu contraseña para
+        guardar el cambio de nombre:</p>
+      <input type="password" id="input-confirm-password" placeholder="Contraseña actual"
+        autocomplete="current-password">
+    </div>
 
-    <input type="password" id="input-confirm-password" placeholder="Contraseña actual" autocomplete="current-password">
+    <p id="edit-feedback" style="margin-top: 10px; font-size: 0.9rem; min-height: 20px; text-align: center;"></p>
 
-    <p id="edit-feedback" style="margin-top: 10px; font-size: 0.9rem; min-height: 20px;"></p>
-
-    <div class="modal-actions">
+    <div class="modal-actions" style="margin-top: 10px;">
       <button id="btn-cancel-edit" class="btn-secondary">Cancelar</button>
-      <button id="btn-save-edit" class="btn-primary">Guardar</button>
+      <button id="btn-save-all" class="btn-primary">Guardar</button>
     </div>
   </div>
 </div>
+
+<!-- MODAL SELECCIONAR FOTO DE PERFIL -->
+<div id="modal-select-profile" class="modal-overlay hidden">
+  <div class="modal-content" style="max-width: 500px;">
+    <h3>Selecciona tu Foto de Perfil</h3>
+    <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 15px;">
+      Elige el avatar que más te guste para tu cuenta.
+    </p>
+
+    <div class="profile-selection-grid" id="profile-options-grid">
+      <!-- Se llenará con JS -->
+    </div>
+
+    <div class="modal-actions" style="margin-top: 20px;">
+      <button id="btn-cancel-profile" class="btn-secondary">Cancelar</button>
+      <button id="btn-save-profile" class="btn-primary" disabled>Seleccionar</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- MODAL NUEVA NOTIFICACIÓN (SOLO ADMIN) -->
 <div id="modal-new-notification" class="modal-overlay hidden">
@@ -334,8 +385,198 @@
   </div>
 </div>
 
+<!-- MODAL ESCRIBIR RESEÑA -->
+<div id="modal-write-review" class="modal-overlay hidden">
+  <div class="modal-review-container">
+    <div class="review-header">
+      <div class="review-title-row">
+        <img src="Multimedia/star_r.svg" alt="Logo" class="review-logo-icon">
+        <h3>Escribir Reseña</h3>
+      </div>
+      <button id="btn-close-review" class="btn-cerrar-review">&times;</button>
+    </div>
+
+    <div class="review-media-info">
+      <img id="review-media-img" src="" alt="Portada">
+      <div class="review-media-details">
+        <h4 id="review-media-title">Título</h4>
+        <p id="review-media-meta">Tipo • Año</p>
+      </div>
+    </div>
+
+    <div class="review-form-body">
+      <h5>¿Qué te pareció?</h5>
+      <div class="star-rating" id="star-rating-input">
+        <div class="star-wrapper" data-value="1">
+          <div class="star-circle"><img src="Multimedia/star_r.svg" alt="1"></div>
+          <span>1</span>
+        </div>
+        <div class="star-wrapper" data-value="2">
+          <div class="star-circle"><img src="Multimedia/star_r.svg" alt="2"></div>
+          <span>2</span>
+        </div>
+        <div class="star-wrapper" data-value="3">
+          <div class="star-circle"><img src="Multimedia/star_r.svg" alt="3"></div>
+          <span>3</span>
+        </div>
+        <div class="star-wrapper" data-value="4">
+          <div class="star-circle"><img src="Multimedia/star_r.svg" alt="4"></div>
+          <span>4</span>
+        </div>
+        <div class="star-wrapper" data-value="5">
+          <div class="star-circle"><img src="Multimedia/star_r.svg" alt="5"></div>
+          <span>5</span>
+        </div>
+      </div>
+
+      <div class="review-textarea-wrapper">
+        <textarea id="review-text-input" placeholder="Escribe tu opinión aquí..."></textarea>
+      </div>
+
+      <p class="review-warning">
+        <img src="Multimedia/info.svg" alt="Info" style="width:14px; vertical-align:middle; margin-right:4px;">
+        RECUERDA NO USAR PALABRAS ANTISONANTES
+      </p>
+    </div>
+
+    <div class="review-actions">
+      <button id="btn-cancel-review" class="btn-review-secondary">Cancelar</button>
+      <button id="btn-submit-review" class="btn-review-primary">Publicar Reseña</button>
+    </div>
+  </div>
+</div>
+
+<!-- GENERACIÓN DE IMÁGENES -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<!-- MODAL COMPARTIR RESEÑA (HISTORIAS 9:16) -->
+<div id="modal-share-review" class="modal-review">
+  <div class="modal-share-content">
+
+    <div class="share-header-mobile">
+      <h3>Compartir Reseña</h3>
+      <button id="btn-close-share" class="btn-cerrar-review">&times;</button>
+    </div>
+
+    <div class="share-grid">
+      <!-- Columna Izquierda: Vista Previa -->
+      <div class="share-preview-column">
+        <span class="preview-label">VISTA PREVIA</span>
+        <div id="share-card-container" class="share-card-916">
+
+          <!-- Diseño Estándar 9:16 (Se oculta en modo ticket) -->
+          <div id="standard-share-content" class="share-card-content">
+            <div class="share-user-info">
+              <img src="Multimedia/logo.png" alt="Avatar" class="share-avatar" id="share-avatar-img">
+              <div class="share-user-details">
+                <h4 id="share-user-name">Usuario</h4>
+                <p id="share-date">Fecha</p>
+              </div>
+            </div>
+            <div id="share-stars" class="share-stars"></div>
+            <div class="share-movie-info">
+              <h3 id="share-movie-title-full">Título (Año)</h3>
+            </div>
+            <p id="share-text" class="share-review-text">"Texto..."</p>
+            <div id="share-footer-link" class="share-footer-brand">
+              <p>MIRA MÁS EN VANACUE</p>
+            </div>
+          </div>
+
+          <!-- Diseño Ticket (Se muestra en modo ticket) -->
+          <div id="ticket-share-content" class="ticket-card-content" style="display: none;">
+            <div class="ticket-header">
+              <h2 class="ticket-brand"></h2>
+              <p class="ticket-id" id="ticket-receipt-id">RECEIPT ID: #VN-2023-1012</p>
+            </div>
+            <div class="ticket-divider"></div>
+            <div class="ticket-row">
+              <span class="ticket-label">USUARIO:</span>
+              <span class="ticket-value" id="ticket-user-name">ALEJANDRO G.</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-label">FECHA:</span>
+              <span class="ticket-value" id="ticket-date">12/10/2023</span>
+            </div>
+            <div class="ticket-divider"></div>
+            <div class="ticket-section-label">CALIFICACIÓN</div>
+            <div id="ticket-stars" class="ticket-stars"></div>
+            <div class="ticket-section-label">RESEÑA</div>
+            <div class="ticket-movie-title" id="ticket-movie-title-full">TITULO (2023)</div>
+            <p id="ticket-text" class="ticket-review-text">"Texto..."</p>
+            <div class="ticket-divider"></div>
+            <div class="ticket-footer" id="ticket-footer-promo">
+              <div class="ticket-barcode">|||| || |||| ||| | |||| ||</div>
+              <p>GRACIAS POR COMPARTIR</p>
+              <p class="ticket-web">vnc-e.com</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Ajustes y Acciones -->
+      <div class="share-settings-column">
+        <div class="share-settings-header">
+          <h3>Compartir Reseña</h3>
+          <button id="btn-close-share-desktop" class="btn-cerrar-review">&times;</button>
+        </div>
+
+        <p class="share-description">
+          Elige el formato ideal para tus redes sociales. Personaliza el estilo antes de exportar.
+        </p>
+
+        <div class="share-adjustments-new">
+          <div class="adj-group">
+            <label>FORMATO DE IMAGEN</label>
+            <div class="format-toggle">
+              <button id="btn-fmt-standard" class="btn-fmt active">Estándar 9:16</button>
+              <button id="btn-fmt-ticket" class="btn-fmt">Modo Ticket</button>
+            </div>
+          </div>
+
+          <div class="adj-group" id="grp-bg-color" style="display: none;">
+            <label>AJUSTES DE ESTILO</label>
+            <div class="style-row">
+              <span>Color de fondo:</span>
+              <div class="color-options">
+                <div class="color-circle light active" data-color="light"></div>
+                <div class="color-circle dark" data-color="dark"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="adj-group" id="grp-gradient-opt">
+            <label class="share-checkbox">
+              <input type="checkbox" id="chk-gradient" checked>
+              <span class="checkmark"></span>
+              Fondo degradado premium
+            </label>
+          </div>
+
+          <div class="adj-group" id="grp-standard-opts">
+            <label class="share-checkbox">
+              <input type="checkbox" id="chk-include-link" checked>
+              <span class="checkmark"></span>
+              Incluir link de la página
+            </label>
+          </div>
+        </div>
+
+        <div class="share-actions">
+          <button id="btn-download-share" class="btn-primary-review">
+            <img src="Multimedia/download.svg" alt="Download" style="width:18px; margin-right:8px;">
+            Descargar como PNG
+          </button>
+          <button id="btn-cancel-share" class="btn-secondary-review">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="config.js"></script>
 
-<script src="script.js?v=149"></script>
+<script src="script.js?v=205"></script>
 
 </html>
