@@ -149,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         Text('Ingresa para continuar', style: TextStyle(color: Colors.grey[500], fontSize: 14)),
         SizedBox(height: 48),
 
-        _buildTextField(controller: _usernameController, label: 'Usuario'),
+        _buildTextField(controller: _usernameController, label: 'Usuario o correo electrónico'),
         SizedBox(height: 16),
         _buildTextField(controller: _passwordController, label: 'Contraseña', isPassword: true),
         

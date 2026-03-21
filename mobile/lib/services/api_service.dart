@@ -30,7 +30,9 @@ class ApiService {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           await _saveToken(data['token']);
-          await saveUser(username); // Save username for display
+          
+          final String trueUsername = data['user']?['username'] ?? username;
+          await saveUser(trueUsername); // Save true username
           
           final String role = data['user']?['tipo_cuenta'] ?? data['user']?['role'] ?? 'Free';
           await _saveRole(role);
@@ -38,7 +40,7 @@ class ApiService {
           final String profilePic = data['user']?['profile_pic'] ?? 'alucard.jpg';
           await saveProfilePic(profilePic);
           
-          return {'success': true, 'token': data['token']};
+          return {'success': true, 'token': data['token'], 'username': trueUsername};
         } else {
           return {'success': false, 'message': data['message'] ?? 'Usuario o contraseña incorrectos'};
         }

@@ -8,8 +8,8 @@
   <title>Vanacue</title>
   <link rel="icon" type="image/png" href="Multimedia/vnce_4.png">
   <link rel="stylesheet" href="normalize.css">
-  <link rel="stylesheet" href="styles.css?v=160">
-  <link rel="stylesheet" href="reviews.css?v=21">
+  <link rel="stylesheet" href="styles.css?v=161">
+  <link rel="stylesheet" href="reviews.css?v=22">
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -372,7 +372,35 @@
     <textarea id="notif-message" placeholder="Mensaje..." rows="4"
       style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 10px; resize: none;"></textarea>
 
-    <label style="color: #fff; font-size: 0.9rem; display: block; margin-bottom: 5px;">Tipo:</label>
+    <label style="color: #fff; font-size: 0.9rem; display: block; margin-bottom: 5px;">Público Objetivo:</label>
+    <select id="notif-target-type"
+      style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 10px;">
+      <option value="all">🌐 Todos los usuarios</option>
+      <option value="role">👥 Por Rol (Free, Premium, Admin)</option>
+      <option value="user">👤 Usuario específico</option>
+    </select>
+
+    <div id="notif-target-value-container" class="hidden" style="margin-bottom: 10px;">
+      <label style="color: #fff; font-size: 0.9rem; display: block; margin-bottom: 5px;"
+        id="lbl-notif-target-value">Valor:</label>
+      <div id="notif-target-role-wrapper" class="hidden">
+        <select id="notif-target-role" style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
+          <option value="free">Free</option>
+          <option value="premium">Premium</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <input type="text" id="notif-target-user" placeholder="Escribe el username..." class="hidden"
+        style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label style="color: #fff; font-size: 0.9rem; display: block; margin-bottom: 5px;">Excluir a (opcional):</label>
+      <input type="text" id="notif-exclude-user" placeholder="Username a excluir..."
+        style="width: 100%; padding: 10px; border-radius: 5px; border: none;">
+    </div>
+
+    <label style="color: #fff; font-size: 0.9rem; display: block; margin-bottom: 5px;">Tipo de alerta:</label>
     <select id="notif-type" style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 20px;">
       <option value="info">ℹ️ Información</option>
       <option value="alert">⚠️ Alerta / Mantenimiento</option>
@@ -577,6 +605,6 @@
 
 <script src="config.js"></script>
 
-<script src="script.js?v=205"></script>
+<script src="script.js?v=207"></script>
 
 </html>

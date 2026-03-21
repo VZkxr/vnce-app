@@ -77,7 +77,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             await dataPromise;
         }
 
-        if (accion === 'reseñas' || accion === 'reseñas') window.renderView('reviews');
+        if (accion === 'reseñas' || accion === 'reviews') {
+            const userStr = localStorage.getItem('vanacue_user');
+            const user = userStr ? JSON.parse(userStr) : {};
+            if (user.reviews_block) {
+                window.location.href = "index.html";
+                return;
+            }
+            window.renderView('reviews');
+        }
         else if (accion === 'series') window.renderView('series');
         else if (accion === 'peliculas') window.renderView('movies');
         else if (accion === 'favoritos') window.renderView('favorites');
@@ -576,6 +584,13 @@ window.navigateTo = function (viewName, param = null) {
     } else if (viewName === 'plans') {
         newUrl = "?accion=planes";
     } else if (viewName === 'reviews') {
+        const userStr = localStorage.getItem('vanacue_user');
+        const user = userStr ? JSON.parse(userStr) : {};
+        if (user.reviews_block) {
+            mostrarToast("Función no disponible.");
+            window.location.href = "index.html";
+            return;
+        }
         newUrl = "?accion=reseñas";
     } else if (viewName === 'scanner') {
         newUrl = "?accion=scanner";
@@ -2548,8 +2563,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const btnReviews = document.getElementById("link-reviews");
     if (btnReviews) {
+        const userStr = localStorage.getItem('vanacue_user');
+        const user = userStr ? JSON.parse(userStr) : {};
+        if (user.reviews_block) {
+            btnReviews.style.display = 'none';
+        }
+
         btnReviews.addEventListener("click", (e) => {
             e.preventDefault();
+            if (user.reviews_block) {
+                mostrarToast("Función no disponible.");
+                return;
+            }
             if (document.getElementById("mainContent")) {
                 window.navigateTo('reviews');
             } else {
@@ -2875,9 +2900,16 @@ function abrirModal(pelicula) {
     // Botón "Ver reseñas"
     const btnVerResenas = document.getElementById('modal-btn-ver-resenas');
     if (btnVerResenas) {
+        const userStr = localStorage.getItem('vanacue_user');
+        const user = userStr ? JSON.parse(userStr) : {};
+        
         btnVerResenas.style.display = 'inline-flex';
         const tituloPelicula = pelicula.titulo || '';
         btnVerResenas.onclick = () => {
+            if (user.reviews_block) {
+                mostrarToast("Función no disponible.");
+                return;
+            }
             // Cerrar modal y resetear overflow (fix del bug de scroll)
             const modalInfo = document.getElementById('modal-info');
             if (modalInfo) modalInfo.classList.add('hidden');
@@ -3150,6 +3182,11 @@ function abrirModal(pelicula) {
 
             if (!isPremium) {
                 mostrarToast("Necesitas suscripción premium para realizar esta acción.");
+                return;
+            }
+
+            if (user.reviews_block) {
+                mostrarToast("Función no disponible.");
                 return;
             }
 
@@ -5171,9 +5208,16 @@ if (btnSendNotif && modalNotif) {
     btnSendNotif.addEventListener('click', async () => {
         const title = document.getElementById('notif-title').value;
         const message = document.getElementById('notif-message').value;
-        // Mapeo seguro: index 0 -> info, index 1 -> alert
-        const typeSelect = document.getElementById('notif-type');
-        const type = typeSelect.value;
+        const type = document.getElementById('notif-type').value;
+        const targetType = document.getElementById('notif-target-type').value;
+        const excludeUser = document.getElementById('notif-exclude-user').value;
+
+        let targetValue = null;
+        if (targetType === 'role') {
+            targetValue = document.getElementById('notif-target-role').value;
+        } else if (targetType === 'user') {
+            targetValue = document.getElementById('notif-target-user').value;
+        }
 
         if (!title || !message) {
             alert("Por favor completa el título y mensaje.");
@@ -5188,7 +5232,14 @@ if (btnSendNotif && modalNotif) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ title, message, type })
+                body: JSON.stringify({ 
+                    title, 
+                    message, 
+                    type, 
+                    targetType, 
+                    targetValue, 
+                    excludeUser 
+                })
             });
 
             const data = await response.json();
@@ -5199,9 +5250,11 @@ if (btnSendNotif && modalNotif) {
                 // Limpiar
                 document.getElementById('notif-title').value = '';
                 document.getElementById('notif-message').value = '';
+                document.getElementById('notif-exclude-user').value = '';
+                document.getElementById('notif-target-user').value = '';
 
                 // RECARGAR SIEMPRE para actualizar badge y lista
-                if (notifDropdown) loadNotifications(notifDropdown);
+                if (window.notifDropdown) loadNotifications(window.notifDropdown);
             } else {
                 alert("Error: " + data.message);
             }
@@ -5214,6 +5267,38 @@ if (btnSendNotif && modalNotif) {
     if (btnCancelNotif) {
         btnCancelNotif.addEventListener('click', () => {
             modalNotif.classList.add('hidden');
+            // Limpiar campos
+            document.getElementById('notif-title').value = '';
+            document.getElementById('notif-message').value = '';
+            document.getElementById('notif-exclude-user').value = '';
+            document.getElementById('notif-target-user').value = '';
+            const targetTypeSelect = document.getElementById('notif-target-type');
+            if (targetTypeSelect) targetTypeSelect.value = 'all';
+            const targetValueContainer = document.getElementById('notif-target-value-container');
+            if (targetValueContainer) targetValueContainer.classList.add('hidden');
+        });
+    }
+
+    // Listener para cambiar campos según público objetivo
+    const targetTypeSelect = document.getElementById('notif-target-type');
+    const targetValueContainer = document.getElementById('notif-target-value-container');
+    const targetRoleWrapper = document.getElementById('notif-target-role-wrapper');
+    const targetUserInput = document.getElementById('notif-target-user');
+
+    if (targetTypeSelect) {
+        targetTypeSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'all') {
+                targetValueContainer.classList.add('hidden');
+            } else {
+                targetValueContainer.classList.remove('hidden');
+                if (e.target.value === 'role') {
+                    targetRoleWrapper.classList.remove('hidden');
+                    targetUserInput.classList.add('hidden');
+                } else {
+                    targetRoleWrapper.classList.add('hidden');
+                    targetUserInput.classList.remove('hidden');
+                }
+            }
         });
     }
 }
@@ -5861,11 +5946,12 @@ window.mostrarScanner = function () {
                         <th>Usuario</th>
                         <th>Estado</th>
                         <th>Viendo</th>
+                        <th>Última vista</th>
                         <th>Última Conexión</th>
                     </tr>
                 </thead>
                 <tbody id="scanner-tbody">
-                    <tr><td colspan="4" style="text-align:center;">Cargando datos...</td></tr>
+                    <tr><td colspan="5" style="text-align:center;">Cargando datos...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -5908,7 +5994,7 @@ function renderScannerTable(users) {
     if (!tbody) return;
 
     if (users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay usuarios registrados</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay usuarios registrados</td></tr>';
         return;
     }
 
@@ -5946,6 +6032,7 @@ function renderScannerTable(users) {
                 </div>
             </td>
             <td>${u.media || 'Ninguna'}</td>
+            <td>${u.last_viewed || 'Ninguna'}</td>
             <td>${lastSeenText}</td>
         `;
         tbody.appendChild(tr);

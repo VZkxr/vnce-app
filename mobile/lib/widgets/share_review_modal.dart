@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../models/models.dart';
@@ -19,6 +21,7 @@ class ShareReviewModal extends StatefulWidget {
 
 class _ShareReviewModalState extends State<ShareReviewModal> {
   final ScreenshotController _screenshotController = ScreenshotController();
+  final GlobalKey _offstageKey = GlobalKey();
   
   bool isTicketMode = false;
   bool addPremiumGradient = true;
@@ -28,18 +31,26 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
 
   void _shareContent() async {
     setState(() => isExporting = true);
+    
+    // Give time for layout builder to process the requested changes in the offstage widget
+    await Future.delayed(const Duration(milliseconds: 500));
+    
     try {
-      final Uint8List? imageBytes = await _screenshotController.capture(
-        delay: const Duration(milliseconds: 50),
-        pixelRatio: 3.0,
-      );
+      final boundary = _offstageKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      
+      if (boundary == null) {
+          throw Exception("No se pudo encontrar el renderizador de la imagen.");
+      }
 
-      if (imageBytes != null) {
-        final result = await ImageGallerySaverPlus.saveImage(
-            imageBytes,
-            quality: 100,
-            name: "Vanacue_Review_${widget.review.id}_${DateTime.now().millisecondsSinceEpoch}"
-        );
+      ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final Uint8List imageBytes = byteData!.buffer.asUint8List();
+
+      final result = await ImageGallerySaverPlus.saveImage(
+          imageBytes,
+          quality: 100,
+          name: "Vanacue_Review_${widget.review.id}_${DateTime.now().millisecondsSinceEpoch}"
+      );
         
         if (mounted) {
           if (result != null && result['isSuccess'] == true) {
@@ -53,7 +64,6 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
             );
           }
         }
-      }
     } catch (e) {
       if (mounted) {
          ScaffoldMessenger.of(context).showSnackBar(
@@ -69,7 +79,26 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Stack(
+      children: [
+        // CONTENEDOR OFFSTAGE DE RESOLUCIÓN COMPLETA PARA EXPORTACIÓN NÍTIDA Y SIN RECORTE
+        Positioned(
+          left: -10000,
+          top: -10000,
+          child: RepaintBoundary(
+            key: _offstageKey,
+            child: Material(
+              color: Colors.black,
+              child: SizedBox(
+                width: 1080,
+                height: 1920,
+                child: isTicketMode ? _buildTicketMode() : _buildStandardMode(),
+              ),
+            ),
+          ),
+        ),
+        // UI PRINCIPAL DEL MODAL
+        Container(
       decoration: BoxDecoration(
         color: Color(0xFF0F0F0F),
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -246,7 +275,8 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
           ],
         ),
       ),
-    );
+    ), // This closing parenthesis was missing to close the Container at line 101
+    ]);
   }
 
   Widget _buildCheckbox(String label, bool value, ValueChanged<bool?> onChanged) {
@@ -290,31 +320,31 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
           end: Alignment.bottomRight,
         ) : null,
       ),
-      padding: EdgeInsets.all(72),
+      padding: EdgeInsets.fromLTRB(135, 135, 135, 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               CircleAvatar(
-                radius: 60,
+                radius: 85,
                 backgroundImage: widget.review.profilePic.isNotEmpty
                    ? CachedNetworkImageProvider('https://vnc-e.com/Multimedia/Profiles/${widget.review.profilePic}')
                    : null,
                 backgroundColor: Color(0xFF1E1E1E),
-                child: widget.review.profilePic.isEmpty ? Icon(Icons.person, color: Colors.white, size: 60) : null,
+                child: widget.review.profilePic.isEmpty ? Icon(Icons.person, color: Colors.white, size: 85) : null,
               ),
-              SizedBox(width: 32),
+              SizedBox(width: 48),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.review.username, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 48)),
-                  Text(_formatDate(widget.review.createdAt), style: TextStyle(color: Colors.grey[400], fontSize: 32)),
+                  Text(widget.review.username, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 60)),
+                  Text(_formatDate(widget.review.createdAt), style: TextStyle(color: Colors.grey[400], fontSize: 40)),
                 ],
               )
             ],
           ),
-          SizedBox(height: 64),
+          SizedBox(height: 100),
           Row(
             children: List.generate(5, (index) => Icon(
               index < widget.review.rating ? Icons.star : Icons.star_border,
@@ -322,27 +352,28 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
               size: 64,
             )),
           ),
-          SizedBox(height: 64),
+          SizedBox(height: 100),
           Text(
-            widget.review.movieTitle.toUpperCase(),
-            style: TextStyle(color: Color(0xFFE50914), fontSize: 64, fontWeight: FontWeight.w900),
+            '${widget.review.movieTitle.toUpperCase()} (${widget.review.movieYear})',
+            style: TextStyle(color: Color(0xFFE50914), fontSize: 68, fontWeight: FontWeight.w900),
           ),
-          SizedBox(height: 48),
-          Expanded(
+          SizedBox(height: 65),
+          Flexible(
             child: Text(
               '"${widget.review.comment}"',
-              style: TextStyle(color: Colors.white, fontSize: 52, fontStyle: FontStyle.italic, height: 1.4),
+              style: TextStyle(color: Colors.white, fontSize: 61, fontStyle: FontStyle.italic, height: 1.5),
               overflow: TextOverflow.ellipsis,
-              maxLines: 10,
+              maxLines: 9, // Reduced strictly to trigger ellipsis before bottom padding
             ),
           ),
+          Spacer(),
           if (includePageLink) ...[
             Divider(color: Colors.white12, thickness: 3),
-            SizedBox(height: 32),
+            SizedBox(height: 12),
             Center(
               child: Text(
                 'MIRA MÁS EN VANACUE',
-                style: TextStyle(color: Colors.grey[500], fontSize: 28, letterSpacing: 4, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.grey[500], fontSize: 34, letterSpacing: 8, fontWeight: FontWeight.bold),
               ),
             )
           ]
@@ -397,7 +428,7 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
           ),
           SizedBox(height: 24),
           lineWidget,
-          Spacer(flex: 1),
+          SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(5, (index) => Icon(
@@ -406,16 +437,20 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
                size: 80,
             )),
           ),
-          Spacer(flex: 1),
+          SizedBox(height: 32),
           Text(
-            widget.review.movieTitle.toUpperCase(),
+            '${widget.review.movieTitle.toUpperCase()} (${widget.review.movieYear})',
             textAlign: TextAlign.left,
             style: TextStyle(color: fgColor, fontFamily: 'Courier', fontSize: 56, fontWeight: FontWeight.w900, height: 1.2),
           ),
           SizedBox(height: 48),
-          Text(
-            '"${widget.review.comment}"',
-            style: TextStyle(color: fgColor, fontFamily: 'Courier', fontSize: 44, height: 1.4),
+          Flexible(
+            child: Text(
+              '"${widget.review.comment}"',
+              style: TextStyle(color: fgColor, fontFamily: 'Courier', fontSize: 44, height: 1.4),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 11, // Triggers ellipsis before hitting the Ticket footer
+            ),
           ),
           SizedBox(height: 64),
           lineWidget,

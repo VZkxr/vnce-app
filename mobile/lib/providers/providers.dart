@@ -53,7 +53,7 @@ class AuthProvider with ChangeNotifier {
     
     if (result['success']) {
       _isAuthenticated = true;
-      _username = username;
+      _username = result['username'] ?? username;
       _userRole = await _api.getRole() ?? 'Free';
       _profilePic = await _api.getProfilePic() ?? 'alucard.jpg';
       notifyListeners();
