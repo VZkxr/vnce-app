@@ -310,7 +310,49 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
     );
   }
 
+  String _truncateTextToFit(String text, TextStyle style, double maxWidth, int maxLines) {
+    if (text.isEmpty) return '""';
+    
+    final fullText = '"$text"';
+    final textPainter = TextPainter(
+      text: TextSpan(text: fullText, style: style),
+      maxLines: maxLines,
+      textDirection: ui.TextDirection.ltr,
+    );
+    textPainter.layout(maxWidth: maxWidth);
+    
+    if (!textPainter.didExceedMaxLines) {
+      return fullText;
+    }
+    
+    int low = 0;
+    int high = text.length;
+    String best = '""';
+    
+    while (low <= high) {
+      int mid = low + (high - low) ~/ 2;
+      String candidateStr = '"' + text.substring(0, mid).trimRight() + '..."';
+      final candidatePainter = TextPainter(
+        text: TextSpan(text: candidateStr, style: style),
+        maxLines: maxLines,
+        textDirection: ui.TextDirection.ltr,
+      );
+      candidatePainter.layout(maxWidth: maxWidth);
+      
+      if (candidatePainter.didExceedMaxLines) {
+        high = mid - 1;
+      } else {
+        best = candidateStr;
+        low = mid + 1;
+      }
+    }
+    
+    return best;
+  }
+
   Widget _buildStandardMode() {
+    final style = TextStyle(color: Colors.white, fontSize: 61, fontStyle: FontStyle.italic, height: 1.5);
+    
     return Container(
       decoration: BoxDecoration(
         color: Color(0xFF0A0A0A),
@@ -320,7 +362,7 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
           end: Alignment.bottomRight,
         ) : null,
       ),
-      padding: EdgeInsets.fromLTRB(135, 135, 135, 80),
+      padding: EdgeInsets.fromLTRB(135, 135, 135, 45),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -355,18 +397,25 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
           SizedBox(height: 100),
           Text(
             '${widget.review.movieTitle.toUpperCase()} (${widget.review.movieYear})',
-            style: TextStyle(color: Color(0xFFE50914), fontSize: 68, fontWeight: FontWeight.w900),
+            style: TextStyle(color: Color(0xFFE50914), fontSize: 64, fontWeight: FontWeight.w900),
           ),
           SizedBox(height: 65),
-          Flexible(
-            child: Text(
-              '"${widget.review.comment}"',
-              style: TextStyle(color: Colors.white, fontSize: 61, fontStyle: FontStyle.italic, height: 1.5),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 9, // Reduced strictly to trigger ellipsis before bottom padding
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final lineHeight = style.fontSize! * style.height!;
+                int maxLines = (constraints.maxHeight / lineHeight).floor();
+                if (maxLines > 7) maxLines = 7;
+                if (maxLines <= 0) return const SizedBox.shrink();
+                
+                final commentTextDynamic = _truncateTextToFit(widget.review.comment, style, constraints.maxWidth, maxLines);
+                return Text(
+                  commentTextDynamic,
+                  style: style,
+                );
+              },
             ),
           ),
-          Spacer(),
           if (includePageLink) ...[
             Divider(color: Colors.white12, thickness: 3),
             SizedBox(height: 12),
@@ -385,6 +434,8 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
   Widget _buildTicketMode() {
     final bgColor = isDarkBackground ? Color(0xFF0E0E0E) : Colors.white;
     final fgColor = isDarkBackground ? Colors.white : Colors.black;
+    final style = TextStyle(color: fgColor, fontFamily: 'Courier', fontSize: 44, height: 1.4);
+
     final lineWidget = Row(
       children: List.generate(
         30,
@@ -444,17 +495,24 @@ class _ShareReviewModalState extends State<ShareReviewModal> {
             style: TextStyle(color: fgColor, fontFamily: 'Courier', fontSize: 56, fontWeight: FontWeight.w900, height: 1.2),
           ),
           SizedBox(height: 48),
-          Flexible(
-            child: Text(
-              '"${widget.review.comment}"',
-              style: TextStyle(color: fgColor, fontFamily: 'Courier', fontSize: 44, height: 1.4),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 11, // Triggers ellipsis before hitting the Ticket footer
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final lineHeight = style.fontSize! * style.height!;
+                int maxLines = (constraints.maxHeight / lineHeight).floor();
+                if (maxLines > 8) maxLines = 8;
+                if (maxLines <= 0) return const SizedBox.shrink();
+
+                final commentTextDynamic = _truncateTextToFit(widget.review.comment, style, constraints.maxWidth, maxLines);
+                return Text(
+                  commentTextDynamic,
+                  style: style,
+                );
+              },
             ),
           ),
-          SizedBox(height: 64),
           lineWidget,
-          Spacer(flex: 2),
+          SizedBox(height: 16),
           Text(
             '| | | |  | |  | | | |  | | |',
             textAlign: TextAlign.center,

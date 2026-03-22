@@ -1,42 +1,23 @@
 
 Running Gradle task 'assembleRelease'...                        
+lib/widgets/share_review_modal.dart:320:36: Error: Member not found: 'ltr'.
+      textDirection: TextDirection.ltr,
+                                   ^^^
+Target kernel_snapshot failed: Exception
 
-FAILURE: Build completed with 2 failures.
 
-1: Task failed with an exception.
------------
+FAILURE: Build failed with an exception.
+
 * What went wrong:
-A problem occurred configuring project ':image_gallery_saver'.
-> Could not create an instance of type com.android.build.api.variant.impl.LibraryVariantBuilderImpl.
-   > Namespace not specified. Specify a namespace in the module's build file. See https://d.android.com/r/tools/upgrade-assistant/set-namespace for information about setting the namespace.
-
-     If you've specified the package attribute in the source AndroidManifest.xml, you can use the AGP Upgrade Assistant to migrate to the namespace value in the build file. Refer to https://d.android.com/r/tools/upgrade-assistant/agp-upgrade-assistant for general information about using the AGP Upgrade Assistant.
+Execution failed for task ':app:compileFlutterBuildRelease'.
+> Process 'command 'C:\flutter\bin\flutter.bat'' finished with non-zero exit value 1
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
 > Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
-==============================================================================
 
-2: Task failed with an exception.
------------
-* What went wrong:
-Failed to query the value of property 'buildFlowServiceProperty'.
-> Could not isolate value org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService$Parameters_Decorated@7896010a of type BuildFlowService.Parameters
-   > A problem occurred configuring project ':image_gallery_saver'.
-      > Could not create an instance of type com.android.build.api.variant.impl.LibraryVariantBuilderImpl.
-         > Namespace not specified. Specify a namespace in the module's build file. See https://d.android.com/r/tools/upgrade-assistant/set-namespace for information about setting the namespace.
-
-           If you've specified the package attribute in the source AndroidManifest.xml, you can use the AGP Upgrade Assistant to migrate to the namespace value in the build file. Refer to https://d.android.com/r/tools/upgrade-assistant/agp-upgrade-assistant for general information about using the AGP Upgrade Assistant.
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-==============================================================================
-
-BUILD FAILED in 1s
-Running Gradle task 'assembleRelease'...                         1,682ms
+BUILD FAILED in 12s
+Running Gradle task 'assembleRelease'...                           12.7s
 Gradle task assembleRelease failed with exit code 1
